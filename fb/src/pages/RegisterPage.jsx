@@ -90,8 +90,8 @@ const RegisterPage = () => {
       const loginResult = await login(payload.email, formData.password);
 
       if (loginResult.success) {
-        showToast('Auto-login successful! Let\'s complete your profile.', 'success');
-        navigate('/profile');
+        showToast('Auto-login successful!', 'success');
+        // Let the PublicRoute's automatic redirect handle navigation to dashboard
       } else {
         showToast('Registration successful! Please login.', 'warning');
         navigate('/login');
