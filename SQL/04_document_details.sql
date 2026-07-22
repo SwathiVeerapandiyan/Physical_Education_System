@@ -1,6 +1,6 @@
-
 CREATE TABLE document_details (
                                   document_id SERIAL PRIMARY KEY,
+                                  user_form_id INT UNIQUE REFERENCES users_form(id) ON DELETE CASCADE,
                                   candidate_signature VARCHAR(255),
                                   parent_signature VARCHAR(255),
                                   mark_12_certificate VARCHAR(255),

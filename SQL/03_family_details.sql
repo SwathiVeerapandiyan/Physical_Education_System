@@ -1,5 +1,6 @@
 CREATE TABLE family_details (
                                 family_id SERIAL PRIMARY KEY,
+                                user_form_id INT UNIQUE REFERENCES users_form(id) ON DELETE CASCADE,
                                 father_name VARCHAR(100) NOT NULL,
                                 father_occupation VARCHAR(100),
                                 mother_name VARCHAR(100) NOT NULL,
