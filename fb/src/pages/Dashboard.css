@@ -4,6 +4,62 @@
   flex-direction: column;
 }
 
+/* ── Skeleton loader (keeps sidebar clickable during data fetch) ── */
+@keyframes shimmer {
+  0% { background-position: -600px 0; }
+  100% { background-position: 600px 0; }
+}
+
+.skeleton-block {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0px,
+    rgba(255, 255, 255, 0.08) 40px,
+    rgba(255, 255, 255, 0.04) 80px
+  );
+  background-size: 600px 100%;
+  animation: shimmer 1.5s infinite linear;
+  border-radius: var(--radius-md);
+}
+
+.dashboard-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.skeleton-banner {
+  height: 110px;
+  width: 100%;
+}
+
+.skeleton-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.skeleton-stats .skeleton-block {
+  height: 100px;
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.skeleton-block.tall {
+  height: 320px;
+}
+
+@media (max-width: 768px) {
+  .skeleton-stats { grid-template-columns: 1fr 1fr; }
+  .skeleton-grid { grid-template-columns: 1fr; }
+}
+
+
+
 .welcome-banner {
   display: flex;
   justify-content: space-between;
@@ -162,7 +218,17 @@
   border-radius: var(--radius-sm);
   background: rgba(15, 23, 42, 0.2);
   border: 1px solid var(--border-color);
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), transform var(--transition-fast), background var(--transition-fast);
+}
+
+.completion-item-clickable {
+  cursor: pointer;
+}
+
+.completion-item-clickable:hover {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: var(--primary);
+  transform: translateX(4px);
 }
 
 .completion-item.completed {

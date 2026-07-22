@@ -29,13 +29,14 @@ export const AuthProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await authService.login(username, password);
-      if (response.success && response.userDetails) {
-        setUser(response.userDetails);
+      const userObj = response?.user || response?.userDetails;
+      if (response && response.success && userObj) {
+        setUser(userObj);
         setIsAuthenticated(true);
-        localStorage.setItem('pe_user', JSON.stringify(response.userDetails));
-        return { success: true, message: response.message };
+        localStorage.setItem('pe_user', JSON.stringify(userObj));
+        return { success: true, message: response.message || 'Login successful' };
       } else {
-        return { success: false, message: response.message || 'Login failed' };
+        return { success: false, message: response?.message || 'Login failed' };
       }
     } catch (error) {
       return { 

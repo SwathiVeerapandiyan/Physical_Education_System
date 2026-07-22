@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import Spinner from '../components/Spinner';
@@ -9,6 +9,9 @@ const LoginPage = () => {
   const { login } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectPath = location.state?.from || '/dashboard';
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -37,7 +40,7 @@ const LoginPage = () => {
 
     if (result.success) {
       showToast('Logged in successfully!', 'success');
-      navigate('/dashboard');
+      navigate(redirectPath, { replace: true });
     } else {
       showToast(result.message, 'error');
     }

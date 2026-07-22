@@ -91,7 +91,7 @@ const RegisterPage = () => {
 
       if (loginResult.success) {
         showToast('Auto-login successful!', 'success');
-        // Let the PublicRoute's automatic redirect handle navigation to dashboard
+        navigate('/dashboard', { replace: true });
       } else {
         showToast('Registration successful! Please login.', 'warning');
         navigate('/login');

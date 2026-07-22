@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { dashboardService, userFormService, familyDetailsService, documentDetailsService } from '../services/api';
-import Spinner from '../components/Spinner';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -11,11 +10,8 @@ const Dashboard = () => {
   const { showToast } = useToast();
   const navigate = useNavigate();
 
-  const [stats, setStats] = useState(null);
-  const [profileForm, setProfileForm] = useState(null);
+  const [stats, setStats] = useState({ totalUsers: 0, totalCandidates: 0, totalMaleStudents: 0, totalFemaleStudents: 0 });
   const [loading, setLoading] = useState(true);
-
-  // Profile completion indicators
   const [completion, setCompletion] = useState({
     profileCreated: false,
     familyAdded: false,
@@ -25,65 +21,53 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
       setLoading(true);
+
+      // Safety timeout — if backend is slow/down, never block the UI
+      const timeout = setTimeout(() => setLoading(false), 6000);
+
       try {
-        // 1. Fetch KPI Stats
-        const statsData = await dashboardService.getStats();
-        setStats(statsData);
+        // 1. KPI Stats (ignore errors — gracefully fall back to zeros)
+        try {
+          const statsData = await dashboardService.getStats();
+          setStats(statsData);
+        } catch { /* silently ignore */ }
 
-        // 2. Fetch User Form to determine profile status
-        const allForms = await userFormService.getAll();
-        const myForm = allForms.find((f) => f.email?.toLowerCase() === user?.email?.toLowerCase());
+        // 2. Profile completion check
+        try {
+          const allForms = await userFormService.getAll();
+          const myForm = allForms.find((f) => f.email?.toLowerCase() === user?.email?.toLowerCase());
 
-        if (myForm) {
-          setProfileForm(myForm);
-          
-          // Verify subsequent completion items
-          let familyStatus = false;
-          let docStatus = false;
+          if (myForm) {
+            let familyStatus = false;
+            let docStatus = false;
 
-          try {
-            const family = await familyDetailsService.getByCandidateId(myForm.id);
-            if (family && family.familyId) {
-              familyStatus = true;
-            }
-          } catch (e) {
-            // Treat error (e.g., 404) as not yet added
+            try {
+              const family = await familyDetailsService.getByCandidateId(myForm.id);
+              if (family && family.familyId) familyStatus = true;
+            } catch { /* not added yet */ }
+
+            try {
+              const docs = await documentDetailsService.getByCandidateId(myForm.id);
+              if (docs && docs.documentId) docStatus = true;
+            } catch { /* not uploaded yet */ }
+
+            setCompletion({ profileCreated: true, familyAdded: familyStatus, documentsUploaded: docStatus });
           }
+        } catch { /* backend unreachable — show empty state */ }
 
-          try {
-            const docs = await documentDetailsService.getByCandidateId(myForm.id);
-            if (docs && docs.documentId) {
-              docStatus = true;
-            }
-          } catch (e) {
-            // Treat error as not yet uploaded
-          }
-
-          setCompletion({
-            profileCreated: true,
-            familyAdded: familyStatus,
-            documentsUploaded: docStatus,
-          });
-        } else {
-          setCompletion({
-            profileCreated: false,
-            familyAdded: false,
-            documentsUploaded: false,
-          });
-        }
-      } catch (error) {
-        showToast(error.message || 'Failed to fetch dashboard records', 'error');
       } finally {
+        clearTimeout(timeout);
         setLoading(false);
       }
     };
 
     if (user?.email) {
       fetchDashboardData();
+    } else {
+      setLoading(false);
     }
-  }, [user, showToast]);
+  }, [user]);
 
-  // Compute progress percentage
   const getCompletionPercent = () => {
     let count = 0;
     if (completion.profileCreated) count += 34;
@@ -92,19 +76,36 @@ const Dashboard = () => {
     return count;
   };
 
-  if (loading) {
-    return <Spinner fullPage message="Fetching live dashboard metrics..." />;
-  }
-
   const completionPercent = getCompletionPercent();
+
+  // ── Inline skeleton — sidebar stays clickable during load ──
+  if (loading) {
+    return (
+      <div className="dashboard-wrapper">
+        <div className="dashboard-skeleton animate-fade-in">
+          <div className="skeleton-banner skeleton-block" />
+          <div className="skeleton-stats">
+            <div className="skeleton-block" />
+            <div className="skeleton-block" />
+            <div className="skeleton-block" />
+            <div className="skeleton-block" />
+          </div>
+          <div className="skeleton-grid">
+            <div className="skeleton-block tall" />
+            <div className="skeleton-block tall" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-wrapper">
-      {/* Welcome banner card */}
+      {/* Welcome banner */}
       <section className="welcome-banner glass-card animate-fade-in">
         <div className="welcome-text">
           <h2>Welcome Back, {user?.name || 'Candidate'}!</h2>
-          <p>Department of Physical Education & Sports Portal</p>
+          <p>Department of Physical Education &amp; Sports Portal</p>
           <div className="badge-grid mt-4">
             <span className="info-badge"><strong>Reg No:</strong> {user?.registerNo || 'N/A'}</span>
             <span className="info-badge"><strong>Department:</strong> {user?.dept || 'N/A'}</span>
@@ -114,7 +115,7 @@ const Dashboard = () => {
         <div className="welcome-icon">🏆</div>
       </section>
 
-      {/* KPI Cards Grid */}
+      {/* KPI Cards */}
       <section className="stats-grid mt-6">
         <div className="stat-card glass-card">
           <p className="stat-label">Total Users</p>
@@ -138,12 +139,12 @@ const Dashboard = () => {
         </div>
       </section>
 
-      {/* Main Grid: Status & Details */}
+      {/* Main Grid */}
       <div className="dashboard-grid mt-6">
-        {/* Completion Card */}
+
+        {/* Profile Completion */}
         <div className="grid-item-left glass-card">
           <h3 className="grid-item-title">Profile Completion Status</h3>
-          
           <div className="progress-radial-container">
             <div className="progress-bar-linear">
               <div className="linear-label">
@@ -151,94 +152,115 @@ const Dashboard = () => {
                 <span>{completionPercent}%</span>
               </div>
               <div className="linear-bar">
-                <div className="linear-fill" style={{ width: `${completionPercent}%` }}></div>
+                <div className="linear-fill" style={{ width: `${completionPercent}%` }} />
               </div>
             </div>
           </div>
 
           <ul className="completion-list mt-6">
-            <li className={`completion-item ${completion.profileCreated ? 'completed' : 'pending'}`}>
+            <li
+              className={`completion-item completion-item-clickable ${completion.profileCreated ? 'completed' : 'pending'}`}
+              onClick={() => navigate('/profile')}
+            >
               <span className="check-box">{completion.profileCreated ? '✓' : '○'}</span>
               <div className="item-details">
                 <p className="item-name">Complete Student Profile Form</p>
                 <p className="item-desc">Batch, address, and athletic specialty details</p>
               </div>
-              {!completion.profileCreated && (
-                <Link to="/profile" className="item-action-btn">Fill</Link>
-              )}
+              <span className="item-action-btn">
+                {completion.profileCreated ? 'View' : 'Fill'}
+              </span>
             </li>
 
-            <li className={`completion-item ${completion.familyAdded ? 'completed' : 'pending'}`}>
+            <li
+              className={`completion-item completion-item-clickable ${completion.familyAdded ? 'completed' : 'pending'}`}
+              onClick={() => {
+                if (!completion.profileCreated) {
+                  showToast('Please complete the Student Profile Form first', 'warning');
+                  navigate('/profile');
+                } else {
+                  navigate('/family');
+                }
+              }}
+            >
               <span className="check-box">{completion.familyAdded ? '✓' : '○'}</span>
               <div className="item-details">
                 <p className="item-name">Associate Family Details</p>
                 <p className="item-desc">Emergency contacts and siblings occupations</p>
               </div>
-              {completion.profileCreated && !completion.familyAdded && (
-                <Link to="/family" className="item-action-btn">Add</Link>
+              {completion.profileCreated ? (
+                <span className="item-action-btn">{completion.familyAdded ? 'View' : 'Add'}</span>
+              ) : (
+                <span className="locked-badge">Locked</span>
               )}
-              {!completion.profileCreated && <span className="locked-badge">Locked</span>}
             </li>
 
-            <li className={`completion-item ${completion.documentsUploaded ? 'completed' : 'pending'}`}>
+            <li
+              className={`completion-item completion-item-clickable ${completion.documentsUploaded ? 'completed' : 'pending'}`}
+              onClick={() => {
+                if (!completion.profileCreated) {
+                  showToast('Please complete the Student Profile Form first', 'warning');
+                  navigate('/profile');
+                } else {
+                  navigate('/documents');
+                }
+              }}
+            >
               <span className="check-box">{completion.documentsUploaded ? '✓' : '○'}</span>
               <div className="item-details">
                 <p className="item-name">Upload Required Certificates</p>
                 <p className="item-desc">Aadhar card, medical fitness certificates, etc.</p>
               </div>
-              {completion.profileCreated && !completion.documentsUploaded && (
-                <Link to="/documents" className="item-action-btn">Upload</Link>
+              {completion.profileCreated ? (
+                <span className="item-action-btn">{completion.documentsUploaded ? 'View' : 'Upload'}</span>
+              ) : (
+                <span className="locked-badge">Locked</span>
               )}
-              {!completion.profileCreated && <span className="locked-badge">Locked</span>}
             </li>
           </ul>
         </div>
 
-        {/* Quick actions & Navigation */}
+        {/* Quick Actions + Activity */}
         <div className="grid-item-right flex-col gap-6">
           <div className="glass-card flex-1">
             <h3 className="grid-item-title">Quick Actions</h3>
             <div className="action-button-grid mt-4">
-              <button 
-                onClick={() => navigate('/profile')} 
-                className="action-tile-btn bg-indigo"
-              >
+              <button onClick={() => navigate('/profile')} className="action-tile-btn bg-indigo">
                 <span className="tile-icon">📝</span>
                 <span className="tile-title">Edit Profile</span>
               </button>
 
-              <button 
+              <button
                 onClick={() => {
                   if (!completion.profileCreated) {
-                    showToast('Please complete the Student Profile Form first', 'warning');
+                    showToast('Please complete your Student Profile Form first', 'warning');
+                    navigate('/profile');
                   } else {
                     navigate('/family');
                   }
-                }} 
+                }}
                 className="action-tile-btn bg-teal"
               >
-                <span className="tile-icon">👨‍👩‍👦</span>
+                <span className="tile-icon">👨‍👩‍👧‍👦</span>
                 <span className="tile-title">Family Info</span>
               </button>
 
-              <button 
+              <button
                 onClick={() => {
                   if (!completion.profileCreated) {
-                    showToast('Please complete the Student Profile Form first', 'warning');
+                    showToast('Please complete your Student Profile Form first', 'warning');
+                    navigate('/profile');
                   } else {
                     navigate('/documents');
                   }
-                }} 
+                }}
                 className="action-tile-btn bg-amber"
               >
                 <span className="tile-icon">📂</span>
                 <span className="tile-title">Upload Docs</span>
               </button>
 
-              <button 
-                onClick={() => navigate('/users')} 
-                className="action-tile-btn bg-slate"
-              >
+              <button onClick={() => navigate('/users')} className="action-tile-btn bg-slate">
                 <span className="tile-icon">👥</span>
                 <span className="tile-title">View Users</span>
               </button>
@@ -249,14 +271,14 @@ const Dashboard = () => {
             <h3 className="grid-item-title">Recent Activity</h3>
             <ul className="activity-list mt-4">
               <li className="activity-item">
-                <span className="dot active"></span>
+                <span className="dot active" />
                 <div className="activity-details">
                   <p className="activity-text">Log in successful</p>
                   <p className="activity-time">Just now</p>
                 </div>
               </li>
               <li className="activity-item">
-                <span className="dot"></span>
+                <span className="dot" />
                 <div className="activity-details">
                   <p className="activity-text">Database sync complete</p>
                   <p className="activity-time">5 mins ago</p>
@@ -265,6 +287,7 @@ const Dashboard = () => {
             </ul>
           </div>
         </div>
+
       </div>
     </div>
   );

@@ -1,8 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './LandingPage.css';
 
 const LandingPage = () => {
+  const { isAuthenticated } = useAuth();
+
+  const getModuleLink = (targetPath) => {
+    if (isAuthenticated) {
+      return targetPath;
+    }
+    return {
+      pathname: '/login',
+      state: { from: targetPath },
+    };
+  };
+
   return (
     <div className="landing-wrapper">
       {/* Background ambient glows */}
@@ -16,8 +29,14 @@ const LandingPage = () => {
           <span className="logo-title">PE Department</span>
         </div>
         <div className="header-actions">
-          <Link to="/login" className="btn-link-sec">Sign In</Link>
-          <Link to="/register" className="btn-link-prim">Register Now</Link>
+          {isAuthenticated ? (
+            <Link to="/dashboard" className="btn-link-prim">Go to Dashboard →</Link>
+          ) : (
+            <>
+              <Link to="/login" className="btn-link-sec">Sign In</Link>
+              <Link to="/register" className="btn-link-prim">Register Now</Link>
+            </>
+          )}
         </div>
       </header>
 
@@ -25,7 +44,7 @@ const LandingPage = () => {
       <main className="landing-main">
         <section className="hero-section">
           <div className="hero-content animate-fade-in">
-            <span className="badge-featured">Physical Education & Sports Management</span>
+            <span className="badge-featured">Physical Education &amp; Sports Management</span>
             <h1 className="hero-title">
               Empowering Athletes, <br />
               <span className="glow-text">Optimizing Performance</span>
@@ -35,12 +54,20 @@ const LandingPage = () => {
               manage family data, and submit medical evaluation records directly online.
             </p>
             <div className="hero-ctas">
-              <Link to="/register" className="btn-primary lg animate-pulse-glow">
-                Get Started ➔
-              </Link>
-              <Link to="/login" className="btn-secondary lg">
-                Candidate Login
-              </Link>
+              {isAuthenticated ? (
+                <Link to="/dashboard" className="btn-primary lg animate-pulse-glow">
+                  Dashboard ➔
+                </Link>
+              ) : (
+                <>
+                  <Link to="/register" className="btn-primary lg animate-pulse-glow">
+                    Get Started ➔
+                  </Link>
+                  <Link to="/login" className="btn-secondary lg">
+                    Candidate Login
+                  </Link>
+                </>
+              )}
             </div>
           </div>
 
@@ -81,28 +108,31 @@ const LandingPage = () => {
         <section className="features-section">
           <h2 className="section-title">Department Modules</h2>
           <div className="features-grid">
-            <div className="feature-card glass-card">
+            <Link to={getModuleLink('/profile')} className="feature-card glass-card feature-card-clickable">
               <div className="card-icon">📝</div>
               <h3>Student Profile</h3>
               <p>Complete your official physical education profile form detailing your batch, dob, address, and specialty.</p>
-            </div>
-            <div className="feature-card glass-card">
+              <span className="card-action-link">Access Module →</span>
+            </Link>
+            <Link to={getModuleLink('/family')} className="feature-card glass-card feature-card-clickable">
               <div className="card-icon">👨‍👩‍👧‍👦</div>
               <h3>Family Association</h3>
               <p>Keep the department updated with emergency contacts and parents/guardians occupations for notifications.</p>
-            </div>
-            <div className="feature-card glass-card">
+              <span className="card-action-link">Access Module →</span>
+            </Link>
+            <Link to={getModuleLink('/documents')} className="feature-card glass-card feature-card-clickable">
               <div className="card-icon">📂</div>
               <h3>Document Submission</h3>
               <p>Upload and inspect required documents including fitness certificates, transfer records, and admission cards.</p>
-            </div>
+              <span className="card-action-link">Access Module →</span>
+            </Link>
           </div>
         </section>
       </main>
 
       {/* Footer */}
       <footer className="landing-footer">
-        <p>© {new Date().getFullYear()} Physical Education & Sports Department. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Physical Education &amp; Sports Department. All rights reserved.</p>
       </footer>
     </div>
   );
