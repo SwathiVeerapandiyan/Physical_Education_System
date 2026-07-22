@@ -9,3 +9,12 @@ CREATE TABLE users (
                        created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                        updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE family_details 
+ADD COLUMN user_form_id INT UNIQUE REFERENCES users_form(id) ON DELETE CASCADE;
+
+
+
+
+ALTER TABLE document_details 
+ADD COLUMN user_form_id INT UNIQUE REFERENCES users_form(id) ON DELETE CASCADE;
