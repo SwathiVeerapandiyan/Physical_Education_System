@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
+import ChatbotWidget from '../components/ChatbotWidget';
 import './MainLayout.css';
 
 const MainLayout = ({ children }) => {
@@ -105,9 +106,13 @@ const MainLayout = ({ children }) => {
         <main className="page-container">
           {children}
         </main>
+
+        {/* MCC Chatbot Widget */}
+        <ChatbotWidget />
       </div>
     </div>
   );
 };
 
 export default MainLayout;
+

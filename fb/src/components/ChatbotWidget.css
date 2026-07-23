@@ -1,0 +1,389 @@
+/* Madras Christian College (MCC) Chatbot Widget Styling */
+
+.mcc-chatbot-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Floating Trigger Button */
+.mcc-chatbot-trigger {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #800000 0%, #a80000 100%);
+  border: 3px solid #ffffff;
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(128, 0, 0, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.mcc-chatbot-trigger:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 30px rgba(128, 0, 0, 0.5);
+}
+
+.mcc-chatbot-trigger.active {
+  background: #333333;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.trigger-icon-content {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trigger-chat-icon {
+  font-size: 26px;
+}
+
+.trigger-close-icon {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.trigger-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #00d2ff;
+  color: #002244;
+  font-size: 11px;
+  font-weight: bold;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #800000;
+}
+
+/* Main Chatbot Window Drawer */
+.mcc-chatbot-window {
+  position: absolute;
+  bottom: 75px;
+  right: 0;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  height: 580px;
+  max-height: calc(100vh - 120px);
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: mccDrawerSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+@keyframes mccDrawerSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* MCC Maroon Header */
+.mcc-chatbot-header {
+  background: #800000;
+  color: #ffffff;
+  padding: 20px 20px 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  position: relative;
+}
+
+.mcc-header-greeting {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mcc-greeting-title {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+
+}
+
+.waving-hand {
+  display: inline-block;
+  animation: wave 2.5s infinite;
+  transform-origin: 70% 70%;
+}
+
+@keyframes wave {
+  0% { transform: rotate( 0.0deg) }
+  10% { transform: rotate(14.0deg) }
+  20% { transform: rotate(-8.0deg) }
+  30% { transform: rotate(14.0deg) }
+  40% { transform: rotate(-4.0deg) }
+  50% { transform: rotate(10.0deg) }
+  60% { transform: rotate( 0.0deg) }
+  100% { transform: rotate( 0.0deg) }
+}
+
+.mcc-greeting-sub {
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+  opacity: 0.95;
+  margin: 0;
+}
+
+.mcc-close-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 18px;
+  opacity: 0.85;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: opacity 0.2s ease;
+}
+
+.mcc-close-btn:hover {
+  opacity: 1;
+}
+
+/* Call Card Container */
+.mcc-contact-card-container {
+  background: #800000;
+  padding: 0 16px 16px;
+}
+
+.mcc-call-pill {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mcc-call-pill:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.mcc-phone-icon {
+  font-size: 26px;
+  color: #0088cc;
+  background: #e8f7ff;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Quick Action Options */
+.mcc-quick-options-container {
+  background: #f8f9fa;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-bottom: 1px solid #eee;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.mcc-option-pill-btn {
+  background: #1e88e5;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(30, 136, 229, 0.2);
+}
+
+.mcc-option-pill-btn:hover {
+  background: #1565c0;
+  transform: translateX(2px);
+  box-shadow: 0 4px 8px rgba(21, 101, 192, 0.3);
+}
+
+/* Chat Body Log */
+.mcc-chat-body {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+  background: #fdfdfd;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mcc-message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.mcc-message-row.user-row {
+  justify-content: flex-end;
+}
+
+.mcc-message-row.bot-row {
+  justify-content: flex-start;
+}
+
+.mcc-bot-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #800000;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.mcc-message-bubble {
+  max-width: 78%;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.bot-bubble {
+  background: #f0f4f8;
+  color: #1a2530;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.user-bubble {
+  background: #800000;
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+}
+
+.mcc-message-time {
+  font-size: 10px;
+  opacity: 0.7;
+  margin-top: 4px;
+  text-align: right;
+}
+
+/* Typing Indicator Dots */
+.typing-bubble {
+  padding: 12px 18px;
+}
+
+.typing-dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.typing-dots span {
+  width: 6px;
+  height: 6px;
+  background: #800000;
+  border-radius: 50%;
+  animation: typing 1.4s infinite ease-in-out both;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typing {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+/* Footer Input Area */
+.mcc-chat-footer {
+  padding: 12px 16px;
+  background: #ffffff;
+  border-top: 1px solid #eeeeee;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mcc-chat-input {
+  flex: 1;
+  border: 1px solid #dddddd;
+  border-radius: 20px;
+  padding: 10px 16px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.mcc-chat-input:focus {
+  border-color: #800000;
+}
+
+.mcc-send-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #800000;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.mcc-send-btn:hover:not(:disabled) {
+  background: #a80000;
+  transform: scale(1.05);
+}
+
+.mcc-send-btn:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 480px) {
+  .mcc-chatbot-container {
+    bottom: 16px;
+    right: 16px;
+  }
+  
+  .mcc-chatbot-window {
+    width: calc(100vw - 32px);
+    height: 520px;
+    bottom: 70px;
+  }
+}

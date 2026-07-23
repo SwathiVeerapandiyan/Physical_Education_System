@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import ChatbotWidget from '../components/ChatbotWidget';
 import './LandingPage.css';
+
 
 const LandingPage = () => {
   const { isAuthenticated } = useAuth();
@@ -134,8 +136,12 @@ const LandingPage = () => {
       <footer className="landing-footer">
         <p>© {new Date().getFullYear()} Physical Education &amp; Sports Department. All rights reserved.</p>
       </footer>
+
+      {/* MCC Chatbot Widget */}
+      <ChatbotWidget />
     </div>
   );
 };
 
 export default LandingPage;
+

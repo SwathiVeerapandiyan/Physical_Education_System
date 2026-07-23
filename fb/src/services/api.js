@@ -229,4 +229,12 @@ export const liveScoreService = {
   delete: async (id) => (await apiClient.delete(`/live-scores/${id}`)).data,
 };
 
+export const chatbotService = {
+  getWelcomeMessage: async () => (await apiClient.get('/chatbot/welcome')).data,
+  getQuickOptions: async () => (await apiClient.get('/chatbot/options')).data,
+  getFaqs: async () => (await apiClient.get('/chatbot/faqs')).data,
+  sendMessage: async (messageData) => (await apiClient.post('/chatbot/message', messageData)).data,
+};
+
 export default apiClient;
+
