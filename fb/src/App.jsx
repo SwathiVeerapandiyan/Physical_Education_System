@@ -14,6 +14,10 @@ import UserManagement from './pages/UserManagement';
 import UserForm from './pages/UserForm';
 import FamilyDetails from './pages/FamilyDetails';
 import DocumentDetails from './pages/DocumentDetails';
+import SportsManagement from './pages/SportsManagement';
+import TournamentsManagement from './pages/TournamentsManagement';
+import TeamsManagement from './pages/TeamsManagement';
+import MatchesManagement from './pages/MatchesManagement';
 
 // Protected Route Guard
 const ProtectedRoute = () => {
@@ -79,6 +83,10 @@ function App() {
               <Route path="/profile" element={<UserForm />} />
               <Route path="/family" element={<FamilyDetails />} />
               <Route path="/documents" element={<DocumentDetails />} />
+              <Route path="/sports" element={<SportsManagement />} />
+              <Route path="/tournaments" element={<TournamentsManagement />} />
+              <Route path="/teams" element={<TeamsManagement />} />
+              <Route path="/matches" element={<MatchesManagement />} />
             </Route>
 
             {/* Fallback Catch-all Route */}

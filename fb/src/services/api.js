@@ -117,4 +117,51 @@ export const documentDetailsService = {
   }
 };
 
+export const sportsService = {
+  getAll: async () => (await apiClient.get('/sports')).data,
+  getById: async (id) => (await apiClient.get(`/sports/${id}`)).data,
+  create: async (data) => (await apiClient.post('/sports', data)).data,
+  update: async (id, data) => (await apiClient.put(`/sports/${id}`, data)).data,
+  delete: async (id) => (await apiClient.delete(`/sports/${id}`)).data,
+};
+
+export const tournamentService = {
+  getAll: async (status) => (await apiClient.get('/tournaments', { params: { status } })).data,
+  getById: async (id) => (await apiClient.get(`/tournaments/${id}`)).data,
+  create: async (data) => (await apiClient.post('/tournaments', data)).data,
+  update: async (id, data) => (await apiClient.put(`/tournaments/${id}`, data)).data,
+  delete: async (id) => (await apiClient.delete(`/tournaments/${id}`)).data,
+};
+
+export const teamService = {
+  getAll: async (sportId) => (await apiClient.get('/teams', { params: { sportId } })).data,
+  getById: async (id) => (await apiClient.get(`/teams/${id}`)).data,
+  create: async (data) => (await apiClient.post('/teams', data)).data,
+  update: async (id, data) => (await apiClient.put(`/teams/${id}`, data)).data,
+  delete: async (id) => (await apiClient.delete(`/teams/${id}`)).data,
+};
+
+export const teamMemberService = {
+  getByTeamId: async (teamId) => (await apiClient.get(`/team-members/team/${teamId}`)).data,
+  getByStudentId: async (studentId) => (await apiClient.get(`/team-members/student/${studentId}`)).data,
+  create: async (data) => (await apiClient.post('/team-members', data)).data,
+  delete: async (id) => (await apiClient.delete(`/team-members/${id}`)).data,
+};
+
+export const tournamentRegistrationService = {
+  getByTournamentId: async (tId) => (await apiClient.get(`/tournament-registrations/tournament/${tId}`)).data,
+  getByTeamId: async (teamId) => (await apiClient.get(`/tournament-registrations/team/${teamId}`)).data,
+  create: async (data) => (await apiClient.post('/tournament-registrations', data)).data,
+  update: async (id, data) => (await apiClient.put(`/tournament-registrations/${id}`, data)).data,
+  delete: async (id) => (await apiClient.delete(`/tournament-registrations/${id}`)).data,
+};
+
+export const matchService = {
+  getAll: async (tournamentId) => (await apiClient.get('/matches', { params: { tournamentId } })).data,
+  getById: async (id) => (await apiClient.get(`/matches/${id}`)).data,
+  create: async (data) => (await apiClient.post('/matches', data)).data,
+  update: async (id, data) => (await apiClient.put(`/matches/${id}`, data)).data,
+  delete: async (id) => (await apiClient.delete(`/matches/${id}`)).data,
+};
+
 export default apiClient;

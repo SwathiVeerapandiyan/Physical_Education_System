@@ -19,10 +19,14 @@ const MainLayout = ({ children }) => {
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/users', label: 'User Management', icon: '👥' },
+    { path: '/users', label: 'User Directory', icon: '👥' },
     { path: '/profile', label: 'User Form', icon: '📝' },
     { path: '/family', label: 'Family Details', icon: '👨‍👩‍👧‍👦' },
     { path: '/documents', label: 'Document Details', icon: '📁' },
+    { path: '/sports', label: 'Sports Directory', icon: '🏀' },
+    { path: '/tournaments', label: 'Tournaments', icon: '🏆' },
+    { path: '/teams', label: 'Teams & Squads', icon: '🛡️' },
+    { path: '/matches', label: 'Match Fixtures', icon: '⚽' },
   ];
 
   // Helper to determine active breadcrumb/page title
