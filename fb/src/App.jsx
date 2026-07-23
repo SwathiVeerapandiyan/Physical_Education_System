@@ -18,6 +18,7 @@ import SportsManagement from './pages/SportsManagement';
 import TournamentsManagement from './pages/TournamentsManagement';
 import TeamsManagement from './pages/TeamsManagement';
 import MatchesManagement from './pages/MatchesManagement';
+import GalleryManagement from './pages/GalleryManagement';
 
 // Protected Route Guard
 const ProtectedRoute = () => {
@@ -87,6 +88,7 @@ function App() {
               <Route path="/tournaments" element={<TournamentsManagement />} />
               <Route path="/teams" element={<TeamsManagement />} />
               <Route path="/matches" element={<MatchesManagement />} />
+              <Route path="/gallery" element={<GalleryManagement />} />
             </Route>
 
             {/* Fallback Catch-all Route */}

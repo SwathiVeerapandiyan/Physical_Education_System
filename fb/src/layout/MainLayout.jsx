@@ -27,6 +27,7 @@ const MainLayout = ({ children }) => {
     { path: '/tournaments', label: 'Tournaments', icon: '🏆' },
     { path: '/teams', label: 'Teams & Squads', icon: '🛡️' },
     { path: '/matches', label: 'Match Fixtures', icon: '⚽' },
+    { path: '/gallery', label: 'Gallery & Media', icon: '🖼️' },
   ];
 
   // Helper to determine active breadcrumb/page title

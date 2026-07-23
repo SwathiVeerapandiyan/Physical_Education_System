@@ -164,4 +164,12 @@ export const matchService = {
   delete: async (id) => (await apiClient.delete(`/matches/${id}`)).data,
 };
 
+export const galleryService = {
+  getAll: async (eventName, activeOnly) => (await apiClient.get('/gallery', { params: { eventName, activeOnly } })).data,
+  getById: async (id) => (await apiClient.get(`/gallery/${id}`)).data,
+  create: async (data) => (await apiClient.post('/gallery', data)).data,
+  update: async (id, data) => (await apiClient.put(`/gallery/${id}`, data)).data,
+  delete: async (id) => (await apiClient.delete(`/gallery/${id}`)).data,
+};
+
 export default apiClient;
