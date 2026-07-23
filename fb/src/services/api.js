@@ -172,4 +172,61 @@ export const galleryService = {
   delete: async (id) => (await apiClient.delete(`/gallery/${id}`)).data,
 };
 
+export const equipmentBookingService = {
+  getAll: async (userId, status) => (await apiClient.get('/equipment-bookings', { params: { userId, status } })).data,
+  getById: async (id) => (await apiClient.get(`/equipment-bookings/${id}`)).data,
+  create: async (data) => (await apiClient.post('/equipment-bookings', data)).data,
+  update: async (id, data) => (await apiClient.put(`/equipment-bookings/${id}`, data)).data,
+  delete: async (id) => (await apiClient.delete(`/equipment-bookings/${id}`)).data,
+};
+
+export const groundBookingService = {
+  getAll: async (userId, status) => (await apiClient.get('/ground-bookings', { params: { userId, status } })).data,
+  getById: async (id) => (await apiClient.get(`/ground-bookings/${id}`)).data,
+  create: async (data) => (await apiClient.post('/ground-bookings', data)).data,
+  update: async (id, data) => (await apiClient.put(`/ground-bookings/${id}`, data)).data,
+  delete: async (id) => (await apiClient.delete(`/ground-bookings/${id}`)).data,
+};
+
+export const noticeBoardService = {
+  getAll: async (category, activeOnly) => (await apiClient.get('/notice-board', { params: { category, activeOnly } })).data,
+  getById: async (id) => (await apiClient.get(`/notice-board/${id}`)).data,
+  create: async (data) => (await apiClient.post('/notice-board', data)).data,
+  update: async (id, data) => (await apiClient.put(`/notice-board/${id}`, data)).data,
+  delete: async (id) => (await apiClient.delete(`/notice-board/${id}`)).data,
+};
+
+export const feedbackService = {
+  getAll: async (status, userId) => (await apiClient.get('/feedback', { params: { status, userId } })).data,
+  getById: async (id) => (await apiClient.get(`/feedback/${id}`)).data,
+  create: async (data) => (await apiClient.post('/feedback', data)).data,
+  update: async (id, data) => (await apiClient.put(`/feedback/${id}`, data)).data,
+  delete: async (id) => (await apiClient.delete(`/feedback/${id}`)).data,
+};
+
+export const healthFitnessService = {
+  getAll: async (userId) => (await apiClient.get('/health-fitness', { params: { userId } })).data,
+  getById: async (id) => (await apiClient.get(`/health-fitness/${id}`)).data,
+  getByUserId: async (userId) => (await apiClient.get(`/health-fitness/user/${userId}`)).data,
+  create: async (data) => (await apiClient.post('/health-fitness', data)).data,
+  update: async (id, data) => (await apiClient.put(`/health-fitness/${id}`, data)).data,
+  delete: async (id) => (await apiClient.delete(`/health-fitness/${id}`)).data,
+};
+
+export const emergencyContactService = {
+  getAll: async (userId) => (await apiClient.get('/emergency-contacts', { params: { userId } })).data,
+  getById: async (id) => (await apiClient.get(`/emergency-contacts/${id}`)).data,
+  create: async (data) => (await apiClient.post('/emergency-contacts', data)).data,
+  update: async (id, data) => (await apiClient.put(`/emergency-contacts/${id}`, data)).data,
+  delete: async (id) => (await apiClient.delete(`/emergency-contacts/${id}`)).data,
+};
+
+export const liveScoreService = {
+  getAll: async (sportType, status) => (await apiClient.get('/live-scores', { params: { sportType, status } })).data,
+  getById: async (id) => (await apiClient.get(`/live-scores/${id}`)).data,
+  create: async (data) => (await apiClient.post('/live-scores', data)).data,
+  update: async (id, data) => (await apiClient.put(`/live-scores/${id}`, data)).data,
+  delete: async (id) => (await apiClient.delete(`/live-scores/${id}`)).data,
+};
+
 export default apiClient;

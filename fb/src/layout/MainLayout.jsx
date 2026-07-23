@@ -28,6 +28,13 @@ const MainLayout = ({ children }) => {
     { path: '/teams', label: 'Teams & Squads', icon: '🛡️' },
     { path: '/matches', label: 'Match Fixtures', icon: '⚽' },
     { path: '/gallery', label: 'Gallery & Media', icon: '🖼️' },
+    { path: '/equipment-bookings', label: 'Equipment Bookings', icon: '🏀' },
+    { path: '/ground-bookings', label: 'Ground Bookings', icon: '🏟️' },
+    { path: '/notices', label: 'Notice Board', icon: '📢' },
+    { path: '/feedback', label: 'Feedback & Reviews', icon: '💬' },
+    { path: '/health-fitness', label: 'Health & Fitness', icon: '🩺' },
+    { path: '/emergency-contacts', label: 'Emergency Contacts', icon: '🚨' },
+    { path: '/live-scores', label: 'Live Scoreboard', icon: '⚡' },
   ];
 
   // Helper to determine active breadcrumb/page title

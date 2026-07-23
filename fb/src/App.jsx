@@ -19,6 +19,13 @@ import TournamentsManagement from './pages/TournamentsManagement';
 import TeamsManagement from './pages/TeamsManagement';
 import MatchesManagement from './pages/MatchesManagement';
 import GalleryManagement from './pages/GalleryManagement';
+import EquipmentBookingManagement from './pages/EquipmentBookingManagement';
+import GroundBookingManagement from './pages/GroundBookingManagement';
+import NoticeBoardManagement from './pages/NoticeBoardManagement';
+import FeedbackManagement from './pages/FeedbackManagement';
+import HealthFitnessManagement from './pages/HealthFitnessManagement';
+import EmergencyContactManagement from './pages/EmergencyContactManagement';
+import LiveScoreManagement from './pages/LiveScoreManagement';
 
 // Protected Route Guard
 const ProtectedRoute = () => {
@@ -89,6 +96,13 @@ function App() {
               <Route path="/teams" element={<TeamsManagement />} />
               <Route path="/matches" element={<MatchesManagement />} />
               <Route path="/gallery" element={<GalleryManagement />} />
+              <Route path="/equipment-bookings" element={<EquipmentBookingManagement />} />
+              <Route path="/ground-bookings" element={<GroundBookingManagement />} />
+              <Route path="/notices" element={<NoticeBoardManagement />} />
+              <Route path="/feedback" element={<FeedbackManagement />} />
+              <Route path="/health-fitness" element={<HealthFitnessManagement />} />
+              <Route path="/emergency-contacts" element={<EmergencyContactManagement />} />
+              <Route path="/live-scores" element={<LiveScoreManagement />} />
             </Route>
 
             {/* Fallback Catch-all Route */}
