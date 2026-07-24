@@ -99,7 +99,7 @@ const ChatbotWidget = () => {
       }
     } catch (error) {
       // Local fallback simulation if server is unreachable
-      let fallbackText = "Thank you for contacting PE Department! You can reach us at pe.dept@portal.edu or call +91 44 2239 0675.";
+      let fallbackText = "❓ I couldn't quite understand your request. Please ask a specific question regarding Ground Bookings, Equipment Rental, User Form, Notice Board, Tournaments, or Gallery, or select one of the options below!";
       if (actionPill) {
         if (actionPill.action === 'ACTION_FAQ') {
           fallbackText = "FAQ Highlights:\n• Ground Bookings: Use the Ground Bookings tab.\n• Equipment Rental: Use the Equipment tab.\n• Hours: Mon-Sat 6 AM to 7 PM.";
