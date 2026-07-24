@@ -16,7 +16,7 @@ public class ChatbotServiceImpl implements ChatbotService {
 
     @Override
     public ChatMessageDto getWelcomeMessage() {
-        ChatMessageDto botMsg = new ChatMessageDto("bot", "Welcome to Madras Christian College - Department of Physical Education! How may I assist you today?");
+        ChatMessageDto botMsg = new ChatMessageDto("bot", "Welcome to Department of Physical Education & Sports! How may I assist you today?");
         botMsg.setId(UUID.randomUUID().toString());
         botMsg.setCategory("WELCOME");
         botMsg.setSuggestedOptions(getQuickOptions());
@@ -78,14 +78,14 @@ public class ChatbotServiceImpl implements ChatbotService {
         }
 
         if ("ACTION_EMAIL".equalsIgnoreCase(quickAction) || msg.contains("email") || msg.contains("contact")) {
-            response.setMessage("📧 You can reach out directly to the PE Department at:\nEmail: pe.dept@mcc.edu.in\nPhone: +91 44 2239 0675 / +91 44 2239 6272\nAddress: Department of Physical Education, Madras Christian College, Tambaram, Chennai - 600059.");
+            response.setMessage("📧 You can reach out directly to the PE Department at:\nEmail: pe.dept@portal.edu\nPhone: +91 44 2239 0675 / +91 44 2239 6272\nAddress: Department of Physical Education & Sports.");
             response.setCategory("CONTACT");
             response.setSuggestedOptions(getQuickOptions());
             return response;
         }
 
         if ("ACTION_GOODBYE".equalsIgnoreCase(quickAction) || msg.contains("bye") || msg.contains("goodbye")) {
-            response.setMessage("Thank you for connecting with MCC Physical Education Portal. Have a energetic and active day! 🏆👋");
+            response.setMessage("Thank you for connecting with Physical Education Portal. Have an energetic and active day! 🏆👋");
             response.setCategory("GOODBYE");
             List<ChatOptionDto> resetOptions = new ArrayList<>();
             resetOptions.add(new ChatOptionDto("restart", "Start New Chat", "ACTION_RESTART", null));
@@ -94,7 +94,7 @@ public class ChatbotServiceImpl implements ChatbotService {
         }
 
         if ("ACTION_GROUND".equalsIgnoreCase(quickAction) || msg.contains("ground") || msg.contains("court") || msg.contains("field") || msg.contains("turf")) {
-            response.setMessage("🏟️ Ground Bookings:\nYou can reserve MCC Main Football Ground, Cricket Oval, Basketball Courts, and Tennis Courts online. Visit the 'Ground Bookings' section in your portal dashboard to request slot allocations.");
+            response.setMessage("🏟️ Ground Bookings:\nYou can reserve Main Football Ground, Cricket Oval, Basketball Courts, and Tennis Courts online. Visit the 'Ground Bookings' section in your portal dashboard to request slot allocations.");
             response.setCategory("GROUND");
             response.setSuggestedOptions(Arrays.asList(
                     new ChatOptionDto("equip", "Rent Equipment", "ACTION_EQUIPMENT", null),
@@ -131,7 +131,7 @@ public class ChatbotServiceImpl implements ChatbotService {
 
         // Natural Language Processing fallback & keyword matching
         if (msg.contains("hi") || msg.contains("hello") || msg.contains("hey")) {
-            response.setMessage("Hello! Welcome to Madras Christian College PE Assistant ✋. How can I help you today?");
+            response.setMessage("Hello! Welcome to Physical Education Assistant ✋. How can I help you today?");
             response.setSuggestedOptions(getQuickOptions());
         } else if (msg.contains("hours") || msg.contains("time") || msg.contains("timing") || msg.contains("open")) {
             response.setMessage("⏰ Department Operating Hours:\nMonday to Saturday: 6:00 AM - 7:00 PM\nSunday & Holidays: Special Events Only.");
@@ -143,7 +143,7 @@ public class ChatbotServiceImpl implements ChatbotService {
             response.setMessage("🚨 Emergency Contacts:\nCampus Medical Center: +91 44 2239 0100\nPE Emergency Help Desk: +91 94440 12345");
             response.setSuggestedOptions(getQuickOptions());
         } else {
-            response.setMessage("Thank you for your message! For specific assistance regarding ground reservations, sports equipment, tournaments, or live scores, please choose an option below or email pe.dept@mcc.edu.in.");
+            response.setMessage("Thank you for your message! For specific assistance regarding ground reservations, sports equipment, tournaments, or live scores, please choose an option below or email pe.dept@portal.edu.");
             response.setSuggestedOptions(getQuickOptions());
         }
 

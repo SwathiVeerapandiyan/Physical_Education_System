@@ -35,7 +35,7 @@ const ChatbotWidget = () => {
           {
             id: welcome.id || 'welcome-1',
             sender: 'bot',
-            message: welcome.message || 'Welcome to Madras Christian College - Physical Education Department!',
+            message: welcome.message || 'Welcome to Department of Physical Education & Sports!',
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             options: welcome.suggestedOptions || []
           }
@@ -49,7 +49,7 @@ const ChatbotWidget = () => {
           {
             id: 'fallback-1',
             sender: 'bot',
-            message: 'Hi ✋ Welcome to Madras Christian College - Department of Physical Education. How can we help you today?',
+            message: 'Hi ✋ Welcome to Department of Physical Education & Sports. How can we help you today?',
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }
         ]);
@@ -99,14 +99,14 @@ const ChatbotWidget = () => {
       }
     } catch (error) {
       // Local fallback simulation if server is unreachable
-      let fallbackText = "Thank you for contacting MCC PE Department! You can reach us at pe.dept@mcc.edu.in or call +91 44 2239 0675.";
+      let fallbackText = "Thank you for contacting PE Department! You can reach us at pe.dept@portal.edu or call +91 44 2239 0675.";
       if (actionPill) {
         if (actionPill.action === 'ACTION_FAQ') {
           fallbackText = "FAQ Highlights:\n• Ground Bookings: Use the Ground Bookings tab.\n• Equipment Rental: Use the Equipment tab.\n• Hours: Mon-Sat 6 AM to 7 PM.";
         } else if (actionPill.action === 'ACTION_EMAIL') {
-          fallbackText = "📧 Official Contact:\nEmail: pe.dept@mcc.edu.in\nPhone: +91 44 2239 0675";
+          fallbackText = "📧 Official Contact:\nEmail: pe.dept@portal.edu\nPhone: +91 44 2239 0675";
         } else if (actionPill.action === 'ACTION_GOODBYE') {
-          fallbackText = "Thank you for visiting MCC Physical Education Portal! Have a great day ahead! 🏆";
+          fallbackText = "Thank you for visiting Physical Education Portal! Have a great day ahead! 🏆";
         } else if (actionPill.action === 'ACTION_GROUND') {
           fallbackText = "🏟️ Ground Booking: Select 'Ground Bookings' from sidebar to reserve slots for Football, Cricket, Basketball or Tennis.";
         } else if (actionPill.action === 'ACTION_EQUIPMENT') {
@@ -150,7 +150,7 @@ const ChatbotWidget = () => {
               <div className="mcc-greeting-title">
                 Hi <span className="waving-hand">✋</span>
               </div>
-              <p className="mcc-greeting-sub">Welcome to Madras Christian College</p>
+              <p className="mcc-greeting-sub">Welcome to PE & Sports Portal</p>
             </div>
             <button className="mcc-close-btn" onClick={() => setIsOpen(false)} title="Close Chat">
               ✕
@@ -233,7 +233,7 @@ const ChatbotWidget = () => {
       <button
         className={`mcc-chatbot-trigger ${isOpen ? 'active' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
-        title="Madras Christian College Chatbot"
+        title="Physical Education Chatbot"
       >
         {isOpen ? (
           <span className="trigger-close-icon">✕</span>
