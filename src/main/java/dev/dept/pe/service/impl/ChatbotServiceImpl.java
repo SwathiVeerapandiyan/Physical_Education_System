@@ -143,7 +143,7 @@ public class ChatbotServiceImpl implements ChatbotService {
             response.setMessage("🚨 Emergency Contacts:\nCampus Medical Center: +91 44 2239 0100\nPE Emergency Help Desk: +91 94440 12345");
             response.setSuggestedOptions(getQuickOptions());
         } else {
-            response.setMessage("Thank you for your message! For specific assistance regarding ground reservations, sports equipment, tournaments, or live scores, please choose an option below or email pe.dept@portal.edu.");
+            response.setMessage("❓ I couldn't quite understand your request. Please ask a specific question regarding Ground Bookings, Equipment Rental, User Form, Notice Board, Tournaments, or Gallery, or select one of the options below!");
             response.setSuggestedOptions(getQuickOptions());
         }
 
