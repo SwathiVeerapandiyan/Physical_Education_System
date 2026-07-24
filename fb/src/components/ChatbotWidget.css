@@ -337,6 +337,8 @@
 
 .mcc-chat-input {
   flex: 1;
+  background-color: #ffffff;
+  color: #1e293b;
   border: 1px solid #dddddd;
   border-radius: 20px;
   padding: 10px 16px;
@@ -345,8 +347,15 @@
   transition: border-color 0.2s ease;
 }
 
+.mcc-chat-input::placeholder {
+  color: #64748b;
+  opacity: 1;
+}
+
 .mcc-chat-input:focus {
   border-color: #800000;
+  color: #1e293b;
+  background-color: #ffffff;
 }
 
 .mcc-send-btn {
