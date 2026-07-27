@@ -136,15 +136,15 @@ const NoticeBoardManagement = () => {
           <div className="glass-panel" style={{ background: '#1e293b', padding: '1.8rem', borderRadius: '16px', width: '100%', maxWidth: '500px' }}>
             <h3 style={{ margin: '0 0 1rem 0', color: '#fff' }}>{editingItem ? 'Edit Notice' : 'Post New Notice'}</h3>
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <input type="text" placeholder="Notice Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required style={{ padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }} />
-              <textarea placeholder="Notice Description..." value={formData.description || ''} onChange={e => setFormData({...formData, description: e.target.value})} rows="4" style={{ padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }} />
+              <input type="text" placeholder="Notice Title" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} required style={{ padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }} />
+              <textarea placeholder="Notice Description..." value={formData.description || ''} onChange={e => setFormData({ ...formData, description: e.target.value })} rows="4" style={{ padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }} />
               <div style={{ display: 'flex', gap: '1rem' }}>
-                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={{ flex: 1, padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }}>
+                <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} style={{ flex: 1, padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }}>
                   <option value="General">General</option>
                   <option value="Tournament">Tournament</option>
                   <option value="Emergency">Emergency</option>
                 </select>
-                <select value={formData.priority} onChange={e => setFormData({...formData, priority: e.target.value})} style={{ flex: 1, padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }}>
+                <select value={formData.priority} onChange={e => setFormData({ ...formData, priority: e.target.value })} style={{ flex: 1, padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }}>
                   <option value="Low">Low</option>
                   <option value="Normal">Normal</option>
                   <option value="High">High</option>
