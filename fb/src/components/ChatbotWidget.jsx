@@ -112,6 +112,21 @@ const ChatbotWidget = () => {
         } else if (actionPill.action === 'ACTION_EQUIPMENT') {
           fallbackText = "🏀 Equipment Rental: Request sports gear via the 'Equipment Bookings' dashboard.";
         }
+      } else if (text) {
+        const lower = text.toLowerCase();
+        if (lower.includes("notice") || lower.includes("announcement")) {
+          fallbackText = "📌 Notice Board:\nCheck out official department notices, sports announcements, and schedule updates under the 'Notice Board' section in your portal dashboard.";
+        } else if (lower.includes("form") || lower.includes("profile") || lower.includes("candidate")) {
+          fallbackText = "📝 User Profile Form:\nYou can complete your student profile details, batch info, and athletic specialty under the 'User Form' section in the left sidebar menu.";
+        } else if (lower.includes("directory") || lower.includes("user")) {
+          fallbackText = "👥 User Directory:\nView registered candidates, system accounts, and athlete profiles under the 'User Directory' section in the sidebar.";
+        } else if (lower.includes("family")) {
+          fallbackText = "👨‍👩‍👧 Family Details:\nAssociate emergency contacts and family/sibling occupations under the 'Family Details' tab in the sidebar.";
+        } else if (lower.includes("document") || lower.includes("upload") || lower.includes("certificate")) {
+          fallbackText = "📁 Document Upload:\nUpload your Aadhar card, medical fitness certificates, and required documents under the 'Document Details' section.";
+        } else if (lower.includes("gallery") || lower.includes("media") || lower.includes("photo")) {
+          fallbackText = "📸 Gallery & Media:\nBrowse event photos, tournament highlights, and sports media under the 'Gallery & Media' section.";
+        }
       }
 
       setMessages((prev) => [
