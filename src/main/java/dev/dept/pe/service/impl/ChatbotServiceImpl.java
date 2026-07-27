@@ -133,6 +133,33 @@ public class ChatbotServiceImpl implements ChatbotService {
         if (msg.contains("hi") || msg.contains("hello") || msg.contains("hey")) {
             response.setMessage("Hello! Welcome to Physical Education Assistant ✋. How can I help you today?");
             response.setSuggestedOptions(getQuickOptions());
+        } else if (msg.contains("notice") || msg.contains("announcement") || msg.contains("news") || msg.contains("update")) {
+            response.setMessage("📌 Notice Board:\nCheck out official department notices, sports announcements, and schedule updates under the 'Notice Board' section in your portal dashboard.");
+            response.setSuggestedOptions(getQuickOptions());
+        } else if (msg.contains("form") || msg.contains("profile") || msg.contains("candidate") || msg.contains("register") || msg.contains("registration")) {
+            response.setMessage("📝 User Profile Form:\nYou can complete your student profile details, batch info, and athletic specialty under the 'User Form' section in the left sidebar menu.");
+            response.setSuggestedOptions(getQuickOptions());
+        } else if (msg.contains("gallery") || msg.contains("media") || msg.contains("photo") || msg.contains("video") || msg.contains("image")) {
+            response.setMessage("📸 Gallery & Media:\nBrowse event photos, tournament highlights, and sports media under the 'Gallery & Media' section in the sidebar.");
+            response.setSuggestedOptions(getQuickOptions());
+        } else if (msg.contains("directory") || msg.contains("users") || msg.contains("students") || msg.contains("athletes")) {
+            response.setMessage("👥 User Directory:\nView registered candidates, system accounts, and athlete profiles under the 'User Directory' section in the sidebar.");
+            response.setSuggestedOptions(getQuickOptions());
+        } else if (msg.contains("family") || msg.contains("parent") || msg.contains("sibling") || msg.contains("guardian")) {
+            response.setMessage("👨‍👩‍👧 Family Details:\nAssociate emergency contacts and family/sibling occupations under the 'Family Details' tab in the sidebar.");
+            response.setSuggestedOptions(getQuickOptions());
+        } else if (msg.contains("document") || msg.contains("certificate") || msg.contains("upload") || msg.contains("aadhar") || msg.contains("file")) {
+            response.setMessage("📁 Document Upload:\nUpload your Aadhar card, medical fitness certificates, and required documents under the 'Document Details' section.");
+            response.setSuggestedOptions(getQuickOptions());
+        } else if (msg.contains("team") || msg.contains("squad") || msg.contains("player")) {
+            response.setMessage("🛡️ Teams & Squads:\nView university sports teams, squad lists, and captain details under the 'Teams & Squads' section.");
+            response.setSuggestedOptions(getQuickOptions());
+        } else if (msg.contains("fixture") || msg.contains("schedule")) {
+            response.setMessage("📅 Match Fixtures:\nCheck upcoming match schedules, timings, and venues under the 'Match Fixtures' section.");
+            response.setSuggestedOptions(getQuickOptions());
+        } else if (msg.contains("feedback") || msg.contains("review") || msg.contains("rating") || msg.contains("suggestion")) {
+            response.setMessage("💬 Feedback & Reviews:\nSubmit your feedback and view facility reviews under the 'Feedback & Reviews' section.");
+            response.setSuggestedOptions(getQuickOptions());
         } else if (msg.contains("hours") || msg.contains("time") || msg.contains("timing") || msg.contains("open")) {
             response.setMessage("⏰ Department Operating Hours:\nMonday to Saturday: 6:00 AM - 7:00 PM\nSunday & Holidays: Special Events Only.");
             response.setSuggestedOptions(getQuickOptions());
