@@ -78,22 +78,14 @@ public class ChatbotServiceImpl implements ChatbotService {
         }
 
         if ("ACTION_EMAIL".equalsIgnoreCase(quickAction) || msg.contains("email") || msg.contains("contact")) {
-<<<<<<< HEAD
-            response.setMessage("[Email] You can reach out directly to the PE Department at:\nEmail: pe.dept@portal.edu\nPhone: +91 44 2239 0675 / +91 44 2239 6272\nAddress: Department of Physical Education & Sports.");
-=======
             response.setMessage("📧 You can reach out directly to the PE Department at:\nEmail: pe.dept@portal.edu\nPhone: +91 44 2239 0675 / +91 44 2239 6272\nAddress: Department of Physical Education & Sports.");
->>>>>>> 7dfd7f657461ec211f5085e180f5ece9b2922c02
             response.setCategory("CONTACT");
             response.setSuggestedOptions(getQuickOptions());
             return response;
         }
 
         if ("ACTION_GOODBYE".equalsIgnoreCase(quickAction) || msg.contains("bye") || msg.contains("goodbye")) {
-<<<<<<< HEAD
-            response.setMessage("Thank you for connecting with Physical Education Portal. Have an energetic and active day! [Trophy]");
-=======
             response.setMessage("Thank you for connecting with Physical Education Portal. Have an energetic and active day! 🏆👋");
->>>>>>> 7dfd7f657461ec211f5085e180f5ece9b2922c02
             response.setCategory("GOODBYE");
             List<ChatOptionDto> resetOptions = new ArrayList<>();
             resetOptions.add(new ChatOptionDto("restart", "Start New Chat", "ACTION_RESTART", null));
@@ -102,11 +94,7 @@ public class ChatbotServiceImpl implements ChatbotService {
         }
 
         if ("ACTION_GROUND".equalsIgnoreCase(quickAction) || msg.contains("ground") || msg.contains("court") || msg.contains("field") || msg.contains("turf")) {
-<<<<<<< HEAD
-            response.setMessage("[Ground] Ground Bookings:\nYou can reserve Main Football Ground, Cricket Oval, Basketball Courts, and Tennis Courts online. Visit the 'Ground Bookings' section in your portal dashboard to request slot allocations.");
-=======
             response.setMessage("🏟️ Ground Bookings:\nYou can reserve Main Football Ground, Cricket Oval, Basketball Courts, and Tennis Courts online. Visit the 'Ground Bookings' section in your portal dashboard to request slot allocations.");
->>>>>>> 7dfd7f657461ec211f5085e180f5ece9b2922c02
             response.setCategory("GROUND");
             response.setSuggestedOptions(Arrays.asList(
                     new ChatOptionDto("equip", "Rent Equipment", "ACTION_EQUIPMENT", null),
@@ -117,11 +105,7 @@ public class ChatbotServiceImpl implements ChatbotService {
         }
 
         if ("ACTION_EQUIPMENT".equalsIgnoreCase(quickAction) || msg.contains("equipment") || msg.contains("bat") || msg.contains("ball") || msg.contains("racket") || msg.contains("net")) {
-<<<<<<< HEAD
-            response.setMessage("[Basketball] Equipment Rental:\nWe offer Footballs, Basketballs, Cricket Kits, Badminton Rackets, and Volleyball nets. Request gear directly via the 'Equipment Bookings' page.");
-=======
             response.setMessage("🏀 Equipment Rental:\nWe offer Footballs, Basketballs, Cricket Kits, Badminton Rackets, and Volleyball nets. Request gear directly via the 'Equipment Bookings' page.");
->>>>>>> 7dfd7f657461ec211f5085e180f5ece9b2922c02
             response.setCategory("EQUIPMENT");
             response.setSuggestedOptions(Arrays.asList(
                     new ChatOptionDto("grnd", "Book Ground", "ACTION_GROUND", null),
@@ -132,11 +116,7 @@ public class ChatbotServiceImpl implements ChatbotService {
         }
 
         if ("ACTION_TOURNAMENT".equalsIgnoreCase(quickAction) || msg.contains("tournament") || msg.contains("match") || msg.contains("fixture") || msg.contains("score")) {
-<<<<<<< HEAD
-            response.setMessage("[Trophy] Tournaments & Matches:\nCheck out active campus tournaments, upcoming fixtures, team registration statuses, and live match scores in the 'Tournaments' and 'Live Scoreboard' sections.");
-=======
             response.setMessage("🏆 Tournaments & Matches:\nCheck out active campus tournaments, upcoming fixtures, team registration statuses, and live match scores in the 'Tournaments' and 'Live Scoreboard' sections.");
->>>>>>> 7dfd7f657461ec211f5085e180f5ece9b2922c02
             response.setCategory("TOURNAMENTS");
             response.setSuggestedOptions(Arrays.asList(
                     new ChatOptionDto("faq", "FAQ", "ACTION_FAQ", null),
@@ -149,50 +129,6 @@ public class ChatbotServiceImpl implements ChatbotService {
             return getWelcomeMessage();
         }
 
-<<<<<<< HEAD
-        // Natural Language Processing fallback & keyword matching (case-insensitive via toLowerCase above)
-        if (msg.contains("hi") || msg.contains("hello") || msg.contains("hey")) {
-            response.setMessage("Hello! Welcome to Physical Education Assistant. How can I help you today?");
-            response.setSuggestedOptions(getQuickOptions());
-        } else if (msg.contains("notice") || msg.contains("announcement") || msg.contains("news") || msg.contains("update")) {
-            response.setMessage("[Notice] Notice Board:\nCheck out official department notices, sports announcements, and schedule updates under the 'Notice Board' section in your portal dashboard.");
-            response.setSuggestedOptions(getQuickOptions());
-        } else if (msg.contains("form") || msg.contains("profile") || msg.contains("candidate") || msg.contains("register") || msg.contains("registration")) {
-            response.setMessage("[Form] User Profile Form:\nYou can complete your student profile details, batch info, and athletic specialty under the 'User Form' section in the left sidebar menu.");
-            response.setSuggestedOptions(getQuickOptions());
-        } else if (msg.contains("gallery") || msg.contains("media") || msg.contains("photo") || msg.contains("video") || msg.contains("image")) {
-            response.setMessage("[Camera] Gallery & Media:\nBrowse event photos, tournament highlights, and sports media under the 'Gallery & Media' section in the sidebar.");
-            response.setSuggestedOptions(getQuickOptions());
-        } else if (msg.contains("directory") || msg.contains("users") || msg.contains("students") || msg.contains("athletes")) {
-            response.setMessage("[People] User Directory:\nView registered candidates, system accounts, and athlete profiles under the 'User Directory' section in the sidebar.");
-            response.setSuggestedOptions(getQuickOptions());
-        } else if (msg.contains("family") || msg.contains("parent") || msg.contains("sibling") || msg.contains("guardian")) {
-            response.setMessage("[Family] Family Details:\nAssociate emergency contacts and family/sibling occupations under the 'Family Details' tab in the sidebar.");
-            response.setSuggestedOptions(getQuickOptions());
-        } else if (msg.contains("document") || msg.contains("certificate") || msg.contains("upload") || msg.contains("aadhar") || msg.contains("file")) {
-            response.setMessage("[Folder] Document Upload:\nUpload your Aadhar card, medical fitness certificates, and required documents under the 'Document Details' section.");
-            response.setSuggestedOptions(getQuickOptions());
-        } else if (msg.contains("team") || msg.contains("squad") || msg.contains("player")) {
-            response.setMessage("[Shield] Teams & Squads:\nView university sports teams, squad lists, and captain details under the 'Teams & Squads' section.");
-            response.setSuggestedOptions(getQuickOptions());
-        } else if (msg.contains("fixture") || msg.contains("schedule")) {
-            response.setMessage("[Calendar] Match Fixtures:\nCheck upcoming match schedules, timings, and venues under the 'Match Fixtures' section.");
-            response.setSuggestedOptions(getQuickOptions());
-        } else if (msg.contains("feedback") || msg.contains("review") || msg.contains("rating") || msg.contains("suggestion")) {
-            response.setMessage("[Chat] Feedback & Reviews:\nSubmit your feedback and view facility reviews under the 'Feedback & Reviews' section.");
-            response.setSuggestedOptions(getQuickOptions());
-        } else if (msg.contains("hours") || msg.contains("time") || msg.contains("timing") || msg.contains("open")) {
-            response.setMessage("[Clock] Department Operating Hours:\nMonday to Saturday: 6:00 AM - 7:00 PM\nSunday & Holidays: Special Events Only.");
-            response.setSuggestedOptions(getQuickOptions());
-        } else if (msg.contains("health") || msg.contains("fitness") || msg.contains("bmi") || msg.contains("medical")) {
-            response.setMessage("[Health] Health & Fitness Module:\nYou can log fitness records, track BMI, and update medical clearance reports under the 'Health & Fitness' tab.");
-            response.setSuggestedOptions(getQuickOptions());
-        } else if (msg.contains("emergency") || msg.contains("doctor") || msg.contains("first aid")) {
-            response.setMessage("[Emergency] Emergency Contacts:\nCampus Medical Center: +91 44 2239 0100\nPE Emergency Help Desk: +91 94440 12345");
-            response.setSuggestedOptions(getQuickOptions());
-        } else {
-            response.setMessage("I couldn't quite understand your request. Please ask a specific question regarding Ground Bookings, Equipment Rental, User Form, Notice Board, Tournaments, or Gallery, or select one of the options below!");
-=======
         // Natural Language Processing fallback & keyword matching
         if (msg.contains("hi") || msg.contains("hello") || msg.contains("hey")) {
             response.setMessage("Hello! Welcome to Physical Education Assistant ✋. How can I help you today?");
@@ -235,7 +171,6 @@ public class ChatbotServiceImpl implements ChatbotService {
             response.setSuggestedOptions(getQuickOptions());
         } else {
             response.setMessage("❓ I couldn't quite understand your request. Please ask a specific question regarding Ground Bookings, Equipment Rental, User Form, Notice Board, Tournaments, or Gallery, or select one of the options below!");
->>>>>>> 7dfd7f657461ec211f5085e180f5ece9b2922c02
             response.setSuggestedOptions(getQuickOptions());
         }
 
