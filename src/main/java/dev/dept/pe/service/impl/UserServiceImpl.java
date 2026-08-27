@@ -33,6 +33,10 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByRegisterNo(userDto.getRegisterNo()).isPresent()) {
             throw new IllegalArgumentException("Register number already exists: " + userDto.getRegisterNo());
         }
+        // Check duplicate mobile number
+        if (userDto.getMobileNo() != null && userRepository.findByMobileNo(userDto.getMobileNo()).isPresent()) {
+            throw new IllegalArgumentException("Mobile number already exists: " + userDto.getMobileNo());
+        }
 
         User user = mapToEntity(userDto);
         
@@ -75,6 +79,14 @@ public class UserServiceImpl implements UserService {
         Optional<User> registerUser = userRepository.findByRegisterNo(userDto.getRegisterNo());
         if (registerUser.isPresent() && !registerUser.get().getUserId().equals(userId)) {
             throw new IllegalArgumentException("Register number already exists: " + userDto.getRegisterNo());
+        }
+
+        // Check if updating mobile number conflicts with another user
+        if (userDto.getMobileNo() != null) {
+            Optional<User> mobileUser = userRepository.findByMobileNo(userDto.getMobileNo());
+            if (mobileUser.isPresent() && !mobileUser.get().getUserId().equals(userId)) {
+                throw new IllegalArgumentException("Mobile number already exists: " + userDto.getMobileNo());
+            }
         }
 
         user.setName(userDto.getName());

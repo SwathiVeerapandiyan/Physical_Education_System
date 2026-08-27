@@ -88,6 +88,19 @@ public class AuthController {
         if (user == null || user.getEmail() == null || user.getPassword() == null) {
             return ResponseEntity.badRequest().body("Email and password are required");
         }
+
+        // Pre-validate unique constraint fields before save
+        if (user.getEmail() != null && userRepository.findByEmail(user.getEmail().trim()).isPresent()) {
+            return ResponseEntity.badRequest().body("Email is already registered: " + user.getEmail());
+        }
+
+        if (user.getRegisterNo() != null && userRepository.findByRegisterNo(user.getRegisterNo().trim()).isPresent()) {
+            return ResponseEntity.badRequest().body("Register number is already registered: " + user.getRegisterNo());
+        }
+
+        if (user.getMobileNo() != null && userRepository.findByMobileNo(user.getMobileNo()).isPresent()) {
+            return ResponseEntity.badRequest().body("Mobile number is already registered: " + user.getMobileNo());
+        }
         
         // Hash password with BCrypt before saving
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
