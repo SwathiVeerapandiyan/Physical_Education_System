@@ -35,10 +35,19 @@ public class AuthController {
         String username = loginRequest.getUsername().trim();
         String password = loginRequest.getPassword();
 
-        // Try to find user by email or register number
+        // Try to find user by email, register number, name, or mobile number
         Optional<User> userOpt = userRepository.findByEmail(username);
         if (userOpt.isEmpty()) {
             userOpt = userRepository.findByRegisterNo(username);
+        }
+        if (userOpt.isEmpty()) {
+            userOpt = userRepository.findByName(username);
+        }
+        if (userOpt.isEmpty()) {
+            try {
+                Long mobile = Long.parseLong(username);
+                userOpt = userRepository.findByMobileNo(mobile);
+            } catch (NumberFormatException ignored) {}
         }
 
         if (userOpt.isEmpty()) {
