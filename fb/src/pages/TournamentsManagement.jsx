@@ -131,8 +131,8 @@ const TournamentsManagement = () => {
     setRegistering(true);
     try {
       await tournamentRegistrationService.create({
-        tournamentId: selectedTournament.tournamentId,
-        teamId: selectedTeamId,
+        tournamentId: Number(selectedTournament.tournamentId),
+        teamId: Number(selectedTeamId),
         status: 'Approved'
       });
       showToast('Team registered for tournament successfully! 🎉', 'success');

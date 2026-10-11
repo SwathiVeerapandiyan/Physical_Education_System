@@ -13,7 +13,20 @@ const apiClient = axios.create({
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    const message = error.response?.data?.message || error.response?.data || 'An unexpected error occurred';
+    let message = 'An unexpected error occurred';
+    if (typeof error.response?.data === 'string') {
+      message = error.response.data;
+    } else if (error.response?.data?.message && typeof error.response.data.message === 'string') {
+      message = error.response.data.message;
+    } else if (error.response?.data?.error && typeof error.response.data.error === 'string') {
+      message = error.response.data.error;
+    } else if (error.message) {
+      if (error.code === 'ERR_NETWORK' || error.message.includes('Network Error')) {
+        message = 'Unable to connect to backend server. Please verify the Spring Boot server is running on port 8080.';
+      } else {
+        message = error.message;
+      }
+    }
     return Promise.reject({
       message,
       status: error.response?.status,

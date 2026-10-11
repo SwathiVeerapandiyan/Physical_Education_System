@@ -31,7 +31,9 @@ export const ToastProvider = ({ children }) => {
               {toast.type === 'warning' && '⚠'}
               {toast.type === 'info' && 'ℹ'}
             </div>
-            <div className="toast-message">{toast.message}</div>
+            <div className="toast-message">
+              {typeof toast.message === 'string' ? toast.message : (toast.message?.message || JSON.stringify(toast.message))}
+            </div>
             <button className="toast-close-btn">&times;</button>
           </div>
         ))}

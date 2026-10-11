@@ -31,11 +31,17 @@ public class TournamentRegistrationServiceImpl implements TournamentRegistration
 
     @Override
     public TournamentRegistrationDto create(TournamentRegistrationDto dto) {
+        if (dto == null || dto.getTournamentId() == null || dto.getTeamId() == null) {
+            throw new IllegalArgumentException("Tournament ID and Team ID are required for registration.");
+        }
         if (!tournamentRepository.existsById(dto.getTournamentId())) {
             throw new ResourceNotFoundException("Tournament not found with ID: " + dto.getTournamentId());
         }
         if (!teamRepository.existsById(dto.getTeamId())) {
             throw new ResourceNotFoundException("Team not found with ID: " + dto.getTeamId());
+        }
+        if (registrationRepository.existsByTournamentIdAndTeamId(dto.getTournamentId(), dto.getTeamId())) {
+            throw new IllegalArgumentException("This team is already registered for this tournament.");
         }
 
         TournamentRegistration entity = mapToEntity(dto);

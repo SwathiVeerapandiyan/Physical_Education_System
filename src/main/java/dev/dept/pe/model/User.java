@@ -36,6 +36,21 @@ public class User {
     @Column(name = "updated_time", insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime updatedTime;
 
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdTime == null) {
+            this.createdTime = LocalDateTime.now();
+        }
+        if (this.updatedTime == null) {
+            this.updatedTime = LocalDateTime.now();
+        }
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedTime = LocalDateTime.now();
+    }
+
     // Default Constructor
     public User() {
     }

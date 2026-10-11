@@ -35,8 +35,11 @@ public class AuthController {
         String username = loginRequest.getUsername().trim();
         String password = loginRequest.getPassword();
 
-        // Try to find user by email or register number
-        Optional<User> userOpt = userRepository.findByEmail(username);
+        // Try to find user by email or register number (case-insensitive email)
+        Optional<User> userOpt = userRepository.findByEmail(username.toLowerCase());
+        if (userOpt.isEmpty()) {
+            userOpt = userRepository.findByEmail(username);
+        }
         if (userOpt.isEmpty()) {
             userOpt = userRepository.findByRegisterNo(username);
         }
@@ -85,21 +88,45 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
-        if (user == null || user.getEmail() == null || user.getPassword() == null) {
-            return ResponseEntity.badRequest().body("Email and password are required");
+        if (user == null) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "User details are required"));
         }
+        if (user.getName() == null || user.getName().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Full name is required"));
+        }
+        if (user.getRegisterNo() == null || user.getRegisterNo().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Register number is required"));
+        }
+        if (user.getDept() == null || user.getDept().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Department is required"));
+        }
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Email address is required"));
+        }
+        if (user.getMobileNo() == null) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Mobile number is required"));
+        }
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Password is required"));
+        }
+
+        // Clean & trim fields
+        user.setName(user.getName().trim());
+        user.setRegisterNo(user.getRegisterNo().trim());
+        user.setDept(user.getDept().trim());
+        user.setEmail(user.getEmail().trim().toLowerCase());
 
         // Pre-validate unique constraint fields before save
-        if (user.getEmail() != null && userRepository.findByEmail(user.getEmail().trim()).isPresent()) {
-            return ResponseEntity.badRequest().body("Email is already registered: " + user.getEmail());
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Email is already registered: " + user.getEmail()));
         }
 
-        if (user.getRegisterNo() != null && userRepository.findByRegisterNo(user.getRegisterNo().trim()).isPresent()) {
-            return ResponseEntity.badRequest().body("Register number is already registered: " + user.getRegisterNo());
+        if (userRepository.findByRegisterNo(user.getRegisterNo()).isPresent()) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Register number is already registered: " + user.getRegisterNo()));
         }
 
-        if (user.getMobileNo() != null && userRepository.findByMobileNo(user.getMobileNo()).isPresent()) {
-            return ResponseEntity.badRequest().body("Mobile number is already registered: " + user.getMobileNo());
+        if (userRepository.findByMobileNo(user.getMobileNo()).isPresent()) {
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Mobile number is already registered: " + user.getMobileNo()));
         }
         
         // Hash password with BCrypt before saving
@@ -108,9 +135,10 @@ public class AuthController {
         
         try {
             User savedUser = userRepository.save(user);
+            savedUser.setPassword(null); // Do not expose password hash in response
             return ResponseEntity.ok(savedUser);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Failed to register user: " + e.getMessage());
+            return ResponseEntity.badRequest().body(java.util.Map.of("message", "Failed to register user: " + e.getMessage()));
         }
     }
 
