@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--bg-primary);
+  background: linear-gradient(135deg, #f8f6f2 0%, #f1ece4 100%);
   position: relative;
   overflow: hidden;
   padding: 40px 24px;
@@ -13,31 +13,36 @@
   position: absolute;
   border-radius: 50%;
   filter: blur(140px);
-  opacity: 0.08;
+  opacity: 0.18;
   z-index: 0;
   pointer-events: none;
 }
 
 .register-glow-1 {
-  width: 500px;
-  height: 500px;
-  background: var(--primary);
+  width: 520px;
+  height: 520px;
+  background: #9f1239;
   top: 5%;
   right: 15%;
+  opacity: 0.08;
 }
 
 .register-glow-2 {
-  width: 450px;
-  height: 450px;
-  background: var(--secondary);
+  width: 460px;
+  height: 460px;
+  background: #1e2d5a;
   bottom: 5%;
   left: 15%;
+  opacity: 0.06;
 }
 
 .register-container {
   width: 100%;
   max-width: 680px;
-  background: rgba(19, 27, 46, 0.7);
+  background: #ffffff;
+  border: 1px solid rgba(159, 18, 57, 0.18);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10), 0 0 20px rgba(159, 18, 57, 0.06);
+  border-radius: var(--radius-md);
   z-index: 1;
   padding: 40px !important;
   animation: fadeIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;

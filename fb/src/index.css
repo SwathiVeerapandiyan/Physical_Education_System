@@ -1,40 +1,57 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-heading: 'Cinzel', 'Outfit', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
 
-  /* Premium Soft & Cyber Dark Palette */
-  --bg-primary: #0b0f19;
-  --bg-secondary: #131b2e;
-  --bg-tertiary: #1b2640;
-  
-  --primary: #6366f1;       /* Indigo */
-  --primary-hover: #4f46e5;
-  --primary-glow: rgba(99, 102, 241, 0.15);
-  
-  --secondary: #14b8a6;     /* Teal */
-  --secondary-hover: #0d9488;
-  
-  --accent: #f59e0b;        /* Amber */
-  --error: #f43f5e;         /* Rose */
-  --success: #10b981;       /* Emerald */
-  
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-focus: rgba(99, 102, 241, 0.4);
-  
-  --shadow-sm: 0 2px 8px -1px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 16px -6px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
-  
+  /* ── MCC Light Theme – White Shade Backgrounds ── */
+  --bg-primary: #f8f6f2;        /* Warm white parchment */
+  --bg-secondary: #ffffff;      /* Pure white cards */
+  --bg-tertiary: #f1ece4;       /* Subtle warm tint */
+  --bg-page: #f5f3ef;           /* Page body background */
+  --bg-sidebar: #fff;           /* Sidebar white */
+
+  --primary: #9f1239;           /* MCC Crimson */
+  --primary-hover: #be123c;
+  --primary-glow: rgba(159, 18, 57, 0.18);
+
+  --secondary: #b5883e;         /* Darker gold for light bg */
+  --secondary-hover: #c9a050;
+
+  --maroon: #7b1129;            /* Deep collegiate maroon */
+  --maroon-dark: #4a0616;
+  --navy: #1e2d5a;              /* Admissions navy */
+  --gold: #b5883e;
+  --gold-light: #f5e6c2;
+
+  /* Signature Gradients */
+  --grad-hero: radial-gradient(circle at 50% 25%, #8b1532 0%, #680b20 50%, #30030e 100%);
+  --grad-maroon: linear-gradient(135deg, #a81734 0%, #7b1129 60%, #4a0616 100%);
+  --grad-crimson: linear-gradient(135deg, #be123c 0%, #9f1239 50%, #7b1129 100%);
+  --grad-navy: linear-gradient(135deg, #1f2856 0%, #161c38 60%, #0d1124 100%);
+  --grad-gold: linear-gradient(135deg, #fce8bd 0%, #dfb76c 50%, #a67926 100%);
+  --grad-card: linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(248,246,242,0.98) 100%);
+
+  --accent: #b5883e;
+  --error: #dc2626;
+  --success: #059669;
+
+  /* ── Light-mode text ── */
+  --text-primary: #1a1218;      /* Near-black warm */
+  --text-secondary: #4b3f52;    /* Muted maroon-grey */
+  --text-muted: #8a7a8f;
+
+  --border-color: rgba(159, 18, 57, 0.14);
+  --border-focus: rgba(159, 18, 57, 0.45);
+
+  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 4px rgba(123, 17, 41, 0.06);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.12);
+
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 24px;
-  
+
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -48,7 +65,7 @@
 }
 
 html, body {
-  background-color: var(--bg-primary);
+  background-color: var(--bg-page, #f5f3ef);
   color: var(--text-primary);
   font-family: var(--font-body);
   font-size: 16px;
@@ -64,11 +81,11 @@ html, body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: #ede9e3;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--bg-tertiary);
+  background: rgba(159, 18, 57, 0.3);
   border-radius: 4px;
 }
 
@@ -77,10 +94,10 @@ html, body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
+  font-family: 'Cinzel', 'Outfit', Georgia, serif;
   color: var(--text-primary);
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   line-height: 1.25;
 }
 
@@ -100,20 +117,16 @@ button, input, select, textarea {
   color: inherit;
 }
 
-/* Glassmorphism Styles */
+/* Light Card Styles */
 .glass-panel {
-  background: rgba(19, 27, 46, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: #ffffff;
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-md);
 }
 
 .glass-card {
-  background: rgba(27, 38, 64, 0.4);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--border-color);
+  background: #ffffff;
+  border: 1px solid rgba(159, 18, 57, 0.12);
   border-radius: var(--radius-md);
   padding: 24px;
   box-shadow: var(--shadow-md);
@@ -123,7 +136,7 @@ button, input, select, textarea {
 .glass-card:hover {
   transform: translateY(-4px);
   border-color: var(--border-focus);
-  box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 8px 24px -8px rgba(159, 18, 57, 0.2);
 }
 
 /* Animations */
@@ -138,8 +151,8 @@ button, input, select, textarea {
 }
 
 @keyframes pulseGlow {
-  0%, 100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.2); }
-  50% { box-shadow: 0 0 25px rgba(99, 102, 241, 0.45); }
+  0%, 100% { box-shadow: 0 0 15px rgba(223, 183, 108, 0.25); }
+  50% { box-shadow: 0 0 25px rgba(190, 18, 60, 0.5); }
 }
 
 @keyframes spin {
@@ -160,16 +173,16 @@ button, input, select, textarea {
 
 /* Interactive Elements */
 .btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, #4338ca 100%);
-  border: none;
+  background: var(--grad-crimson);
+  border: 1px solid rgba(223, 183, 108, 0.35);
   border-radius: var(--radius-sm);
   color: #fff;
   cursor: pointer;
   font-weight: 600;
   padding: 12px 24px;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
   transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 14px rgba(159, 18, 57, 0.4);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -177,9 +190,10 @@ button, input, select, textarea {
 }
 
 .btn-primary:hover {
-  filter: brightness(1.1);
+  filter: brightness(1.12);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(99, 102, 241, 0.45);
+  box-shadow: 0 6px 20px rgba(190, 18, 60, 0.6);
+  border-color: #dfb76c;
 }
 
 .btn-primary:active {
@@ -191,6 +205,7 @@ button, input, select, textarea {
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+  border-color: transparent;
 }
 
 .btn-secondary {
@@ -209,8 +224,9 @@ button, input, select, textarea {
 }
 
 .btn-secondary:hover {
-  background: rgba(255,255,255,0.05);
-  border-color: var(--text-secondary);
+  background: rgba(159, 18, 57, 0.06);
+  border-color: var(--primary);
+  color: var(--primary);
   transform: translateY(-1px);
 }
 
@@ -256,8 +272,8 @@ button, input, select, textarea {
 }
 
 .form-control {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid var(--border-color);
+  background: #ffffff;
+  border: 1px solid rgba(159, 18, 57, 0.2);
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 0.95rem;
@@ -269,7 +285,7 @@ button, input, select, textarea {
 .form-control:focus {
   outline: none;
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px var(--primary-glow);
+  box-shadow: 0 0 0 3px rgba(159, 18, 57, 0.12);
 }
 
 .form-control::placeholder {
@@ -281,7 +297,7 @@ button, input, select, textarea {
 }
 
 .form-control.is-invalid:focus {
-  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.15);
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.18);
 }
 
 .invalid-feedback {

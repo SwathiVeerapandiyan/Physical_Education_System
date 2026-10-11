@@ -99,7 +99,7 @@ const EquipmentBookingManagement = () => {
           <h2 style={{ margin: 0, color: '#fff' }}>🏀 Equipment Booking Management</h2>
           <p style={{ margin: '0.25rem 0 0 0', color: '#94a3b8' }}>Reserve and manage sports equipment requests.</p>
         </div>
-        <button onClick={handleOpenCreate} style={{ padding: '0.75rem 1.4rem', background: '#6366f1', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 600, cursor: 'pointer' }}>
+        <button onClick={handleOpenCreate} style={{ padding: '0.75rem 1.4rem', background: 'linear-gradient(135deg, #be123c, #7b1129)', border: '1px solid rgba(223,183,108,0.4)', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 600, cursor: 'pointer' }}>
           ➕ New Booking
         </button>
       </div>
@@ -168,7 +168,7 @@ const EquipmentBookingManagement = () => {
               <textarea placeholder="Remarks..." value={formData.remarks || ''} onChange={e => setFormData({...formData, remarks: e.target.value})} style={{ padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }} />
               <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.8rem' }}>
                 <button type="button" onClick={() => setShowModal(false)} style={{ padding: '0.6rem 1.2rem', background: '#475569', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '0.6rem 1.4rem', background: '#6366f1', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Save</button>
+                <button type="submit" style={{ padding: '0.6rem 1.4rem', background: 'linear-gradient(135deg, #be123c, #7b1129)', border: '1px solid rgba(223,183,108,0.4)', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Save</button>
               </div>
             </form>
           </div>

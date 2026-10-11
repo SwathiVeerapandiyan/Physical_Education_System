@@ -184,7 +184,8 @@
   flex-wrap: wrap;
 }
 
-.btn-primary.lg, .btn-secondary.lg {
+.btn-primary.lg,
+.btn-secondary.lg {
   padding: 16px 32px;
   font-size: 1.05rem;
   border-radius: var(--radius-sm);
@@ -216,9 +217,17 @@
   border-radius: 50%;
 }
 
-.dot-red { background-color: var(--error); }
-.dot-yellow { background-color: var(--accent); }
-.dot-green { background-color: var(--success); }
+.dot-red {
+  background-color: var(--error);
+}
+
+.dot-yellow {
+  background-color: var(--accent);
+}
+
+.dot-green {
+  background-color: var(--success);
+}
 
 .visual-body {
   padding-top: 24px;
