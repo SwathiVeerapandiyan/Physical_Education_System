@@ -20,9 +20,9 @@ class EmergencyContactModel {
       contactId: json['contactId'] as int?,
       userId: json['userId'] as int?,
       contactName: json['contactName'] as String?,
-      relation: json['relation'] as String?,
-      phone: json['phone'] as String?,
-      altPhone: json['altPhone'] as String?,
+      relation: (json['relation'] ?? json['relationship']) as String?,
+      phone: (json['phone'] ?? json['phoneNumber']) as String?,
+      altPhone: (json['altPhone'] ?? json['alternatePhone']) as String?,
     );
   }
 
@@ -32,8 +32,12 @@ class EmergencyContactModel {
       'userId': userId,
       'contactName': contactName,
       'relation': relation,
+      'relationship': relation,
       'phone': phone,
+      'phoneNumber': phone,
       'altPhone': altPhone,
+      'alternatePhone': altPhone,
     };
   }
+
 }

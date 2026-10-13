@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/document-details")
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*")
 public class DocumentDetailsController {
 
     private final DocumentDetailsService documentDetailsService;

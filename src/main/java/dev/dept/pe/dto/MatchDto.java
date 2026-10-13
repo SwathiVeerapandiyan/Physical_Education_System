@@ -10,6 +10,10 @@ public class MatchDto {
     private String venue;
     private LocalDateTime matchDate;
     private String status;
+    private String teamA;
+    private String teamB;
+    private String score;
+    private String winner;
     private LocalDateTime createdTime;
 
     public MatchDto() {}
@@ -28,6 +32,15 @@ public class MatchDto {
     public void setMatchDate(LocalDateTime matchDate) { this.matchDate = matchDate; }
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+    public String getTeamA() { return teamA; }
+    public void setTeamA(String teamA) { this.teamA = teamA; }
+    public String getTeamB() { return teamB; }
+    public void setTeamB(String teamB) { this.teamB = teamB; }
+    public String getScore() { return score; }
+    public void setScore(String score) { this.score = score; }
+    public String getWinner() { return winner; }
+    public void setWinner(String winner) { this.winner = winner; }
     public LocalDateTime getCreatedTime() { return createdTime; }
     public void setCreatedTime(LocalDateTime createdTime) { this.createdTime = createdTime; }
+
 }

@@ -30,11 +30,18 @@ public class User {
     @Column(name = "password", nullable = false, length = 255)
     private String password;
 
+    @Column(name = "username", length = 50)
+    private String username;
+
+    @Column(name = "role", length = 30)
+    private String role = "STUDENT";
+
     @Column(name = "created_time", insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdTime;
 
     @Column(name = "updated_time", insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime updatedTime;
+
 
     // Default Constructor
     public User() {
@@ -97,9 +104,26 @@ public class User {
         this.password = password;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public LocalDateTime getCreatedTime() {
         return createdTime;
     }
+
 
     public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;

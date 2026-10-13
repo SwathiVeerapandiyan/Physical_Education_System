@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users-form")
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*")
 public class UserFormController {
 
     private final UserFormService userFormService;

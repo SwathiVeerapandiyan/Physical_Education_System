@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/sports")
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*")
 public class SportsDetailsController {
 
     private final SportsDetailsService sportsDetailsService;

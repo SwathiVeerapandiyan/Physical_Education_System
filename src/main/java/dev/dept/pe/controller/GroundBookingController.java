@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping({"/api/ground-bookings", "/api/ground-booking"})
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*")
 public class GroundBookingController {
 
     private final GroundBookingService service;

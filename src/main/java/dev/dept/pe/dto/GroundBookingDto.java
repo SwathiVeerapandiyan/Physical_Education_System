@@ -51,6 +51,9 @@ public class GroundBookingDto {
     public String getBookingStatus() { return bookingStatus; }
     public void setBookingStatus(String bookingStatus) { this.bookingStatus = bookingStatus; }
 
+    public String getStatus() { return bookingStatus; }
+    public void setStatus(String status) { if (status != null && !status.isEmpty()) this.bookingStatus = status; }
+
     public BigDecimal getPaymentAmount() { return paymentAmount; }
     public void setPaymentAmount(BigDecimal paymentAmount) { this.paymentAmount = paymentAmount; }
 
@@ -63,6 +66,10 @@ public class GroundBookingDto {
     public String getRemarks() { return remarks; }
     public void setRemarks(String remarks) { this.remarks = remarks; }
 
+    public String getPurpose() { return remarks; }
+    public void setPurpose(String purpose) { if (this.remarks == null) this.remarks = purpose; }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
+

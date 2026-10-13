@@ -20,8 +20,13 @@ public class TournamentDto {
     public void setTournamentId(Long tournamentId) { this.tournamentId = tournamentId; }
     public String getTournamentName() { return tournamentName; }
     public void setTournamentName(String tournamentName) { this.tournamentName = tournamentName; }
+    public String getTitle() { return tournamentName; }
+    public void setTitle(String title) { if (this.tournamentName == null || this.tournamentName.isEmpty()) this.tournamentName = title; }
+    public String getDescription() { return organizer; }
+    public void setDescription(String description) { if (this.organizer == null || this.organizer.isEmpty()) this.organizer = description; }
     public String getOrganizer() { return organizer; }
     public void setOrganizer(String organizer) { this.organizer = organizer; }
+
     public String getVenue() { return venue; }
     public void setVenue(String venue) { this.venue = venue; }
     public LocalDate getStartDate() { return startDate; }

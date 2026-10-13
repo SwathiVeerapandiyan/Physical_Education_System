@@ -48,9 +48,11 @@ public class LoginResponse {
     public static class UserDetails {
         private Long userId;
         private String name;
+        private String username;
         private String dept;
         private String registerNo;
         private String email;
+        private String role;
         private Long mobileNo;
         private LocalDateTime createdTime;
         private LocalDateTime updatedTime;
@@ -58,15 +60,33 @@ public class LoginResponse {
         public UserDetails() {
         }
 
-        public UserDetails(Long userId, String name, String dept, String registerNo, String email, Long mobileNo, LocalDateTime createdTime, LocalDateTime updatedTime) {
+        public UserDetails(Long userId, String name, String username, String dept, String registerNo, String email, String role, Long mobileNo, LocalDateTime createdTime, LocalDateTime updatedTime) {
             this.userId = userId;
             this.name = name;
+            this.username = username;
             this.dept = dept;
             this.registerNo = registerNo;
             this.email = email;
+            this.role = role;
             this.mobileNo = mobileNo;
             this.createdTime = createdTime;
             this.updatedTime = updatedTime;
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public void setUsername(String username) {
+            this.username = username;
+        }
+
+        public String getRole() {
+            return role;
+        }
+
+        public void setRole(String role) {
+            this.role = role;
         }
 
         public Long getUserId() {

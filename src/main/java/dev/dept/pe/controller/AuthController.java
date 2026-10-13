@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*") // Allow frontend requests from any origin
+@CrossOrigin(originPatterns = "*") // Allow frontend requests with credentials from any origin
 public class AuthController {
 
     private final UserRepository userRepository;
@@ -35,13 +35,16 @@ public class AuthController {
         String username = loginRequest.getUsername().trim();
         String password = loginRequest.getPassword();
 
-        // Try to find user by email, register number, name, or mobile number
+        // Try to find user by email, register number, name, username, or mobile number
         Optional<User> userOpt = userRepository.findByEmail(username);
         if (userOpt.isEmpty()) {
             userOpt = userRepository.findByRegisterNo(username);
         }
         if (userOpt.isEmpty()) {
             userOpt = userRepository.findByName(username);
+        }
+        if (userOpt.isEmpty()) {
+            userOpt = userRepository.findByUsername(username);
         }
         if (userOpt.isEmpty()) {
             try {
@@ -81,9 +84,11 @@ public class AuthController {
         LoginResponse.UserDetails userDetails = new LoginResponse.UserDetails(
                 user.getUserId(),
                 user.getName(),
+                user.getUsername() != null ? user.getUsername() : user.getName(),
                 user.getDept(),
                 user.getRegisterNo(),
                 user.getEmail(),
+                user.getRole() != null ? user.getRole() : "STUDENT",
                 user.getMobileNo(),
                 user.getCreatedTime(),
                 user.getUpdatedTime()
@@ -97,6 +102,14 @@ public class AuthController {
         if (user == null || user.getEmail() == null || user.getPassword() == null) {
             return ResponseEntity.badRequest().body("Email and password are required");
         }
+
+        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+            user.setUsername(user.getName() != null ? user.getName() : user.getEmail().split("@")[0]);
+        }
+        if (user.getRole() == null || user.getRole().trim().isEmpty()) {
+            user.setRole("STUDENT");
+        }
+
 
         // Pre-validate unique constraint fields before save
         if (user.getEmail() != null && userRepository.findByEmail(user.getEmail().trim()).isPresent()) {

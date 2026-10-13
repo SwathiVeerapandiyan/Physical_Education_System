@@ -21,11 +21,11 @@ class HealthFitnessModel {
     return HealthFitnessModel(
       recordId: json['recordId'] as int?,
       userId: json['userId'] as int?,
-      height: (json['height'] as num?)?.toDouble(),
-      weight: (json['weight'] as num?)?.toDouble(),
-      bmi: json['bmi'] as String?,
+      height: ((json['height'] ?? json['heightCm']) as num?)?.toDouble(),
+      weight: ((json['weight'] ?? json['weightKg']) as num?)?.toDouble(),
+      bmi: json['bmi']?.toString(),
       fitnessLevel: json['fitnessLevel'] as String?,
-      lastCheckupDate: json['lastCheckupDate'] as String?,
+      lastCheckupDate: (json['lastCheckupDate'] ?? json['lastCheckup']) as String?,
     );
   }
 
@@ -34,10 +34,14 @@ class HealthFitnessModel {
       if (recordId != null) 'recordId': recordId,
       'userId': userId,
       'height': height,
+      'heightCm': height,
       'weight': weight,
-      'bmi': bmi,
+      'weightKg': weight,
+      'bmi': bmi != null ? double.tryParse(bmi!) : null,
       'fitnessLevel': fitnessLevel,
       'lastCheckupDate': lastCheckupDate,
+      'lastCheckup': lastCheckupDate,
     };
   }
+
 }

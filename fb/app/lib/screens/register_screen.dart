@@ -38,12 +38,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       await ApiService.register({
         'name': _nameController.text.trim(),
+        'username': _usernameController.text.trim().isNotEmpty ? _usernameController.text.trim() : _nameController.text.trim(),
         'registerNo': _registerNoController.text.trim(),
         'email': _emailController.text.trim(),
         'dept': _deptController.text.trim().isNotEmpty ? _deptController.text.trim() : 'General',
+        'role': _role,
         'mobileNo': mobileVal,
         'password': _passwordController.text,
       });
+
 
       setState(() => _isLoading = false);
       toastProvider.showToast('Registration successful! Please login.', 'success');
@@ -119,7 +122,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     controller: _registerNoController,
                     style: const TextStyle(color: AppColors.textPrimary),
                     decoration: AppStyles.inputDecoration(hintText: 'Register Number', labelText: 'Register No'),
+                    validator: (val) => val == null || val.trim().isEmpty ? 'Register number is required' : null,
                   ),
+
                   const SizedBox(height: 14),
 
                   TextFormField(

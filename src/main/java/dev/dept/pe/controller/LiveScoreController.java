@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping({"/api/live-scores", "/api/live-score"})
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*")
 public class LiveScoreController {
 
     private final LiveScoreService service;

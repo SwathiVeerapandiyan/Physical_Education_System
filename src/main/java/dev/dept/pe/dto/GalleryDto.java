@@ -98,4 +98,30 @@ public class GalleryDto {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+
+    public String getMediaUrl() {
+        return imageUrl != null ? imageUrl : videoUrl;
+    }
+
+    public void setMediaUrl(String mediaUrl) {
+        if (this.imageUrl == null) this.imageUrl = mediaUrl;
+    }
+
+    public String getCaption() {
+        return title != null ? title : description;
+    }
+
+    public void setCaption(String caption) {
+        if (this.title == null) this.title = caption;
+        if (this.description == null) this.description = caption;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        this.isActive = active;
+    }
 }
+

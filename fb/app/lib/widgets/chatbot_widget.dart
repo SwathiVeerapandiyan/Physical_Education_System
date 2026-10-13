@@ -52,11 +52,16 @@ class _ChatbotWidgetState extends State<ChatbotWidget> {
     try {
       final response = await ApiService.sendChatbotMessage({'message': userMsg});
       String reply = 'Thank you for reaching out! How else can I assist you?';
-      if (response != null && response is Map && response.containsKey('reply')) {
-        reply = response['reply'].toString();
+      if (response != null && response is Map) {
+        if (response.containsKey('message') && response['message'] != null && response['message'].toString().isNotEmpty) {
+          reply = response['message'].toString();
+        } else if (response.containsKey('reply') && response['reply'] != null && response['reply'].toString().isNotEmpty) {
+          reply = response['reply'].toString();
+        }
       } else if (response is String && response.isNotEmpty) {
         reply = response;
       }
+
 
       if (mounted) {
         setState(() {

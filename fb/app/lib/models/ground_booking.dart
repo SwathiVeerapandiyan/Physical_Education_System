@@ -23,9 +23,9 @@ class GroundBookingModel {
       userId: json['userId'] as int?,
       groundName: json['groundName'] as String?,
       bookingDate: json['bookingDate'] as String?,
-      timeSlot: json['timeSlot'] as String?,
-      purpose: json['purpose'] as String?,
-      status: json['status'] as String?,
+      timeSlot: (json['timeSlot'] ?? (json['startTime'] != null ? '${json['startTime']} - ${json['endTime']}' : null)) as String?,
+      purpose: (json['purpose'] ?? json['remarks'] ?? json['sportType']) as String?,
+      status: (json['status'] ?? json['bookingStatus']) as String?,
     );
   }
 
@@ -34,10 +34,14 @@ class GroundBookingModel {
       if (bookingId != null) 'bookingId': bookingId,
       'userId': userId,
       'groundName': groundName,
+      'sportType': purpose ?? 'Football',
       'bookingDate': bookingDate,
       'timeSlot': timeSlot,
       'purpose': purpose,
+      'remarks': purpose,
       'status': status,
+      'bookingStatus': status ?? 'Pending',
     };
   }
+
 }

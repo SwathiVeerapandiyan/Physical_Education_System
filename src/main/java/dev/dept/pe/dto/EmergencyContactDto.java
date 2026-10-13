@@ -30,12 +30,19 @@ public class EmergencyContactDto {
 
     public String getRelationship() { return relationship; }
     public void setRelationship(String relationship) { this.relationship = relationship; }
+    public String getRelation() { return relationship; }
+    public void setRelation(String relation) { if (this.relationship == null) this.relationship = relation; }
 
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    public String getPhone() { return phoneNumber; }
+    public void setPhone(String phone) { if (this.phoneNumber == null) this.phoneNumber = phone; }
 
     public String getAlternatePhone() { return alternatePhone; }
     public void setAlternatePhone(String alternatePhone) { this.alternatePhone = alternatePhone; }
+    public String getAltPhone() { return alternatePhone; }
+    public void setAltPhone(String altPhone) { if (this.alternatePhone == null) this.alternatePhone = altPhone; }
+
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }

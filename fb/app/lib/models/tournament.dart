@@ -22,13 +22,13 @@ class TournamentModel {
   factory TournamentModel.fromJson(Map<String, dynamic> json) {
     return TournamentModel(
       tournamentId: json['tournamentId'] as int?,
-      title: json['title'] ?? '',
+      title: (json['title'] ?? json['tournamentName'] ?? '') as String,
       sportId: json['sportId'] as int?,
       startDate: json['startDate'] as String?,
       endDate: json['endDate'] as String?,
       venue: json['venue'] as String?,
       status: json['status'] as String?,
-      description: json['description'] as String?,
+      description: (json['description'] ?? json['organizer']) as String?,
     );
   }
 
@@ -36,12 +36,15 @@ class TournamentModel {
     return {
       if (tournamentId != null) 'tournamentId': tournamentId,
       'title': title,
+      'tournamentName': title,
       'sportId': sportId,
       'startDate': startDate,
       'endDate': endDate,
       'venue': venue,
       'status': status,
       'description': description,
+      'organizer': description ?? 'PE Department',
     };
   }
+
 }
