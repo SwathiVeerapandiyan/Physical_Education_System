@@ -106,7 +106,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                         const SizedBox(height: 4),
                         const Text(
-                          'Department of Physical Education & Sports Portal',
+                          'Madras Christian College • Physical Education & Sports Portal',
                           style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
                         ),
                         const SizedBox(height: 16),
@@ -142,8 +142,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     _KpiCard(title: 'Total Users', value: _stats.totalUsers, trend: 'System accounts', color: AppColors.success),
                     _KpiCard(title: 'Registered Candidates', value: _stats.totalCandidates, trend: 'Completed profile forms', color: AppColors.secondary),
-                    _KpiCard(title: 'Male Students', value: _stats.totalMaleStudents, trend: 'Athletes', color: AppColors.primary),
-                    _KpiCard(title: 'Female Students', value: _stats.totalFemaleStudents, trend: 'Athletes', color: Colors.pinkAccent),
+                    _KpiCard(title: 'Male Students', value: _stats.totalMaleStudents, trend: 'Athletes', color: AppColors.accent),
+                    _KpiCard(title: 'Female Students', value: _stats.totalFemaleStudents, trend: 'Athletes', color: AppColors.primary),
                   ],
                 );
               },
@@ -424,7 +424,11 @@ class _ActionTile extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.bgTertiary,
         foregroundColor: AppColors.textPrimary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+          side: const BorderSide(color: AppColors.borderColor),
+        ),
         padding: const EdgeInsets.symmetric(horizontal: 12),
       ),
       onPressed: onTap,

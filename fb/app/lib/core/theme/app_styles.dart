@@ -15,9 +15,9 @@ class AppStyles {
       ),
       boxShadow: const [
         BoxShadow(
-          color: Colors.black38,
+          color: Color(0x0C0F172A),
           blurRadius: 16,
-          offset: Offset(0, 8),
+          offset: Offset(0, 4),
         ),
       ],
     );
@@ -31,6 +31,13 @@ class AppStyles {
         color: AppColors.borderColor,
         width: 1.0,
       ),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x050F172A),
+          blurRadius: 10,
+          offset: Offset(0, 2),
+        ),
+      ],
     );
   }
 
@@ -46,7 +53,7 @@ class AppStyles {
       prefixIcon: prefixIcon,
       suffixIcon: suffixIcon,
       filled: true,
-      fillColor: const Color(0x990F172A),
+      fillColor: AppColors.inputFill,
       hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 14),
       labelStyle: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

@@ -61,7 +61,7 @@ class ToastOverlay extends StatelessWidget {
                       border: Border.all(color: _getBgColor(toast.type), width: 1.5),
                       boxShadow: const [
                         BoxShadow(
-                          color: Colors.black45,
+                          color: Color(0x1A0F172A),
                           blurRadius: 12,
                           offset: Offset(0, 4),
                         ),

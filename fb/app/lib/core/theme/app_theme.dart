@@ -3,15 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 class AppTheme {
-  static ThemeData get darkTheme {
-    final baseTextTheme = GoogleFonts.plusJakartaSansTextTheme(ThemeData.dark().textTheme);
-    final headingTextTheme = GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme);
+  static ThemeData get lightTheme {
+    final baseTextTheme = GoogleFonts.plusJakartaSansTextTheme(ThemeData.light().textTheme);
+    final headingTextTheme = GoogleFonts.outfitTextTheme(ThemeData.light().textTheme);
 
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.dark,
+      brightness: Brightness.light,
       scaffoldBackgroundColor: AppColors.bgPrimary,
-      colorScheme: const ColorScheme.dark(
+      colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
         secondary: AppColors.secondary,
         surface: AppColors.bgSecondary,
@@ -54,7 +54,8 @@ class AppTheme {
           borderRadius: BorderRadius.circular(14),
           side: const BorderSide(color: AppColors.borderColor),
         ),
-        elevation: 4,
+        elevation: 2,
+        shadowColor: const Color(0x0C0F172A),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: AppColors.bgSecondary,
@@ -63,6 +64,12 @@ class AppTheme {
           side: const BorderSide(color: AppColors.borderColor),
         ),
       ),
+      dividerTheme: const DividerThemeData(
+        color: AppColors.borderColor,
+        thickness: 1,
+      ),
     );
   }
+
+  static ThemeData get darkTheme => lightTheme;
 }
