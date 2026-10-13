@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping({"/api/emergency-contacts", "/api/emergency-contact"})
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*")
 public class EmergencyContactController {
 
     private final EmergencyContactService service;

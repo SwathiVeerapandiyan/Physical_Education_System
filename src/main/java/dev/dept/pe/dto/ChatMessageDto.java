@@ -34,6 +34,9 @@ public class ChatMessageDto {
 
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
+    public String getReply() { return message; }
+    public void setReply(String reply) { if (this.message == null) this.message = reply; }
+
 
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }

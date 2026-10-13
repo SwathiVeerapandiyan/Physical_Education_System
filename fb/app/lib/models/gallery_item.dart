@@ -22,10 +22,10 @@ class GalleryItemModel {
       galleryId: json['galleryId'] as int?,
       eventName: json['eventName'] as String?,
       mediaType: json['mediaType'] as String?,
-      mediaUrl: json['mediaUrl'] as String?,
-      caption: json['caption'] as String?,
-      uploadDate: json['uploadDate'] as String?,
-      active: json['active'] as bool?,
+      mediaUrl: (json['mediaUrl'] ?? json['imageUrl'] ?? json['videoUrl']) as String?,
+      caption: (json['caption'] ?? json['title'] ?? json['description']) as String?,
+      uploadDate: (json['uploadDate'] ?? json['eventDate'] ?? json['createdAt'])?.toString(),
+      active: (json['active'] ?? json['isActive']) as bool?,
     );
   }
 
@@ -35,9 +35,14 @@ class GalleryItemModel {
       'eventName': eventName,
       'mediaType': mediaType,
       'mediaUrl': mediaUrl,
+      'imageUrl': mediaUrl,
       'caption': caption,
+      'title': caption ?? eventName ?? 'Gallery Item',
+      'description': caption,
       'uploadDate': uploadDate,
       'active': active,
+      'isActive': active ?? true,
     };
   }
+
 }

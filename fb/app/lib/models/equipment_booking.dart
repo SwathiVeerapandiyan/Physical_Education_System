@@ -25,7 +25,7 @@ class EquipmentBookingModel {
       quantity: json['quantity'] as int?,
       bookingDate: json['bookingDate'] as String?,
       returnDate: json['returnDate'] as String?,
-      status: json['status'] as String?,
+      status: (json['status'] ?? json['bookingStatus']) as String?,
     );
   }
 
@@ -38,6 +38,8 @@ class EquipmentBookingModel {
       'bookingDate': bookingDate,
       'returnDate': returnDate,
       'status': status,
+      'bookingStatus': status ?? 'Pending',
     };
   }
+
 }

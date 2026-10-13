@@ -19,10 +19,10 @@ class NoticeItemModel {
     return NoticeItemModel(
       noticeId: json['noticeId'] as int?,
       title: json['title'] as String?,
-      content: json['content'] as String?,
+      content: (json['content'] ?? json['description']) as String?,
       category: json['category'] as String?,
-      publishDate: json['publishDate'] as String?,
-      active: json['active'] as bool?,
+      publishDate: (json['publishDate'] ?? json['createdAt'])?.toString(),
+      active: (json['active'] ?? json['isActive']) as bool?,
     );
   }
 
@@ -31,9 +31,12 @@ class NoticeItemModel {
       if (noticeId != null) 'noticeId': noticeId,
       'title': title,
       'content': content,
+      'description': content,
       'category': category,
       'publishDate': publishDate,
       'active': active,
+      'isActive': active ?? true,
     };
   }
+
 }

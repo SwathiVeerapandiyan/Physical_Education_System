@@ -25,8 +25,8 @@ class MatchFixtureModel {
     return MatchFixtureModel(
       matchId: json['matchId'] as int?,
       tournamentId: json['tournamentId'] as int?,
-      teamA: json['teamA'] as String?,
-      teamB: json['teamB'] as String?,
+      teamA: (json['teamA'] ?? (json['teamOne'] != null ? 'Team ${json['teamOne']}' : null)) as String?,
+      teamB: (json['teamB'] ?? (json['teamTwo'] != null ? 'Team ${json['teamTwo']}' : null)) as String?,
       matchDate: json['matchDate'] as String?,
       venue: json['venue'] as String?,
       status: json['status'] as String?,
@@ -34,6 +34,7 @@ class MatchFixtureModel {
       winner: json['winner'] as String?,
     );
   }
+
 
   Map<String, dynamic> toJson() {
     return {

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/family-details")
-@CrossOrigin(origins = "*")
+@CrossOrigin(originPatterns = "*")
 public class FamilyDetailsController {
 
     private final FamilyDetailsService familyDetailsService;

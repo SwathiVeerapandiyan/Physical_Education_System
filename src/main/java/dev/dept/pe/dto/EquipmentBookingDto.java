@@ -53,6 +53,10 @@ public class EquipmentBookingDto {
     public String getBookingStatus() { return bookingStatus; }
     public void setBookingStatus(String bookingStatus) { this.bookingStatus = bookingStatus; }
 
+    public String getStatus() { return bookingStatus; }
+    public void setStatus(String status) { if (status != null && !status.isEmpty()) this.bookingStatus = status; }
+
+
     public String getApprovedBy() { return approvedBy; }
     public void setApprovedBy(String approvedBy) { this.approvedBy = approvedBy; }
 

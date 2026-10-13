@@ -88,9 +88,14 @@ public class MatchServiceImpl implements MatchService {
         entity.setVenue(dto.getVenue());
         entity.setMatchDate(dto.getMatchDate());
         entity.setStatus(dto.getStatus());
+        entity.setTeamA(dto.getTeamA());
+        entity.setTeamB(dto.getTeamB());
+        entity.setScore(dto.getScore());
+        entity.setWinner(dto.getWinner());
 
         Match updated = matchRepository.save(entity);
         return mapToDto(updated);
+
     }
 
     @Override
@@ -110,6 +115,10 @@ public class MatchServiceImpl implements MatchService {
         dto.setVenue(entity.getVenue());
         dto.setMatchDate(entity.getMatchDate());
         dto.setStatus(entity.getStatus());
+        dto.setTeamA(entity.getTeamA());
+        dto.setTeamB(entity.getTeamB());
+        dto.setScore(entity.getScore());
+        dto.setWinner(entity.getWinner());
         dto.setCreatedTime(entity.getCreatedTime());
         return dto;
     }
@@ -123,6 +132,11 @@ public class MatchServiceImpl implements MatchService {
         entity.setVenue(dto.getVenue());
         entity.setMatchDate(dto.getMatchDate());
         entity.setStatus(dto.getStatus());
+        entity.setTeamA(dto.getTeamA());
+        entity.setTeamB(dto.getTeamB());
+        entity.setScore(dto.getScore());
+        entity.setWinner(dto.getWinner());
         return entity;
     }
+
 }

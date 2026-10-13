@@ -30,9 +30,13 @@ public class HealthFitnessDto {
 
     public BigDecimal getHeightCm() { return heightCm; }
     public void setHeightCm(BigDecimal heightCm) { this.heightCm = heightCm; }
+    public Double getHeight() { return heightCm != null ? heightCm.doubleValue() : null; }
+    public void setHeight(Double height) { if (height != null && this.heightCm == null) this.heightCm = BigDecimal.valueOf(height); }
 
     public BigDecimal getWeightKg() { return weightKg; }
     public void setWeightKg(BigDecimal weightKg) { this.weightKg = weightKg; }
+    public Double getWeight() { return weightKg != null ? weightKg.doubleValue() : null; }
+    public void setWeight(Double weight) { if (weight != null && this.weightKg == null) this.weightKg = BigDecimal.valueOf(weight); }
 
     public BigDecimal getBmi() { return bmi; }
     public void setBmi(BigDecimal bmi) { this.bmi = bmi; }
@@ -57,7 +61,14 @@ public class HealthFitnessDto {
 
     public LocalDate getLastCheckup() { return lastCheckup; }
     public void setLastCheckup(LocalDate lastCheckup) { this.lastCheckup = lastCheckup; }
+    public String getLastCheckupDate() { return lastCheckup != null ? lastCheckup.toString() : null; }
+    public void setLastCheckupDate(String s) {
+        if (s != null && !s.trim().isEmpty()) {
+            try { this.lastCheckup = LocalDate.parse(s.trim()); } catch (Exception ignored) {}
+        }
+    }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
+

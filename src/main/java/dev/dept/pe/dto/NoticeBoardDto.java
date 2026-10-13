@@ -27,6 +27,8 @@ public class NoticeBoardDto {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+    public String getContent() { return description; }
+    public void setContent(String content) { if (this.description == null) this.description = content; }
 
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
@@ -48,7 +50,10 @@ public class NoticeBoardDto {
 
     public Boolean getIsActive() { return isActive; }
     public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+    public Boolean getActive() { return isActive; }
+    public void setActive(Boolean active) { this.isActive = active; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
+

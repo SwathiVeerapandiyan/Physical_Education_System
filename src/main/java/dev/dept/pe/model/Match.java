@@ -30,8 +30,21 @@ public class Match {
     @Column(name = "status", length = 30)
     private String status;
 
+    @Column(name = "team_a", length = 100)
+    private String teamA;
+
+    @Column(name = "team_b", length = 100)
+    private String teamB;
+
+    @Column(name = "score", length = 50)
+    private String score;
+
+    @Column(name = "winner", length = 100)
+    private String winner;
+
     @Column(name = "created_time", insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdTime;
+
 
     public Match() {
     }
@@ -99,4 +112,37 @@ public class Match {
     public void setCreatedTime(LocalDateTime createdTime) {
         this.createdTime = createdTime;
     }
+
+    public String getTeamA() {
+        return teamA;
+    }
+
+    public void setTeamA(String teamA) {
+        this.teamA = teamA;
+    }
+
+    public String getTeamB() {
+        return teamB;
+    }
+
+    public void setTeamB(String teamB) {
+        this.teamB = teamB;
+    }
+
+    public String getScore() {
+        return score;
+    }
+
+    public void setScore(String score) {
+        this.score = score;
+    }
+
+    public String getWinner() {
+        return winner;
+    }
+
+    public void setWinner(String winner) {
+        this.winner = winner;
+    }
 }
+

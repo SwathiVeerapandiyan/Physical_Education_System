@@ -58,6 +58,32 @@ public class LiveScoreDto {
     public String getWinner() { return winner; }
     public void setWinner(String winner) { this.winner = winner; }
 
+    private String commentary;
+
+    public String getMatchTitle() { return matchName; }
+    public void setMatchTitle(String matchTitle) { if (this.matchName == null || this.matchName.isEmpty()) this.matchName = matchTitle; }
+
+    public String getCurrentStatus() { return matchStatus; }
+    public void setCurrentStatus(String currentStatus) { if (currentStatus != null && !currentStatus.isEmpty()) this.matchStatus = currentStatus; }
+
+    public String getTeamAScore() { return teamOneScore != null ? teamOneScore.toString() : "0"; }
+    public void setTeamAScore(String s) {
+        if (s != null) {
+            try { this.teamOneScore = Integer.parseInt(s.trim()); } catch (Exception ignored) {}
+        }
+    }
+
+    public String getTeamBScore() { return teamTwoScore != null ? teamTwoScore.toString() : "0"; }
+    public void setTeamBScore(String s) {
+        if (s != null) {
+            try { this.teamTwoScore = Integer.parseInt(s.trim()); } catch (Exception ignored) {}
+        }
+    }
+
+    public String getCommentary() { return commentary; }
+    public void setCommentary(String commentary) { this.commentary = commentary; }
+
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }
+
