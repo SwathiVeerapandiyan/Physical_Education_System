@@ -199,7 +199,7 @@ class MainLayout extends StatelessWidget {
 
     final topHeader = Container(
       height: 70,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: EdgeInsets.symmetric(horizontal: screenWidth < 600 ? 12 : 24),
       decoration: AppStyles.glassPanelDecoration(),
       child: Row(
         children: [
@@ -210,31 +210,51 @@ class MainLayout extends StatelessWidget {
                 onPressed: () => Scaffold.of(ctx).openDrawer(),
               ),
             ),
-          Text(
-            _getPageTitle(),
-            style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+          Flexible(
+            child: Text(
+              _getPageTitle(),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontSize: screenWidth < 600 ? 18 : 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           const Spacer(),
-          Text(
-            'Welcome, ${user?.name ?? 'User'}',
-            style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
-          ),
-          const SizedBox(width: 16),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          if (screenWidth >= 768) ...[
+            Text(
+              'Welcome, ${user?.name ?? 'User'}',
+              style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+              overflow: TextOverflow.ellipsis,
             ),
-            onPressed: () => _handleLogout(context),
-            icon: const Icon(Icons.logout, size: 16),
-            label: const Text('Logout', style: TextStyle(fontWeight: FontWeight.w600)),
-          ),
+            const SizedBox(width: 16),
+          ],
+          if (screenWidth < 600)
+            IconButton(
+              tooltip: 'Logout',
+              style: IconButton.styleFrom(
+                backgroundColor: AppColors.error,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                padding: const EdgeInsets.all(10),
+              ),
+              icon: const Icon(Icons.logout, size: 18),
+              onPressed: () => _handleLogout(context),
+            )
+          else
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.error,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: () => _handleLogout(context),
+              icon: const Icon(Icons.logout, size: 16),
+              label: const Text('Logout', style: TextStyle(fontWeight: FontWeight.w600)),
+            ),
         ],
       ),
     );
@@ -253,7 +273,7 @@ class MainLayout extends StatelessWidget {
                     Expanded(
                       child: Container(
                         color: AppColors.bgPrimary,
-                        padding: const EdgeInsets.all(24),
+                        padding: EdgeInsets.all(screenWidth < 600 ? 12 : 24),
                         child: child,
                       ),
                     ),
