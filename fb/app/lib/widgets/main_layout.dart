@@ -76,7 +76,7 @@ class MainLayout extends StatelessWidget {
         children: [
           // Logo Header
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
             child: Row(
               children: [
                 Container(
@@ -88,12 +88,30 @@ class MainLayout extends StatelessWidget {
                   child: const Text('🏅', style: TextStyle(fontSize: 22)),
                 ),
                 const SizedBox(width: 12),
-                const Text(
-                  'PE Portal',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'PE Portal',
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Madras Christian College',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -260,7 +278,7 @@ class MainLayout extends StatelessWidget {
     );
 
     return Scaffold(
-      drawer: !isDesktop ? Drawer(child: _buildSidebarContent(context)) : null,
+      drawer: !isDesktop ? Drawer(backgroundColor: AppColors.bgSecondary, child: _buildSidebarContent(context)) : null,
       body: Stack(
         children: [
           Row(

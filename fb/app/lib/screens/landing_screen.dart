@@ -20,13 +20,27 @@ class LandingScreen extends StatelessWidget {
                 children: [
                   const Text('🏅', style: TextStyle(fontSize: 24)),
                   const SizedBox(width: 10),
-                  const Text(
-                    'PE Portal',
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'PE Portal',
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Madras Christian College (Autonomous)',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
                   ),
                   const Spacer(),
                   OutlinedButton(

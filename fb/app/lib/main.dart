@@ -51,7 +51,7 @@ class PePortalApp extends StatelessWidget {
     return MaterialApp(
       title: 'Physical Education & Sports Portal',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme,
       builder: (context, child) {
         return ToastOverlay(child: child ?? const SizedBox.shrink());
       },
