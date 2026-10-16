@@ -1,34 +1,73 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/api_constants.dart';
 
 class ApiClient {
-  // Configurable base URL for testing with physical Android devices or custom hosts
+  static const String environment = String.fromEnvironment(
+    'ENVIRONMENT',
+    defaultValue: 'development',
+  );
+
+  static const String envApiUrl = String.fromEnvironment(
+    'API_URL',
+    defaultValue: String.fromEnvironment('BACKEND_URL', defaultValue: ''),
+  );
+
+  static const String _serverPrefKey = 'pe_custom_server_url';
   static String? customBaseUrl;
 
-  static String get _hostUrl {
-    if (customBaseUrl != null && customBaseUrl!.trim().isNotEmpty) {
-      return customBaseUrl!.trim();
+  static Future<void> init() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      customBaseUrl = prefs.getString(_serverPrefKey);
+    } catch (_) {}
+  }
+
+  static Future<void> setCustomBaseUrl(String? url) async {
+    customBaseUrl = url?.trim();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (customBaseUrl != null && customBaseUrl!.isNotEmpty) {
+        await prefs.setString(_serverPrefKey, customBaseUrl!);
+      } else {
+        await prefs.remove(_serverPrefKey);
+      }
+    } catch (_) {}
+  }
+
+  static String get defaultHostUrl {
+    // 1. Explicit dart-define URL
+    if (envApiUrl.trim().isNotEmpty) {
+      return envApiUrl.trim();
     }
 
+    // 2. Web browser
     if (kIsWeb) {
-      // On Web: When running flutter dev server (e.g. localhost:53703),
-      // forward requests to the Spring Boot backend on port 8080.
       if (Uri.base.host == 'localhost' || Uri.base.host == '127.0.0.1') {
         return 'http://${Uri.base.host}:8080';
       }
       return Uri.base.origin;
     }
 
-    // On Android: the emulator accesses host localhost via 10.0.2.2
+    // 3. Android
     if (defaultTargetPlatform == TargetPlatform.android) {
-      return 'http://10.0.2.2:8080';
+      return 'http://192.168.29.140:8080';
     }
 
-    // Default for iOS simulator, Windows, macOS, Linux
+    // Default for iOS / desktop
     return 'http://localhost:8080';
   }
+
+  static String get _hostUrl {
+    if (customBaseUrl != null && customBaseUrl!.trim().isNotEmpty) {
+      return customBaseUrl!.trim();
+    }
+    return defaultHostUrl;
+  }
+
+  static String get currentHostUrl => _hostUrl;
 
   static Uri _buildUri(String path, [Map<String, dynamic>? queryParameters]) {
     final String cleanPath = path.startsWith('/') ? path : '/$path';

@@ -30,8 +30,11 @@ import 'screens/health_fitness_screen.dart';
 import 'screens/emergency_contact_screen.dart';
 import 'screens/live_score_screen.dart';
 
-void main() {
+import 'core/network/api_client.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ApiClient.init();
   runApp(
     MultiProvider(
       providers: [

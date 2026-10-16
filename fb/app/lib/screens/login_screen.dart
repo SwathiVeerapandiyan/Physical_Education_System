@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_styles.dart';
+import '../core/network/api_client.dart';
 import '../providers/auth_provider.dart';
 import '../providers/toast_provider.dart';
 
@@ -17,6 +18,62 @@ class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+
+  void _showServerConfigDialog() {
+    final controller = TextEditingController(text: ApiClient.currentHostUrl);
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.bgSecondary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.dns_outlined, color: AppColors.primary),
+            SizedBox(width: 8),
+            Text('Backend Server URL', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Enter the backend URL (e.g. http://192.168.29.140:8080 or your production domain):',
+              style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+              decoration: AppStyles.inputDecoration(
+                hintText: 'http://192.168.29.140:8080',
+                labelText: 'Server Host URL',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              await ApiClient.setCustomBaseUrl(null);
+              if (mounted) setState(() {});
+              Navigator.pop(ctx);
+            },
+            child: const Text('Reset Default', style: TextStyle(color: AppColors.textMuted)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+            onPressed: () async {
+              await ApiClient.setCustomBaseUrl(controller.text);
+              if (mounted) setState(() {});
+              Navigator.pop(ctx);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _submitLogin() async {
     if (!_formKey.currentState!.validate()) return;
@@ -62,14 +119,30 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text(
-                    '🏅 PE Portal',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.textPrimary,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(width: 40),
+                      const Expanded(
+                        child: Text(
+                          '🏅 PE Portal',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 40,
+                        child: IconButton(
+                          icon: const Icon(Icons.settings_outlined, size: 20, color: AppColors.textMuted),
+                          tooltip: 'Backend Server Configuration',
+                          onPressed: _showServerConfigDialog,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 8),
                   const Text(
