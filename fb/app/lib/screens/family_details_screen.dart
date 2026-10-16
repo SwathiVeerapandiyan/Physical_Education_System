@@ -45,10 +45,26 @@ class _FamilyDetailsScreenState extends State<FamilyDetailsScreen> {
     if (user?.email != null) {
       try {
         final forms = await ApiService.getAllUserForms();
-        _myUserForm = forms.firstWhere(
+        final match = forms.where(
           (f) => f.email?.toLowerCase() == user!.email?.toLowerCase(),
-          orElse: () => UserFormModel(),
-        );
+        ).toList();
+
+        if (match.isNotEmpty) {
+          _myUserForm = match.first;
+        } else {
+          // Initialize base form for the logged-in user if not created yet
+          _myUserForm = await ApiService.createUserForm(UserFormModel(
+            name: user!.name ?? 'Student',
+            email: user.email ?? '',
+            registerNo: user.registerNo ?? '',
+            dept: user.dept ?? 'General',
+            phone: user.mobileNo?.toString() ?? '9876543210',
+            gender: 'Male',
+            batch: '2024-2025',
+            address: 'Campus',
+            sportsSpecialty: 'Athletics',
+          ));
+        }
 
         if (_myUserForm?.id != null) {
           final family = await ApiService.getFamilyByCandidateId(_myUserForm!.id!);

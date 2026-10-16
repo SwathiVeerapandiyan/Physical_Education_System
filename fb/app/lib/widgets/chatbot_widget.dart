@@ -91,15 +91,18 @@ class _ChatbotWidgetState extends State<ChatbotWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        if (_isOpen)
-          Positioned(
-            bottom: 84,
-            right: 24,
-            child: Material(
-              color: Colors.transparent,
-              child: Container(
+    return Positioned(
+      bottom: 24,
+      right: 24,
+      child: Material(
+        color: Colors.transparent,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            if (_isOpen)
+              Container(
+                margin: const EdgeInsets.only(bottom: 12),
                 width: 360,
                 height: 480,
                 decoration: AppStyles.glassBoxDecoration(borderRadius: 16),
@@ -254,21 +257,17 @@ class _ChatbotWidgetState extends State<ChatbotWidget> {
                   ],
                 ),
               ),
-            ),
-          ),
 
-        // Floating Toggle Button
-        Positioned(
-          bottom: 24,
-          right: 24,
-          child: FloatingActionButton(
-            backgroundColor: AppColors.primary,
-            elevation: 8,
-            onPressed: () => setState(() => _isOpen = !_isOpen),
-            child: Icon(_isOpen ? Icons.close : Icons.chat_bubble_outline, color: Colors.white),
-          ),
+            // Floating Toggle Button
+            FloatingActionButton(
+              backgroundColor: AppColors.primary,
+              elevation: 8,
+              onPressed: () => setState(() => _isOpen = !_isOpen),
+              child: Icon(_isOpen ? Icons.close : Icons.chat_bubble_outline, color: Colors.white),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

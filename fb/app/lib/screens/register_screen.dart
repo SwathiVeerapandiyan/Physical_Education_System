@@ -48,13 +48,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
 
 
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
       toastProvider.showToast('Registration successful! Please login.', 'success');
       if (mounted) {
         Navigator.pushReplacementNamed(context, '/login');
       }
     } catch (e) {
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
       toastProvider.showToast('Registration failed: ${e.toString()}', 'error');
     }
   }
@@ -67,7 +71,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Container(
-            width: 460,
+            constraints: const BoxConstraints(maxWidth: 460),
             padding: const EdgeInsets.all(36),
             decoration: AppStyles.glassBoxDecoration(borderRadius: 20),
             child: Form(

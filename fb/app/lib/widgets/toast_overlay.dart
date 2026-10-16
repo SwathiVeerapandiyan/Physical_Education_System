@@ -52,40 +52,43 @@ class ToastOverlay extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: toastProvider.toasts.map((toast) {
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: AppColors.bgSecondary,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: _getBgColor(toast.type), width: 1.5),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x1A0F172A),
-                          blurRadius: 12,
-                          offset: Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(_getIcon(toast.type), color: _getBgColor(toast.type), size: 20),
-                        const SizedBox(width: 10),
-                        Text(
-                          toast.message,
-                          style: const TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                  return Material(
+                    color: Colors.transparent,
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      decoration: BoxDecoration(
+                        color: AppColors.bgSecondary,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: _getBgColor(toast.type), width: 1.5),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x1A0F172A),
+                            blurRadius: 12,
+                            offset: Offset(0, 4),
                           ),
-                        ),
-                        const SizedBox(width: 12),
-                        InkWell(
-                          onTap: () => toastProvider.removeToast(toast.id),
-                          child: const Icon(Icons.close, size: 16, color: AppColors.textMuted),
-                        ),
-                      ],
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(_getIcon(toast.type), color: _getBgColor(toast.type), size: 20),
+                          const SizedBox(width: 10),
+                          Text(
+                            toast.message,
+                            style: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          InkWell(
+                            onTap: () => toastProvider.removeToast(toast.id),
+                            child: const Icon(Icons.close, size: 16, color: AppColors.textMuted),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }).toList(),

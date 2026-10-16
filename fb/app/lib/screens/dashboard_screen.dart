@@ -42,19 +42,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final user = Provider.of<AuthProvider>(context, listen: false).user;
       if (user?.email != null) {
         final forms = await ApiService.getAllUserForms();
-        final myForm = forms.firstWhere(
+        final match = forms.where(
           (f) => f.email?.toLowerCase() == user!.email?.toLowerCase(),
-          orElse: () => throw Exception('Not found'),
-        );
+        ).toList();
 
-        _profileCreated = true;
+        if (match.isNotEmpty) {
+          final myForm = match.first;
+          _profileCreated = true;
 
-        if (myForm.id != null) {
-          final family = await ApiService.getFamilyByCandidateId(myForm.id!);
-          if (family?.familyId != null) _familyAdded = true;
+          if (myForm.id != null) {
+            final family = await ApiService.getFamilyByCandidateId(myForm.id!);
+            if (family?.familyId != null) _familyAdded = true;
 
-          final doc = await ApiService.getDocumentByCandidateId(myForm.id!);
-          if (doc?.documentId != null) _documentsUploaded = true;
+            final doc = await ApiService.getDocumentByCandidateId(myForm.id!);
+            if (doc?.documentId != null) _documentsUploaded = true;
+          }
         }
       }
     } catch (_) {}

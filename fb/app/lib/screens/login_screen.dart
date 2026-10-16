@@ -31,7 +31,9 @@ class _LoginScreenState extends State<LoginScreen> {
       _passwordController.text,
     );
 
-    setState(() => _isLoading = false);
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
 
     if (result['success'] == true) {
       toastProvider.showToast('Login successful!', 'success');
@@ -51,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Container(
-            width: 420,
+            constraints: const BoxConstraints(maxWidth: 420),
             padding: const EdgeInsets.all(36),
             decoration: AppStyles.glassBoxDecoration(borderRadius: 20),
             child: Form(

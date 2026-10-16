@@ -69,11 +69,13 @@ class MainLayout extends StatelessWidget {
     final authProvider = Provider.of<AuthProvider>(context);
     final user = authProvider.user;
 
-    return Container(
-      width: 260,
-      decoration: AppStyles.glassPanelDecoration(),
-      child: Column(
-        children: [
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        width: 260,
+        decoration: AppStyles.glassPanelDecoration(),
+        child: Column(
+          children: [
           // Logo Header
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -205,6 +207,7 @@ class MainLayout extends StatelessWidget {
           ),
         ],
       ),
+    ),
     );
   }
 
