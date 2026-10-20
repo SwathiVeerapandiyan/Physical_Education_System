@@ -2,44 +2,65 @@ class EquipmentBookingModel {
   final int? bookingId;
   final int? userId;
   final String? equipmentName;
+  final String? equipmentCategory;
   final int? quantity;
-  final String? bookingDate;
-  final String? returnDate;
-  final String? status; // PENDING, APPROVED, REJECTED, RETURNED
+  final String? bookingDate;    // ISO date: yyyy-MM-dd  (NOT NULL in SQL)
+  final String? startTime;      // HH:mm:ss
+  final String? endTime;        // HH:mm:ss
+  final String? returnDate;     // ISO date: yyyy-MM-dd
+  final String? bookingStatus;
+  final String? approvedBy;
+  final String? remarks;
+  final String? createdAt;
 
   EquipmentBookingModel({
     this.bookingId,
     this.userId,
     this.equipmentName,
+    this.equipmentCategory,
     this.quantity,
     this.bookingDate,
+    this.startTime,
+    this.endTime,
     this.returnDate,
-    this.status,
+    this.bookingStatus,
+    this.approvedBy,
+    this.remarks,
+    this.createdAt,
   });
 
   factory EquipmentBookingModel.fromJson(Map<String, dynamic> json) {
     return EquipmentBookingModel(
-      bookingId: json['bookingId'] as int?,
-      userId: json['userId'] as int?,
+      bookingId: (json['bookingId'] as num?)?.toInt(),
+      userId: (json['userId'] as num?)?.toInt(),
       equipmentName: json['equipmentName'] as String?,
-      quantity: json['quantity'] as int?,
+      equipmentCategory: json['equipmentCategory'] as String?,
+      quantity: (json['quantity'] as num?)?.toInt(),
       bookingDate: json['bookingDate'] as String?,
+      startTime: json['startTime'] as String?,
+      endTime: json['endTime'] as String?,
       returnDate: json['returnDate'] as String?,
-      status: (json['status'] ?? json['bookingStatus']) as String?,
+      bookingStatus: (json['bookingStatus'] ?? json['status']) as String?,
+      approvedBy: json['approvedBy'] as String?,
+      remarks: json['remarks'] as String?,
+      createdAt: json['createdAt'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       if (bookingId != null) 'bookingId': bookingId,
-      'userId': userId,
-      'equipmentName': equipmentName,
-      'quantity': quantity,
-      'bookingDate': bookingDate,
-      'returnDate': returnDate,
-      'status': status,
-      'bookingStatus': status ?? 'Pending',
+      if (userId != null) 'userId': userId,
+      if (equipmentName != null) 'equipmentName': equipmentName,
+      if (equipmentCategory != null) 'equipmentCategory': equipmentCategory,
+      'quantity': quantity ?? 1,
+      'bookingDate': bookingDate,       // required by SQL NOT NULL
+      if (startTime != null) 'startTime': startTime,
+      if (endTime != null) 'endTime': endTime,
+      if (returnDate != null) 'returnDate': returnDate,
+      'bookingStatus': bookingStatus ?? 'Pending',
+      if (approvedBy != null) 'approvedBy': approvedBy,
+      if (remarks != null) 'remarks': remarks,
     };
   }
-
 }
