@@ -35,4 +35,10 @@ class AppColors {
   static const Color glassBackground = Color(0xFFFFFFFF); // Clean white appbar/sidebar
   static const Color glassCardBg = Color(0xFFFFFFFF);     // Clean white card background
   static const Color inputFill = Color(0xFFF8FAFC);       // Soft light input fill
+
+  // Aliases for layout & cards
+  static const Color cardSurface = Color(0xFFFFFFFF);
+  static const Color cardBorder = Color(0xFFE2E8F0);
+  static const Color background = Color(0xFFF6F8FB);
+  static const Color accentGold = Color(0xFFD97706);
 }

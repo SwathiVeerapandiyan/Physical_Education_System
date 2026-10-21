@@ -15,8 +15,14 @@ public class Team {
     @Column(name = "team_name", nullable = false, length = 100)
     private String teamName;
 
-    @Column(name = "sport_id", nullable = false)
+    @Column(name = "sport_id")
     private Long sportId;
+
+    @Column(name = "captain_name", length = 100)
+    private String captainName;
+
+    @Column(name = "department", length = 100)
+    private String department;
 
     @Column(name = "created_time", insertable = false, updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdTime;
@@ -49,6 +55,22 @@ public class Team {
 
     public void setSportId(Long sportId) {
         this.sportId = sportId;
+    }
+
+    public String getCaptainName() {
+        return captainName;
+    }
+
+    public void setCaptainName(String captainName) {
+        this.captainName = captainName;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public LocalDateTime getCreatedTime() {

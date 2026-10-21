@@ -9,6 +9,7 @@ public class TeamMemberDto {
     private LocalDate joinedDate;
 
     private String role;
+    private String studentName;
 
     public TeamMemberDto() {}
 
@@ -18,6 +19,8 @@ public class TeamMemberDto {
     public void setId(Long id) { if (this.teamMemberId == null) this.teamMemberId = id; }
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+    public String getStudentName() { return studentName; }
+    public void setStudentName(String studentName) { this.studentName = studentName; }
     public Long getTeamId() { return teamId; }
     public void setTeamId(Long teamId) { this.teamId = teamId; }
     public Long getStudentId() { return studentId; }

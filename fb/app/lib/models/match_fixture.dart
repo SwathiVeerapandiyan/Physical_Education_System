@@ -1,6 +1,8 @@
 class MatchFixtureModel {
   final int? matchId;
   final int? tournamentId;
+  final int? teamOne;
+  final int? teamTwo;
   final String? teamA;
   final String? teamB;
   final String? matchDate;
@@ -12,6 +14,8 @@ class MatchFixtureModel {
   MatchFixtureModel({
     this.matchId,
     this.tournamentId,
+    this.teamOne,
+    this.teamTwo,
     this.teamA,
     this.teamB,
     this.matchDate,
@@ -25,9 +29,11 @@ class MatchFixtureModel {
     return MatchFixtureModel(
       matchId: json['matchId'] as int?,
       tournamentId: json['tournamentId'] as int?,
+      teamOne: json['teamOne'] as int?,
+      teamTwo: json['teamTwo'] as int?,
       teamA: (json['teamA'] ?? (json['teamOne'] != null ? 'Team ${json['teamOne']}' : null)) as String?,
       teamB: (json['teamB'] ?? (json['teamTwo'] != null ? 'Team ${json['teamTwo']}' : null)) as String?,
-      matchDate: json['matchDate'] as String?,
+      matchDate: json['matchDate']?.toString(),
       venue: json['venue'] as String?,
       status: json['status'] as String?,
       score: json['score'] as String?,
@@ -35,18 +41,19 @@ class MatchFixtureModel {
     );
   }
 
-
   Map<String, dynamic> toJson() {
     return {
       if (matchId != null) 'matchId': matchId,
-      'tournamentId': tournamentId,
-      'teamA': teamA,
-      'teamB': teamB,
-      'matchDate': matchDate,
-      'venue': venue,
-      'status': status,
-      'score': score,
-      'winner': winner,
+      if (tournamentId != null) 'tournamentId': tournamentId,
+      if (teamOne != null) 'teamOne': teamOne,
+      if (teamTwo != null) 'teamTwo': teamTwo,
+      if (teamA != null) 'teamA': teamA,
+      if (teamB != null) 'teamB': teamB,
+      if (matchDate != null) 'matchDate': matchDate,
+      if (venue != null) 'venue': venue,
+      if (status != null) 'status': status,
+      if (score != null) 'score': score,
+      if (winner != null) 'winner': winner,
     };
   }
 }

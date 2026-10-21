@@ -9,6 +9,8 @@ import dev.dept.pe.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import dev.dept.pe.model.SportsDetails;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,9 +28,24 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamDto create(TeamDto dto) {
-        if (!sportsDetailsRepository.existsById(dto.getSportId())) {
-            throw new ResourceNotFoundException("Sport not found with ID: " + dto.getSportId());
+        if (dto.getSportId() != null) {
+            if (!sportsDetailsRepository.existsById(dto.getSportId())) {
+                throw new ResourceNotFoundException("Sport not found with ID: " + dto.getSportId());
+            }
+        } else {
+            List<SportsDetails> sports = sportsDetailsRepository.findAll();
+            if (!sports.isEmpty()) {
+                dto.setSportId(sports.get(0).getSportId());
+            } else {
+                SportsDetails defaultSport = new SportsDetails();
+                defaultSport.setSportName("General Sports");
+                defaultSport.setCategory("Outdoor");
+                defaultSport.setDescription("Auto-created default sports catalog");
+                SportsDetails savedSport = sportsDetailsRepository.save(defaultSport);
+                dto.setSportId(savedSport.getSportId());
+            }
         }
+
         Team entity = mapToEntity(dto);
         Team saved = teamRepository.save(entity);
         return mapToDto(saved);
@@ -60,12 +77,18 @@ public class TeamServiceImpl implements TeamService {
         Team entity = teamRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Team not found with ID: " + id));
 
-        if (!sportsDetailsRepository.existsById(dto.getSportId())) {
-            throw new ResourceNotFoundException("Sport not found with ID: " + dto.getSportId());
+        if (dto.getSportId() != null) {
+            if (!sportsDetailsRepository.existsById(dto.getSportId())) {
+                throw new ResourceNotFoundException("Sport not found with ID: " + dto.getSportId());
+            }
+            entity.setSportId(dto.getSportId());
         }
 
-        entity.setTeamName(dto.getTeamName());
-        entity.setSportId(dto.getSportId());
+        if (dto.getTeamName() != null) {
+            entity.setTeamName(dto.getTeamName());
+        }
+        entity.setCaptainName(dto.getCaptainName());
+        entity.setDepartment(dto.getDepartment());
 
         Team updated = teamRepository.save(entity);
         return mapToDto(updated);
@@ -84,6 +107,8 @@ public class TeamServiceImpl implements TeamService {
         dto.setTeamId(entity.getTeamId());
         dto.setTeamName(entity.getTeamName());
         dto.setSportId(entity.getSportId());
+        dto.setCaptainName(entity.getCaptainName());
+        dto.setDepartment(entity.getDepartment());
         dto.setCreatedTime(entity.getCreatedTime());
         dto.setUpdatedTime(entity.getUpdatedTime());
         return dto;
@@ -94,6 +119,8 @@ public class TeamServiceImpl implements TeamService {
         entity.setTeamId(dto.getTeamId());
         entity.setTeamName(dto.getTeamName());
         entity.setSportId(dto.getSportId());
+        entity.setCaptainName(dto.getCaptainName());
+        entity.setDepartment(dto.getDepartment());
         return entity;
     }
 }

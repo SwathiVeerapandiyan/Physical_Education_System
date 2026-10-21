@@ -34,11 +34,25 @@ public class MatchServiceImpl implements MatchService {
         if (dto.getTournamentId() != null && !tournamentRepository.existsById(dto.getTournamentId())) {
             throw new ResourceNotFoundException("Tournament not found with ID: " + dto.getTournamentId());
         }
-        if (dto.getTeamOne() != null && !teamRepository.existsById(dto.getTeamOne())) {
-            throw new ResourceNotFoundException("Team one not found with ID: " + dto.getTeamOne());
+        if (dto.getTeamOne() != null) {
+            teamRepository.findById(dto.getTeamOne()).ifPresent(t -> {
+                if (dto.getTeamA() == null || dto.getTeamA().trim().isEmpty()) {
+                    dto.setTeamA(t.getTeamName());
+                }
+            });
         }
-        if (dto.getTeamTwo() != null && !teamRepository.existsById(dto.getTeamTwo())) {
-            throw new ResourceNotFoundException("Team two not found with ID: " + dto.getTeamTwo());
+        if (dto.getTeamTwo() != null) {
+            teamRepository.findById(dto.getTeamTwo()).ifPresent(t -> {
+                if (dto.getTeamB() == null || dto.getTeamB().trim().isEmpty()) {
+                    dto.setTeamB(t.getTeamName());
+                }
+            });
+        }
+        if (dto.getMatchDate() == null) {
+            dto.setMatchDate(java.time.LocalDateTime.now().plusDays(1));
+        }
+        if (dto.getStatus() == null || dto.getStatus().trim().isEmpty()) {
+            dto.setStatus("SCHEDULED");
         }
 
         Match entity = mapToEntity(dto);

@@ -23,6 +23,12 @@ public class TeamMember {
     @Column(name = "joined_date")
     private LocalDate joinedDate;
 
+    @Column(name = "role", length = 50)
+    private String role;
+
+    @Column(name = "student_name", length = 100)
+    private String studentName;
+
     public TeamMember() {
     }
 
@@ -56,5 +62,21 @@ public class TeamMember {
 
     public void setJoinedDate(LocalDate joinedDate) {
         this.joinedDate = joinedDate;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getStudentName() {
+        return studentName;
+    }
+
+    public void setStudentName(String studentName) {
+        this.studentName = studentName;
     }
 }
