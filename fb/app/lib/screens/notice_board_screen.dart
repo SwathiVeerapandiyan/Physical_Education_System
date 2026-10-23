@@ -88,7 +88,7 @@ class _NoticeBoardScreenState extends State<NoticeBoardScreen> {
                   active: true,
                 ));
                 toast.showToast('Notice published successfully', 'success');
-                Navigator.pop(ctx);
+                if (ctx.mounted) Navigator.pop(ctx);
                 _loadNotices();
               } catch (_) {
                 toast.showToast('Failed to publish notice', 'error');

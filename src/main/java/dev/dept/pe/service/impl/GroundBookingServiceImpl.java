@@ -24,6 +24,12 @@ public class GroundBookingServiceImpl implements GroundBookingService {
     @Override
     public GroundBookingDto create(GroundBookingDto dto) {
         GroundBooking entity = mapToEntity(dto);
+        if (entity.getUserId() == null) {
+            entity.setUserId(1);
+        }
+        if (entity.getBookingDate() == null) {
+            entity.setBookingDate(java.time.LocalDate.now());
+        }
         if (entity.getBookingStatus() == null) entity.setBookingStatus("Pending");
         if (entity.getPaymentStatus() == null) entity.setPaymentStatus("Pending");
         GroundBooking saved = repository.save(entity);

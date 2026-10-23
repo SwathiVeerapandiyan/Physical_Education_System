@@ -67,7 +67,10 @@ class _UserFormScreenState extends State<UserFormScreen> {
           _addressCtrl.text = myForm.address ?? '';
           _specialtyCtrl.text = myForm.sportsSpecialty ?? '';
           if (myForm.gender != null && myForm.gender!.isNotEmpty) {
-            _gender = myForm.gender!;
+            final g = myForm.gender!.trim().toUpperCase();
+            if (['MALE', 'FEMALE', 'OTHER'].contains(g)) {
+              _gender = g;
+            }
           }
         }
       } catch (_) {}
@@ -186,7 +189,7 @@ class _UserFormScreenState extends State<UserFormScreen> {
                               SizedBox(
                                 width: 330,
                                 child: DropdownButtonFormField<String>(
-                                  value: _gender,
+                                  initialValue: ['MALE', 'FEMALE', 'OTHER'].contains(_gender) ? _gender : 'MALE',
                                   dropdownColor: AppColors.bgSecondary,
                                   style: const TextStyle(color: AppColors.textPrimary),
                                   decoration: AppStyles.inputDecoration(hintText: 'Select Gender', labelText: 'Gender'),

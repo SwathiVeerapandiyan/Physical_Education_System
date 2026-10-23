@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../core/network/api_client.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_styles.dart';
 import '../providers/api_service.dart';
 import '../providers/toast_provider.dart';
+import '../widgets/server_config_dialog.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -63,6 +65,22 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgPrimary,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          TextButton.icon(
+            style: TextButton.styleFrom(foregroundColor: AppColors.textSecondary),
+            onPressed: () => ServerConfigDialog.show(context).then((_) => setState(() {})),
+            icon: const Icon(Icons.settings_ethernet, size: 18),
+            label: Text(
+              'Server: ${ApiClient.currentHost.replaceAll('http://', '')}',
+              style: const TextStyle(fontSize: 12),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),

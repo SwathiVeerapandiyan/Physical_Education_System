@@ -4,6 +4,7 @@ import '../core/theme/app_colors.dart';
 import '../core/theme/app_styles.dart';
 import '../models/health_fitness.dart';
 import '../providers/api_service.dart';
+import '../providers/auth_provider.dart';
 import '../providers/toast_provider.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/main_layout.dart';
@@ -83,17 +84,19 @@ class _HealthFitnessScreenState extends State<HealthFitnessScreen> {
               final w = double.tryParse(wCtrl.text) ?? 70;
               final bmiVal = (w / ((h / 100) * (h / 100))).toStringAsFixed(1);
               final toast = Provider.of<ToastProvider>(context, listen: false);
+              final user = Provider.of<AuthProvider>(context, listen: false).user;
 
               try {
                 await ApiService.createHealthFitness(HealthFitnessModel(
+                  userId: user?.id ?? 1,
                   height: h,
                   weight: w,
                   bmi: bmiVal,
                   fitnessLevel: levelCtrl.text.trim(),
-                  lastCheckupDate: DateTime.now().toString().split(' ')[0],
+                  lastCheckupDate: DateTime.now().toIso8601String().substring(0, 10),
                 ));
                 toast.showToast('Health metric recorded', 'success');
-                Navigator.pop(ctx);
+                if (ctx.mounted) Navigator.pop(ctx);
                 _loadData();
               } catch (_) {
                 toast.showToast('Failed to save record', 'error');

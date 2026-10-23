@@ -104,7 +104,7 @@ class _LiveScoreScreenState extends State<LiveScoreScreen> {
                   commentary: 'High intensity action on field!',
                 ));
                 toast.showToast('Live score updated', 'success');
-                Navigator.pop(ctx);
+                if (ctx.mounted) Navigator.pop(ctx);
                 _loadScores();
               } catch (_) {
                 toast.showToast('Failed to update live score', 'error');
@@ -165,7 +165,7 @@ class _LiveScoreScreenState extends State<LiveScoreScreen> {
                                       ),
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                        decoration: BoxDecoration(color: AppColors.error.withOpacity(0.2), borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.error)),
+                                        decoration: BoxDecoration(color: AppColors.error.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.error)),
                                         child: const Text('🔴 LIVE', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold, fontSize: 11)),
                                       ),
                                     ],

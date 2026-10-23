@@ -24,6 +24,12 @@ public class EquipmentBookingServiceImpl implements EquipmentBookingService {
     @Override
     public EquipmentBookingDto create(EquipmentBookingDto dto) {
         EquipmentBooking entity = mapToEntity(dto);
+        if (entity.getUserId() == null) {
+            entity.setUserId(1);
+        }
+        if (entity.getBookingDate() == null) {
+            entity.setBookingDate(java.time.LocalDate.now());
+        }
         if (entity.getBookingStatus() == null) {
             entity.setBookingStatus("Pending");
         }

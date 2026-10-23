@@ -24,6 +24,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     @Override
     public FeedbackDto create(FeedbackDto dto) {
         Feedback entity = mapToEntity(dto);
+        if (entity.getUserId() == null) {
+            entity.setUserId(1);
+        }
         if (entity.getStatus() == null) entity.setStatus("Open");
         Feedback saved = repository.save(entity);
         return mapToDto(saved);

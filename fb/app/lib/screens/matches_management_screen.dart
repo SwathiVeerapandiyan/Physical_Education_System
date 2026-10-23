@@ -38,71 +38,101 @@ class _MatchesManagementScreenState extends State<MatchesManagementScreen> {
   void _showAddDialog() {
     final teamACtrl = TextEditingController();
     final teamBCtrl = TextEditingController();
-    final dateCtrl = TextEditingController(text: 'Today, 4:00 PM');
+    DateTime scheduledTime = DateTime.now().add(const Duration(hours: 4));
+    final dateCtrl = TextEditingController(
+      text: '${scheduledTime.year}-${scheduledTime.month.toString().padLeft(2, '0')}-${scheduledTime.day.toString().padLeft(2, '0')} ${scheduledTime.hour.toString().padLeft(2, '0')}:${scheduledTime.minute.toString().padLeft(2, '0')}',
+    );
     final venueCtrl = TextEditingController(text: 'Main Field');
 
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Schedule Match Fixture', style: TextStyle(color: AppColors.textPrimary)),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: teamACtrl,
-                style: const TextStyle(color: AppColors.textPrimary),
-                decoration: AppStyles.inputDecoration(hintText: 'Team A Name', labelText: 'Team A'),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: teamBCtrl,
-                style: const TextStyle(color: AppColors.textPrimary),
-                decoration: AppStyles.inputDecoration(hintText: 'Team B Name', labelText: 'Team B'),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: dateCtrl,
-                style: const TextStyle(color: AppColors.textPrimary),
-                decoration: AppStyles.inputDecoration(hintText: 'Date & Time', labelText: 'Match Date'),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: venueCtrl,
-                style: const TextStyle(color: AppColors.textPrimary),
-                decoration: AppStyles.inputDecoration(hintText: 'Stadium / Field Location', labelText: 'Venue'),
-              ),
-            ],
+      builder: (ctx) => StatefulBuilder(
+        builder: (dialogCtx, setDialogState) => AlertDialog(
+          title: const Text('Schedule Match Fixture', style: TextStyle(color: AppColors.textPrimary)),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: teamACtrl,
+                  style: const TextStyle(color: AppColors.textPrimary),
+                  decoration: AppStyles.inputDecoration(hintText: 'Team A Name', labelText: 'Team A'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: teamBCtrl,
+                  style: const TextStyle(color: AppColors.textPrimary),
+                  decoration: AppStyles.inputDecoration(hintText: 'Team B Name', labelText: 'Team B'),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: dateCtrl,
+                  readOnly: true,
+                  onTap: () async {
+                    final d = await showDatePicker(
+                      context: dialogCtx,
+                      initialDate: scheduledTime,
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime.now().add(const Duration(days: 365)),
+                    );
+                    if (d != null && dialogCtx.mounted) {
+                      final t = await showTimePicker(
+                        context: dialogCtx,
+                        initialTime: TimeOfDay.fromDateTime(scheduledTime),
+                      );
+                      if (t != null) {
+                        scheduledTime = DateTime(d.year, d.month, d.day, t.hour, t.minute);
+                        setDialogState(() {
+                          dateCtrl.text = '${scheduledTime.year}-${scheduledTime.month.toString().padLeft(2, '0')}-${scheduledTime.day.toString().padLeft(2, '0')} ${scheduledTime.hour.toString().padLeft(2, '0')}:${scheduledTime.minute.toString().padLeft(2, '0')}';
+                        });
+                      }
+                    }
+                  },
+                  style: const TextStyle(color: AppColors.textPrimary),
+                  decoration: AppStyles.inputDecoration(
+                    hintText: 'Select Match Date & Time',
+                    labelText: 'Match Date',
+                    prefixIcon: const Icon(Icons.calendar_month, color: AppColors.textMuted),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: venueCtrl,
+                  style: const TextStyle(color: AppColors.textPrimary),
+                  decoration: AppStyles.inputDecoration(hintText: 'Stadium / Field Location', labelText: 'Venue'),
+                ),
+              ],
+            ),
           ),
+          actions: [
+            TextButton(
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+              onPressed: () => Navigator.pop(ctx),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+              child: const Text('Schedule'),
+              onPressed: () async {
+                if (teamACtrl.text.isEmpty || teamBCtrl.text.isEmpty) return;
+                final toast = Provider.of<ToastProvider>(context, listen: false);
+                try {
+                  await ApiService.createMatch(MatchFixtureModel(
+                    teamA: teamACtrl.text.trim(),
+                    teamB: teamBCtrl.text.trim(),
+                    matchDate: scheduledTime.toIso8601String(),
+                    venue: venueCtrl.text.trim(),
+                    status: 'SCHEDULED',
+                  ));
+                  toast.showToast('Match scheduled successfully', 'success');
+                  if (ctx.mounted) Navigator.pop(ctx);
+                  _loadMatches();
+                } catch (_) {
+                  toast.showToast('Failed to schedule match', 'error');
+                }
+              },
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
-            onPressed: () => Navigator.pop(ctx),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
-            child: const Text('Schedule'),
-            onPressed: () async {
-              if (teamACtrl.text.isEmpty || teamBCtrl.text.isEmpty) return;
-              final toast = Provider.of<ToastProvider>(context, listen: false);
-              try {
-                await ApiService.createMatch(MatchFixtureModel(
-                  teamA: teamACtrl.text.trim(),
-                  teamB: teamBCtrl.text.trim(),
-                  matchDate: dateCtrl.text.trim(),
-                  venue: venueCtrl.text.trim(),
-                  status: 'SCHEDULED',
-                ));
-                toast.showToast('Match scheduled successfully', 'success');
-                Navigator.pop(ctx);
-                _loadMatches();
-              } catch (_) {
-                toast.showToast('Failed to schedule match', 'error');
-              }
-            },
-          ),
-        ],
       ),
     );
   }
@@ -175,7 +205,12 @@ class _MatchesManagementScreenState extends State<MatchesManagementScreen> {
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      Text(m.matchDate ?? 'TBD', style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+                                      Text(
+                                        m.matchDate != null && m.matchDate!.contains('T')
+                                            ? m.matchDate!.replaceAll('T', ' ').substring(0, m.matchDate!.length > 16 ? 16 : m.matchDate!.length)
+                                            : (m.matchDate ?? 'TBD'),
+                                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                                      ),
                                       Text(m.venue ?? 'Main Court', style: const TextStyle(color: AppColors.textMuted, fontSize: 11)),
                                     ],
                                   ),

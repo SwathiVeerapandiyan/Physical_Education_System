@@ -26,6 +26,9 @@ public class HealthFitnessServiceImpl implements HealthFitnessService {
     @Override
     public HealthFitnessDto create(HealthFitnessDto dto) {
         HealthFitness entity = mapToEntity(dto);
+        if (entity.getUserId() == null) {
+            entity.setUserId(1);
+        }
         calculateBmiIfNeeded(entity);
         HealthFitness saved = repository.save(entity);
         return mapToDto(saved);

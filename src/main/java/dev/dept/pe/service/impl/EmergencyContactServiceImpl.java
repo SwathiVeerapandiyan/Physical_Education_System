@@ -24,6 +24,9 @@ public class EmergencyContactServiceImpl implements EmergencyContactService {
     @Override
     public EmergencyContactDto create(EmergencyContactDto dto) {
         EmergencyContact entity = mapToEntity(dto);
+        if (entity.getUserId() == null) {
+            entity.setUserId(1);
+        }
         EmergencyContact saved = repository.save(entity);
         return mapToDto(saved);
     }

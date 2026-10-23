@@ -95,7 +95,7 @@ class _TournamentsManagementScreenState extends State<TournamentsManagementScree
                   description: descCtrl.text.trim(),
                 ));
                 toast.showToast('Tournament created successfully', 'success');
-                Navigator.pop(ctx);
+                if (ctx.mounted) Navigator.pop(ctx);
                 _loadTournaments();
               } catch (_) {
                 toast.showToast('Failed to create tournament', 'error');
@@ -221,7 +221,7 @@ class _TournamentsManagementScreenState extends State<TournamentsManagementScree
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: _getStatusColor(t.status).withOpacity(0.15),
+                                      color: _getStatusColor(t.status).withValues(alpha: 0.15),
                                       borderRadius: BorderRadius.circular(20),
                                       border: Border.all(color: _getStatusColor(t.status)),
                                     ),

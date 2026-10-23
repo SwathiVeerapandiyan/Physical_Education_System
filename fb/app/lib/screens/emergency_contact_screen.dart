@@ -4,6 +4,7 @@ import '../core/theme/app_colors.dart';
 import '../core/theme/app_styles.dart';
 import '../models/emergency_contact.dart';
 import '../providers/api_service.dart';
+import '../providers/auth_provider.dart';
 import '../providers/toast_provider.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/main_layout.dart';
@@ -79,14 +80,16 @@ class _EmergencyContactScreenState extends State<EmergencyContactScreen> {
             onPressed: () async {
               if (nameCtrl.text.isEmpty) return;
               final toast = Provider.of<ToastProvider>(context, listen: false);
+              final auth = Provider.of<AuthProvider>(context, listen: false);
               try {
                 await ApiService.createEmergencyContact(EmergencyContactModel(
+                  userId: auth.user?.id ?? 1,
                   contactName: nameCtrl.text.trim(),
                   relation: relCtrl.text.trim(),
                   phone: phoneCtrl.text.trim(),
                 ));
                 toast.showToast('Emergency contact added', 'success');
-                Navigator.pop(ctx);
+                if (ctx.mounted) Navigator.pop(ctx);
                 _loadContacts();
               } catch (_) {
                 toast.showToast('Failed to add contact', 'error');

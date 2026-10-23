@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/users-form")
+@RequestMapping({"/api/users-form", "/api/user-form"})
 @CrossOrigin(originPatterns = "*")
 public class UserFormController {
 

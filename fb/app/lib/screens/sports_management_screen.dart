@@ -104,7 +104,7 @@ class _SportsManagementScreenState extends State<SportsManagementScreen> {
                   description: descCtrl.text.trim(),
                 ));
                 toast.showToast('Sport added successfully', 'success');
-                Navigator.pop(ctx);
+                if (ctx.mounted) Navigator.pop(ctx);
                 _loadSports();
               } catch (e) {
                 toast.showToast('Failed to create sport', 'error');

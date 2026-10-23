@@ -88,7 +88,7 @@ class _GalleryManagementScreenState extends State<GalleryManagementScreen> {
                   active: true,
                 ));
                 toast.showToast('Media added to gallery', 'success');
-                Navigator.pop(ctx);
+                if (ctx.mounted) Navigator.pop(ctx);
                 _loadGallery();
               } catch (_) {
                 toast.showToast('Failed to add media', 'error');
@@ -153,7 +153,7 @@ class _GalleryManagementScreenState extends State<GalleryManagementScreen> {
                                     ),
                                     child: Center(
                                       child: item.mediaUrl != null && item.mediaUrl!.startsWith('http')
-                                          ? Image.network(item.mediaUrl!, fit: BoxFit.cover, errorBuilder: (_, __, ___) => const Icon(Icons.image, size: 40, color: AppColors.textMuted))
+                                          ? Image.network(item.mediaUrl!, fit: BoxFit.cover, errorBuilder: (ctx, err, stack) => const Icon(Icons.image, size: 40, color: AppColors.textMuted))
                                           : const Icon(Icons.photo_library, size: 40, color: AppColors.primary),
                                     ),
                                   ),

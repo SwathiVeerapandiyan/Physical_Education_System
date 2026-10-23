@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_styles.dart';
+import '../widgets/server_config_dialog.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
@@ -43,6 +44,12 @@ class LandingScreen extends StatelessWidget {
                     ],
                   ),
                   const Spacer(),
+                  IconButton(
+                    icon: const Icon(Icons.settings_ethernet, color: AppColors.textSecondary),
+                    tooltip: 'Server Connection Settings',
+                    onPressed: () => ServerConfigDialog.show(context),
+                  ),
+                  const SizedBox(width: 8),
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.textPrimary,

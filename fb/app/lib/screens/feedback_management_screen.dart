@@ -4,6 +4,7 @@ import '../core/theme/app_colors.dart';
 import '../core/theme/app_styles.dart';
 import '../models/feedback_item.dart';
 import '../providers/api_service.dart';
+import '../providers/auth_provider.dart';
 import '../providers/toast_provider.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/main_layout.dart';
@@ -74,15 +75,17 @@ class _FeedbackManagementScreenState extends State<FeedbackManagementScreen> {
             onPressed: () async {
               if (subjCtrl.text.isEmpty) return;
               final toast = Provider.of<ToastProvider>(context, listen: false);
+              final auth = Provider.of<AuthProvider>(context, listen: false);
               try {
                 await ApiService.createFeedback(FeedbackItemModel(
+                  userId: auth.user?.id ?? 1,
                   subject: subjCtrl.text.trim(),
                   message: msgCtrl.text.trim(),
                   rating: rating,
                   status: 'OPEN',
                 ));
                 toast.showToast('Feedback submitted. Thank you!', 'success');
-                Navigator.pop(ctx);
+                if (ctx.mounted) Navigator.pop(ctx);
                 _loadFeedback();
               } catch (_) {
                 toast.showToast('Failed to submit feedback', 'error');

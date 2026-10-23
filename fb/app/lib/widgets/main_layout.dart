@@ -5,6 +5,7 @@ import '../core/theme/app_styles.dart';
 import '../providers/auth_provider.dart';
 import '../providers/toast_provider.dart';
 import 'chatbot_widget.dart';
+import 'server_config_dialog.dart';
 
 class NavItemData {
   final String route;
@@ -249,6 +250,12 @@ class MainLayout extends StatelessWidget {
             ),
             const SizedBox(width: 16),
           ],
+          IconButton(
+            tooltip: 'Server Connection Settings',
+            icon: const Icon(Icons.settings_ethernet, color: AppColors.textSecondary, size: 20),
+            onPressed: () => ServerConfigDialog.show(context),
+          ),
+          const SizedBox(width: 8),
           if (screenWidth < 600)
             IconButton(
               tooltip: 'Logout',

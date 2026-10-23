@@ -4,6 +4,7 @@ import '../core/theme/app_colors.dart';
 import '../core/theme/app_styles.dart';
 import '../models/equipment_booking.dart';
 import '../providers/api_service.dart';
+import '../providers/auth_provider.dart';
 import '../providers/toast_provider.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/main_layout.dart';
@@ -73,14 +74,17 @@ class _EquipmentBookingScreenState extends State<EquipmentBookingScreen> {
             onPressed: () async {
               if (eqCtrl.text.isEmpty) return;
               final toast = Provider.of<ToastProvider>(context, listen: false);
+              final user = Provider.of<AuthProvider>(context, listen: false).user;
               try {
                 await ApiService.createEquipmentBooking(EquipmentBookingModel(
+                  userId: user?.id ?? 1,
                   equipmentName: eqCtrl.text.trim(),
                   quantity: int.tryParse(qtyCtrl.text) ?? 1,
+                  bookingDate: DateTime.now().toIso8601String().substring(0, 10),
                   status: 'PENDING',
                 ));
                 toast.showToast('Equipment request submitted', 'success');
-                Navigator.pop(ctx);
+                if (ctx.mounted) Navigator.pop(ctx);
                 _loadBookings();
               } catch (_) {
                 toast.showToast('Failed to submit request', 'error');

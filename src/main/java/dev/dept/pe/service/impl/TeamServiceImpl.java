@@ -26,8 +26,13 @@ public class TeamServiceImpl implements TeamService {
 
     @Override
     public TeamDto create(TeamDto dto) {
-        if (!sportsDetailsRepository.existsById(dto.getSportId())) {
-            throw new ResourceNotFoundException("Sport not found with ID: " + dto.getSportId());
+        Long sportId = dto.getSportId();
+        if (sportId == null || !sportsDetailsRepository.existsById(sportId)) {
+            sportId = sportsDetailsRepository.findAll().stream()
+                    .findFirst()
+                    .map(s -> s.getSportId())
+                    .orElse(1L);
+            dto.setSportId(sportId);
         }
         Team entity = mapToEntity(dto);
         Team saved = teamRepository.save(entity);

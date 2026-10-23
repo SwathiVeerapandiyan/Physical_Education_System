@@ -27,11 +27,13 @@ import 'screens/ground_booking_screen.dart';
 import 'screens/notice_board_screen.dart';
 import 'screens/feedback_management_screen.dart';
 import 'screens/health_fitness_screen.dart';
+import 'core/network/api_client.dart';
 import 'screens/emergency_contact_screen.dart';
 import 'screens/live_score_screen.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ApiClient.init();
   runApp(
     MultiProvider(
       providers: [

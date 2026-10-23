@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/theme/app_colors.dart';
 import '../models/dashboard_stats.dart';
+import '../models/user_form.dart';
 import '../providers/auth_provider.dart';
 import '../providers/api_service.dart';
 import '../providers/toast_provider.dart';
@@ -31,6 +32,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _fetchDashboardData() async {
+    final user = Provider.of<AuthProvider>(context, listen: false).user;
     setState(() => _loading = true);
 
     try {
@@ -39,22 +41,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
     } catch (_) {}
 
     try {
-      final user = Provider.of<AuthProvider>(context, listen: false).user;
       if (user?.email != null) {
         final forms = await ApiService.getAllUserForms();
-        final myForm = forms.firstWhere(
-          (f) => f.email?.toLowerCase() == user!.email?.toLowerCase(),
-          orElse: () => throw Exception('Not found'),
-        );
+        UserFormModel? myForm;
+        for (final f in forms) {
+          if (f.email?.trim().toLowerCase() == user!.email?.trim().toLowerCase()) {
+            myForm = f;
+            break;
+          }
+        }
 
-        _profileCreated = true;
+        if (myForm != null && myForm.id != null) {
+          _profileCreated = true;
+          try {
+            final family = await ApiService.getFamilyByCandidateId(myForm.id!);
+            if (family?.familyId != null) _familyAdded = true;
+          } catch (_) {}
 
-        if (myForm.id != null) {
-          final family = await ApiService.getFamilyByCandidateId(myForm.id!);
-          if (family?.familyId != null) _familyAdded = true;
-
-          final doc = await ApiService.getDocumentByCandidateId(myForm.id!);
-          if (doc?.documentId != null) _documentsUploaded = true;
+          try {
+            final doc = await ApiService.getDocumentByCandidateId(myForm.id!);
+            if (doc?.documentId != null) _documentsUploaded = true;
+          } catch (_) {}
         }
       }
     } catch (_) {}

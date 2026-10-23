@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping({"/api/auth", "/api/users", "/api/user"})
 @CrossOrigin(originPatterns = "*") // Allow frontend requests with credentials from any origin
 public class AuthController {
 
@@ -35,16 +35,16 @@ public class AuthController {
         String username = loginRequest.getUsername().trim();
         String password = loginRequest.getPassword();
 
-        // Try to find user by email, register number, name, username, or mobile number
-        Optional<User> userOpt = userRepository.findByEmail(username);
+        // Try to find user by email, register number, name, username, or mobile number (case-insensitive)
+        Optional<User> userOpt = userRepository.findByEmailIgnoreCase(username);
         if (userOpt.isEmpty()) {
-            userOpt = userRepository.findByRegisterNo(username);
+            userOpt = userRepository.findByRegisterNoIgnoreCase(username);
         }
         if (userOpt.isEmpty()) {
-            userOpt = userRepository.findByName(username);
+            userOpt = userRepository.findByUsernameIgnoreCase(username);
         }
         if (userOpt.isEmpty()) {
-            userOpt = userRepository.findByUsername(username);
+            userOpt = userRepository.findByNameIgnoreCase(username);
         }
         if (userOpt.isEmpty()) {
             try {
@@ -136,8 +136,39 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/users")
+    @GetMapping({"/users", ""})
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userRepository.findAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable("id") Long id) {
+        return userRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @RequestBody User updatedData) {
+        return userRepository.findById(id).map(user -> {
+            if (updatedData.getName() != null) user.setName(updatedData.getName());
+            if (updatedData.getDept() != null) user.setDept(updatedData.getDept());
+            if (updatedData.getEmail() != null) user.setEmail(updatedData.getEmail());
+            if (updatedData.getRegisterNo() != null) user.setRegisterNo(updatedData.getRegisterNo());
+            if (updatedData.getMobileNo() != null) user.setMobileNo(updatedData.getMobileNo());
+            if (updatedData.getRole() != null) user.setRole(updatedData.getRole());
+            if (updatedData.getUsername() != null) user.setUsername(updatedData.getUsername());
+            userRepository.save(user);
+            return ResponseEntity.ok(user);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
+        if (!userRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        userRepository.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
