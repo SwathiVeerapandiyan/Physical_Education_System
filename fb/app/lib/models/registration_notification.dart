@@ -21,6 +21,28 @@ class RegistrationNotification {
     this.isRead = false,
   });
 
+  bool get isStudentRegistration => type == 'NEW_STUDENT_REGISTRATION';
+  bool get isEquipmentBooking => type == 'EQUIPMENT_BOOKING';
+  bool get isGroundBooking => type == 'GROUND_BOOKING';
+
+  String get titleText {
+    if (isEquipmentBooking) return 'New Equipment Booking Request';
+    if (isGroundBooking) return 'New Ground Reservation Request';
+    return 'New Student Registered';
+  }
+
+  String get iconEmoji {
+    if (isEquipmentBooking) return '🏀';
+    if (isGroundBooking) return '🏟️';
+    return '🎓';
+  }
+
+  String get routeTarget {
+    if (isEquipmentBooking) return '/equipment-bookings';
+    if (isGroundBooking) return '/ground-bookings';
+    return '/users';
+  }
+
   factory RegistrationNotification.fromJson(Map<String, dynamic> json) {
     DateTime? parsedDate;
     if (json['registeredAt'] != null) {

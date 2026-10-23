@@ -22,6 +22,7 @@ public class DataInitializer implements CommandLineRunner {
     private final MatchRepository matchRepository;
     private final TournamentRepository tournamentRepository;
     private final TeamRepository teamRepository;
+    private final NoticeBoardRepository noticeBoardRepository;
 
     @Autowired
     public DataInitializer(UserRepository userRepository,
@@ -32,7 +33,8 @@ public class DataInitializer implements CommandLineRunner {
                            LiveScoreRepository liveScoreRepository,
                            MatchRepository matchRepository,
                            TournamentRepository tournamentRepository,
-                           TeamRepository teamRepository) {
+                           TeamRepository teamRepository,
+                           NoticeBoardRepository noticeBoardRepository) {
         this.userRepository = userRepository;
         this.userFormRepository = userFormRepository;
         this.familyDetailsRepository = familyDetailsRepository;
@@ -42,6 +44,7 @@ public class DataInitializer implements CommandLineRunner {
         this.matchRepository = matchRepository;
         this.tournamentRepository = tournamentRepository;
         this.teamRepository = teamRepository;
+        this.noticeBoardRepository = noticeBoardRepository;
     }
 
     @Override
@@ -51,6 +54,7 @@ public class DataInitializer implements CommandLineRunner {
         seedTournamentsAndTeams();
         seedMatches();
         seedLiveScores();
+        seedNotices();
     }
 
     private void seedUsers() {
@@ -227,6 +231,28 @@ public class DataInitializer implements CommandLineRunner {
             s2.setMatchDate(LocalDate.now());
             s2.setWinner("In Progress");
             liveScoreRepository.save(s2);
+        }
+    }
+
+    private void seedNotices() {
+        if (noticeBoardRepository.count() == 0) {
+            NoticeBoard n1 = new NoticeBoard();
+            n1.setTitle("Annual Inter-Collegiate Athletics Meet 2026");
+            n1.setCategory("TOURNAMENTS");
+            n1.setDescription("Registrations are officially open for the Annual Athletics Championship across Track and Field events. Interested student athletes must complete registration before end of this week.");
+            n1.setPublishDate(LocalDate.now());
+            n1.setIsActive(true);
+            n1.setCreatedBy("Department Administrator");
+            noticeBoardRepository.save(n1);
+
+            NoticeBoard n2 = new NoticeBoard();
+            n2.setTitle("Sports Ground & Equipment Maintenance Notice");
+            n2.setCategory("GENERAL");
+            n2.setDescription("Main Football Turf and Track Courts will undergo maintenance every Monday 6:00 AM - 9:00 AM. Ground reservations and equipment checkout are paused during this window.");
+            n2.setPublishDate(LocalDate.now());
+            n2.setIsActive(true);
+            n2.setCreatedBy("Department Administrator");
+            noticeBoardRepository.save(n2);
         }
     }
 }

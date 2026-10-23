@@ -11,6 +11,9 @@ class EquipmentBookingModel {
   final String? bookingStatus;
   final String? approvedBy;
   final String? remarks;
+  final String? studentName;
+  final String? studentRegisterNo;
+  final String? studentDept;
   final String? createdAt;
 
   EquipmentBookingModel({
@@ -26,6 +29,9 @@ class EquipmentBookingModel {
     this.bookingStatus,
     this.approvedBy,
     this.remarks,
+    this.studentName,
+    this.studentRegisterNo,
+    this.studentDept,
     this.createdAt,
   });
 
@@ -43,6 +49,9 @@ class EquipmentBookingModel {
       bookingStatus: (json['bookingStatus'] ?? json['status']) as String?,
       approvedBy: json['approvedBy'] as String?,
       remarks: json['remarks'] as String?,
+      studentName: json['studentName'] as String?,
+      studentRegisterNo: json['studentRegisterNo'] as String?,
+      studentDept: json['studentDept'] as String?,
       createdAt: json['createdAt'] as String?,
     );
   }

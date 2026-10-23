@@ -11,14 +11,19 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import dev.dept.pe.repository.UserRepository;
+import dev.dept.pe.model.User;
+
 @Service
 public class EquipmentBookingServiceImpl implements EquipmentBookingService {
 
     private final EquipmentBookingRepository repository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public EquipmentBookingServiceImpl(EquipmentBookingRepository repository) {
+    public EquipmentBookingServiceImpl(EquipmentBookingRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -96,6 +101,15 @@ public class EquipmentBookingServiceImpl implements EquipmentBookingService {
         dto.setRemarks(entity.getRemarks());
         dto.setCreatedAt(entity.getCreatedAt());
         dto.setUpdatedAt(entity.getUpdatedAt());
+
+        if (entity.getUserId() != null) {
+            userRepository.findById(entity.getUserId().longValue()).ifPresent(u -> {
+                dto.setStudentName(u.getName());
+                dto.setStudentRegisterNo(u.getRegisterNo());
+                dto.setStudentDept(u.getDept());
+            });
+        }
+
         return dto;
     }
 

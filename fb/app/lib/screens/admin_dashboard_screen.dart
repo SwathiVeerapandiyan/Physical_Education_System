@@ -30,6 +30,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   bool _loading = true;
   String _searchQuery = '';
   RegistrationNotification? _handledPopup;
+  int _pendingEquipmentCount = 0;
+  int _pendingGroundCount = 0;
 
   @override
   void initState() {
@@ -57,6 +59,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       if (mounted) setState(() => _userForms = forms);
     } catch (_) {}
 
+    try {
+      final eq = await ApiService.getEquipmentBookings(status: 'Pending');
+      if (mounted) setState(() => _pendingEquipmentCount = eq.length);
+    } catch (_) {}
+
+    try {
+      final grounds = await ApiService.getGroundBookings(status: 'Pending');
+      if (mounted) setState(() => _pendingGroundCount = grounds.length);
+    } catch (_) {}
+
     if (mounted) setState(() => _loading = false);
   }
 
@@ -64,8 +76,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     if (_handledPopup?.notificationId == notification.notificationId) return;
     _handledPopup = notification;
 
-    // Refresh user list automatically to show newly registered student
+    // Refresh data automatically
     _loadAdminData();
+
+    final isBooking = notification.isEquipmentBooking || notification.isGroundBooking;
 
     showDialog(
       context: context,
@@ -74,23 +88,26 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         backgroundColor: AppColors.bgSecondary,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: AppColors.primary, width: 1.5),
+          side: BorderSide(
+            color: isBooking ? AppColors.warning : AppColors.primary,
+            width: 1.5,
+          ),
         ),
         title: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: AppColors.primaryGlow,
+                color: isBooking ? AppColors.warning.withValues(alpha: 0.2) : AppColors.primaryGlow,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.notifications_active, color: AppColors.primary, size: 24),
+              child: Text(notification.iconEmoji, style: const TextStyle(fontSize: 22)),
             ),
             const SizedBox(width: 12),
-            const Expanded(
+            Expanded(
               child: Text(
-                'New Student Registered!',
-                style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
+                notification.titleText,
+                style: const TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
               ),
             ),
           ],
@@ -99,9 +116,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'A new student account has registered successfully and was saved to the database.',
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+            Text(
+              isBooking
+                  ? 'A student has submitted a new reservation request awaiting administrative approval.'
+                  : 'A new student account has registered successfully and was saved to the database.',
+              style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
             ),
             const SizedBox(height: 16),
             Container(
@@ -114,12 +133,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               child: Column(
                 children: [
                   _dossierRow('Student Name', notification.studentName),
-                  const Divider(height: 12, color: AppColors.borderColor),
-                  _dossierRow('Register No', notification.registerNo),
-                  const Divider(height: 12, color: AppColors.borderColor),
-                  _dossierRow('Department', notification.dept),
-                  const Divider(height: 12, color: AppColors.borderColor),
-                  _dossierRow('Email', notification.email),
+                  if (notification.registerNo.isNotEmpty) ...[
+                    const Divider(height: 12, color: AppColors.borderColor),
+                    _dossierRow('Register No', notification.registerNo),
+                  ],
+                  if (isBooking) ...[
+                    const Divider(height: 12, color: AppColors.borderColor),
+                    _dossierRow('Details', notification.dept),
+                  ] else ...[
+                    const Divider(height: 12, color: AppColors.borderColor),
+                    _dossierRow('Department', notification.dept),
+                    const Divider(height: 12, color: AppColors.borderColor),
+                    _dossierRow('Email', notification.email),
+                  ],
                   if (notification.mobileNo != null) ...[
                     const Divider(height: 12, color: AppColors.borderColor),
                     _dossierRow('Mobile No', notification.mobileNo.toString()),
@@ -139,16 +165,24 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           ),
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
+              backgroundColor: isBooking ? AppColors.warning : AppColors.primary,
+              foregroundColor: isBooking ? Colors.black : Colors.white,
             ),
             onPressed: () {
               Navigator.pop(ctx);
               Provider.of<NotificationProvider>(context, listen: false).dismissLatestPopup();
-              _inspectStudentByEmail(notification.email);
+              if (isBooking) {
+                Navigator.pushNamed(context, notification.routeTarget).then((_) => _loadAdminData());
+              } else {
+                _inspectStudentByEmail(notification.email);
+              }
             },
-            icon: const Icon(Icons.visibility, size: 16),
-            label: const Text('Inspect Dossier'),
+            icon: Icon(isBooking ? Icons.arrow_forward : Icons.visibility, size: 16),
+            label: Text(
+              notification.isEquipmentBooking
+                  ? 'Review Equipment'
+                  : (notification.isGroundBooking ? 'Review Grounds' : 'Inspect Dossier'),
+            ),
           ),
         ],
       ),
@@ -180,7 +214,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         const Icon(Icons.notifications_outlined, color: AppColors.primary),
                         const SizedBox(width: 8),
                         const Text(
-                          'Registration Notifications',
+                          'Department Notifications',
                           style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(width: 8),
@@ -202,7 +236,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 Expanded(
                   child: np.notifications.isEmpty
                       ? const Center(
-                          child: Text('No student registrations recorded yet.', style: TextStyle(color: AppColors.textMuted)),
+                          child: Text('No department notifications recorded yet.', style: TextStyle(color: AppColors.textMuted)),
                         )
                       : ListView.separated(
                           itemCount: np.notifications.length,
@@ -212,14 +246,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             return ListTile(
                               leading: CircleAvatar(
                                 backgroundColor: n.isRead ? AppColors.bgTertiary : AppColors.primaryGlow,
-                                child: Icon(
-                                  Icons.person_add,
-                                  color: n.isRead ? AppColors.textMuted : AppColors.primary,
-                                  size: 18,
-                                ),
+                                child: Text(n.iconEmoji, style: const TextStyle(fontSize: 16)),
                               ),
                               title: Text(
-                                n.studentName,
+                                '${n.titleText}: ${n.studentName}',
                                 style: TextStyle(
                                   color: AppColors.textPrimary,
                                   fontWeight: n.isRead ? FontWeight.normal : FontWeight.bold,
@@ -227,7 +257,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                 ),
                               ),
                               subtitle: Text(
-                                '${n.registerNo} • ${n.dept} • ${n.email}',
+                                n.isStudentRegistration
+                                    ? '${n.registerNo} • ${n.dept} • ${n.email}'
+                                    : '${n.registerNo.isNotEmpty ? n.registerNo + ' • ' : ''}${n.dept}',
                                 style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
                               ),
                               trailing: IconButton(
@@ -235,7 +267,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                 onPressed: () {
                                   if (n.notificationId != null) np.markAsRead(n.notificationId!);
                                   Navigator.pop(ctx);
-                                  _inspectStudentByEmail(n.email);
+                                  if (n.isStudentRegistration) {
+                                    _inspectStudentByEmail(n.email);
+                                  } else {
+                                    Navigator.pushNamed(context, n.routeTarget).then((_) => _loadAdminData());
+                                  }
                                 },
                               ),
                             );
@@ -446,6 +482,69 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   ),
                   const SizedBox(height: 20),
 
+                  // Pending Booking Approvals Alert Banner (if any)
+                  if (_pendingEquipmentCount > 0 || _pendingGroundCount > 0)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: GlassCard(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppColors.warning.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: AppColors.warning),
+                              ),
+                              child: const Icon(Icons.pending_actions, color: AppColors.warning, size: 28),
+                            ),
+                            const SizedBox(width: 14),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Pending Student Booking Approvals',
+                                    style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${_pendingEquipmentCount > 0 ? '$_pendingEquipmentCount Equipment request(s) ' : ''}'
+                                    '${_pendingEquipmentCount > 0 && _pendingGroundCount > 0 ? '• ' : ''}'
+                                    '${_pendingGroundCount > 0 ? '$_pendingGroundCount Ground reservation(s) ' : ''}'
+                                    'awaiting administrative review.',
+                                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Wrap(
+                              spacing: 8,
+                              runSpacing: 6,
+                              children: [
+                                if (_pendingEquipmentCount > 0)
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.warning, foregroundColor: Colors.black),
+                                    onPressed: () => Navigator.pushNamed(context, '/equipment-bookings').then((_) => _loadAdminData()),
+                                    icon: const Icon(Icons.sports_basketball, size: 14),
+                                    label: Text('Equipment ($_pendingEquipmentCount)'),
+                                  ),
+                                if (_pendingGroundCount > 0)
+                                  ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+                                    onPressed: () => Navigator.pushNamed(context, '/ground-bookings').then((_) => _loadAdminData()),
+                                    icon: const Icon(Icons.stadium, size: 14),
+                                    label: Text('Grounds ($_pendingGroundCount)'),
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
                   // Admin KPI Cards
                   LayoutBuilder(
                     builder: (context, constraints) {
@@ -460,8 +559,20 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         children: [
                           _KpiTile(title: 'Total Students', value: _users.length, subtitle: 'Active users in DB', color: AppColors.primary, icon: Icons.people),
                           _KpiTile(title: 'Completed Profiles', value: _stats.totalCandidates, subtitle: 'UserForm records', color: AppColors.success, icon: Icons.how_to_reg),
-                          _KpiTile(title: 'Athletes (Male)', value: _stats.totalMaleStudents, subtitle: 'Department roster', color: AppColors.secondary, icon: Icons.sports),
-                          _KpiTile(title: 'Athletes (Female)', value: _stats.totalFemaleStudents, subtitle: 'Department roster', color: AppColors.accent, icon: Icons.sports_tennis),
+                          _KpiTile(
+                            title: 'Pending Equipment',
+                            value: _pendingEquipmentCount,
+                            subtitle: _pendingEquipmentCount > 0 ? 'Action required' : 'All clear',
+                            color: _pendingEquipmentCount > 0 ? AppColors.warning : AppColors.textMuted,
+                            icon: Icons.sports_basketball,
+                          ),
+                          _KpiTile(
+                            title: 'Pending Grounds',
+                            value: _pendingGroundCount,
+                            subtitle: _pendingGroundCount > 0 ? 'Action required' : 'All clear',
+                            color: _pendingGroundCount > 0 ? AppColors.accent : AppColors.textMuted,
+                            icon: Icons.stadium,
+                          ),
                         ],
                       );
                     },
@@ -630,8 +741,20 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                           _ModuleCard(icon: '🛡️', title: 'Teams & Squads', desc: 'Rosters & team members', route: '/teams'),
                           _ModuleCard(icon: '⚽', title: 'Match Fixtures', desc: 'Fixtures, dates & venues', route: '/matches'),
                           _ModuleCard(icon: '⚡', title: 'Live Scoreboard', desc: 'Update match points & sets', route: '/live-scores'),
-                          _ModuleCard(icon: '🏀', title: 'Equipment Bookings', desc: 'Gear reservation requests', route: '/equipment-bookings'),
-                          _ModuleCard(icon: '🏟️', title: 'Ground Bookings', desc: 'Field reservation approvals', route: '/ground-bookings'),
+                          _ModuleCard(
+                            icon: '🏀',
+                            title: 'Equipment Bookings',
+                            desc: 'Gear reservation requests',
+                            route: '/equipment-bookings',
+                            badgeText: _pendingEquipmentCount > 0 ? '$_pendingEquipmentCount Pending' : null,
+                          ),
+                          _ModuleCard(
+                            icon: '🏟️',
+                            title: 'Ground Bookings',
+                            desc: 'Field reservation approvals',
+                            route: '/ground-bookings',
+                            badgeText: _pendingGroundCount > 0 ? '$_pendingGroundCount Pending' : null,
+                          ),
                           _ModuleCard(icon: '📢', title: 'Notice Board', desc: 'Post bulletins & alerts', route: '/notices'),
                           _ModuleCard(icon: '💬', title: 'Feedback & Reviews', desc: 'Student inquiries & feedback', route: '/feedback'),
                           _ModuleCard(icon: '🩺', title: 'Health & Fitness', desc: 'BMI & medical records', route: '/health-fitness'),
@@ -691,8 +814,9 @@ class _ModuleCard extends StatelessWidget {
   final String title;
   final String desc;
   final String route;
+  final String? badgeText;
 
-  const _ModuleCard({required this.icon, required this.title, required this.desc, required this.route});
+  const _ModuleCard({required this.icon, required this.title, required this.desc, required this.route, this.badgeText});
 
   @override
   Widget build(BuildContext context) {
@@ -704,7 +828,25 @@ class _ModuleCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(icon, style: const TextStyle(fontSize: 26)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(icon, style: const TextStyle(fontSize: 26)),
+                if (badgeText != null)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: AppColors.warning.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.warning),
+                    ),
+                    child: Text(
+                      badgeText!,
+                      style: const TextStyle(color: AppColors.warning, fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+              ],
+            ),
             const SizedBox(height: 10),
             Text(
               title,

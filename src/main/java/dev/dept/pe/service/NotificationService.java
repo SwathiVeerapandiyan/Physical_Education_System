@@ -80,6 +80,38 @@ public class NotificationService {
         return notification;
     }
 
+    public RegistrationNotificationDto notifyBookingRequest(String type, String studentName, String email, String registerNo, String details, Long mobileNo) {
+        RegistrationNotificationDto notification = new RegistrationNotificationDto(
+                idSequence.getAndIncrement(),
+                studentName,
+                email,
+                registerNo,
+                details,
+                mobileNo,
+                LocalDateTime.now()
+        );
+        notification.setType(type); // EQUIPMENT_BOOKING or GROUND_BOOKING
+
+        recentNotifications.add(0, notification);
+        if (recentNotifications.size() > 50) {
+            recentNotifications.remove(recentNotifications.size() - 1);
+        }
+
+        List<SseEmitter> deadEmitters = new ArrayList<>();
+        for (SseEmitter emitter : emitters) {
+            try {
+                emitter.send(SseEmitter.event()
+                        .name("BOOKING_REQUESTED")
+                        .data(notification));
+            } catch (Exception e) {
+                deadEmitters.add(emitter);
+            }
+        }
+        emitters.removeAll(deadEmitters);
+
+        return notification;
+    }
+
     public List<RegistrationNotificationDto> getRecentNotifications() {
         return Collections.unmodifiableList(recentNotifications);
     }

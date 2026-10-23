@@ -12,6 +12,9 @@ class GroundBookingModel {
   final String? paymentStatus;
   final String? approvedBy;
   final String? remarks;
+  final String? studentName;
+  final String? studentRegisterNo;
+  final String? studentDept;
   final String? createdAt;
 
   GroundBookingModel({
@@ -28,6 +31,9 @@ class GroundBookingModel {
     this.paymentStatus,
     this.approvedBy,
     this.remarks,
+    this.studentName,
+    this.studentRegisterNo,
+    this.studentDept,
     this.createdAt,
   });
 
@@ -50,6 +56,9 @@ class GroundBookingModel {
       paymentStatus: json['paymentStatus'] as String?,
       approvedBy: json['approvedBy'] as String?,
       remarks: (json['remarks'] ?? json['purpose']) as String?,
+      studentName: json['studentName'] as String?,
+      studentRegisterNo: json['studentRegisterNo'] as String?,
+      studentDept: json['studentDept'] as String?,
       createdAt: json['createdAt'] as String?,
     );
   }

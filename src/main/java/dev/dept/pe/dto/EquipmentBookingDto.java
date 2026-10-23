@@ -18,6 +18,9 @@ public class EquipmentBookingDto {
     private String bookingStatus = "Pending";
     private String approvedBy;
     private String remarks;
+    private String studentName;
+    private String studentRegisterNo;
+    private String studentDept;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -58,6 +61,15 @@ public class EquipmentBookingDto {
 
     public String getRemarks() { return remarks; }
     public void setRemarks(String remarks) { this.remarks = remarks; }
+
+    public String getStudentName() { return studentName; }
+    public void setStudentName(String studentName) { this.studentName = studentName; }
+
+    public String getStudentRegisterNo() { return studentRegisterNo; }
+    public void setStudentRegisterNo(String studentRegisterNo) { this.studentRegisterNo = studentRegisterNo; }
+
+    public String getStudentDept() { return studentDept; }
+    public void setStudentDept(String studentDept) { this.studentDept = studentDept; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

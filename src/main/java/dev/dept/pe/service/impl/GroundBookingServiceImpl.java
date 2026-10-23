@@ -11,14 +11,19 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import dev.dept.pe.repository.UserRepository;
+import dev.dept.pe.model.User;
+
 @Service
 public class GroundBookingServiceImpl implements GroundBookingService {
 
     private final GroundBookingRepository repository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public GroundBookingServiceImpl(GroundBookingRepository repository) {
+    public GroundBookingServiceImpl(GroundBookingRepository repository, UserRepository userRepository) {
         this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -96,6 +101,15 @@ public class GroundBookingServiceImpl implements GroundBookingService {
         dto.setApprovedBy(entity.getApprovedBy());
         dto.setRemarks(entity.getRemarks());
         dto.setCreatedAt(entity.getCreatedAt());
+
+        if (entity.getUserId() != null) {
+            userRepository.findById(entity.getUserId().longValue()).ifPresent(u -> {
+                dto.setStudentName(u.getName());
+                dto.setStudentRegisterNo(u.getRegisterNo());
+                dto.setStudentDept(u.getDept());
+            });
+        }
+
         return dto;
     }
 
