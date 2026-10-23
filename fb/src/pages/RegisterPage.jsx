@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
@@ -111,7 +111,7 @@ const RegisterPage = () => {
 
       <div className="register-container glass-card">
         <div className="register-header">
-          <span className="register-logo-emoji">📝</span>
+          <span className="register-logo-emoji">PE</span>
           <h2>Candidate Registration</h2>
           <p>Create an account to register in the PE Management System</p>
         </div>
@@ -225,7 +225,7 @@ const RegisterPage = () => {
         <div className="register-footer">
           <p>Already have an account? <Link to="/login">Sign in here</Link></p>
           <div className="back-link">
-            <Link to="/">← Back to Landing Page</Link>
+            <Link to="/"> Back to Landing Page</Link>
           </div>
         </div>
       </div>

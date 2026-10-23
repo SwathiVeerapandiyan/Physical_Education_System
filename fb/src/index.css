@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --font-heading: 'Cinzel', 'Outfit', Georgia, serif;
+  --font-heading: 'Plus Jakarta Sans', 'Outfit', -apple-system, sans-serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, sans-serif;
 
   /* ── MCC Light Theme – White Shade Backgrounds ── */
@@ -94,10 +94,10 @@ html, body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Cinzel', 'Outfit', Georgia, serif;
+  font-family: var(--font-heading);
   color: var(--text-primary);
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   line-height: 1.25;
 }
 

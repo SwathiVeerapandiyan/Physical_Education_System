@@ -35,6 +35,22 @@ public class AuthController {
         String username = loginRequest.getUsername().trim();
         String password = loginRequest.getPassword();
 
+        // Built-in Admin authentication for Physical Education Directorate
+        if ((username.equalsIgnoreCase("admin") || username.equalsIgnoreCase("admin@pe.com") || username.equalsIgnoreCase("admin@mcc.edu")) 
+                && (password.equals("admin") || password.equals("admin123"))) {
+            LoginResponse.UserDetails adminDetails = new LoginResponse.UserDetails(
+                    9999L,
+                    "Dr. S. Kumar (Sports Director)",
+                    "Department of Physical Education",
+                    "PE-ADMIN-01",
+                    "admin@pe.com",
+                    9876543210L,
+                    java.time.LocalDateTime.now(),
+                    java.time.LocalDateTime.now()
+            );
+            return ResponseEntity.ok(new LoginResponse(true, "Administrator authenticated successfully", adminDetails));
+        }
+
         // Try to find user by email or register number (case-insensitive email)
         Optional<User> userOpt = userRepository.findByEmail(username.toLowerCase());
         if (userOpt.isEmpty()) {

@@ -1,3 +1,8 @@
+/* =====================================================================
+   LOGIN PAGE STYLES - ADMIN & CANDIDATE ACCESS
+   Preserves original collegiate MCC Crimson, Maroon & Gold palette
+   ===================================================================== */
+
 .login-wrapper {
   min-height: 100vh;
   display: flex;
@@ -38,51 +43,197 @@
 
 .login-container {
   width: 100%;
-  max-width: 460px;
+  max-width: 470px;
   background: #ffffff;
-  border: 1px solid rgba(159, 18, 57, 0.18);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10), 0 0 20px rgba(159, 18, 57, 0.06);
+  border: 1px solid rgba(159, 18, 57, 0.16);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.08), 0 2px 10px rgba(123, 17, 41, 0.04);
   z-index: 1;
-  padding: 40px !important;
-  border-radius: var(--radius-md);
-  animation: fadeIn 0.4s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+  padding: 34px !important;
+  border-radius: 16px;
+  animation: fadeIn 0.35s ease-out forwards;
 }
 
-.login-container:hover {
-  transform: none !important;
+/* Mode Switcher Tabs */
+.login-mode-switcher {
+  display: flex;
+  background: #f5f3ef;
+  padding: 4px;
+  border-radius: 10px;
+  gap: 4px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(159, 18, 57, 0.08);
 }
 
-@media (max-width: 480px) {
-  .login-container {
-    padding: 24px !important;
-  }
+.mode-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  color: #4b3f52;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
+.mode-tab-btn.active.admin-active {
+  background: #9f1239;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(159, 18, 57, 0.25);
+}
+
+.mode-tab-btn.active.student-active {
+  background: #ffffff;
+  color: #1a1218;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* Header */
 .login-header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 22px;
 }
 
-.login-logo-emoji {
-  font-size: 48px;
-  display: block;
-  margin-bottom: 12px;
+.login-badge-seal {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #9f1239 0%, #7b1129 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px auto;
+  box-shadow: 0 4px 12px rgba(159, 18, 57, 0.25);
+  border: 1px solid rgba(252, 232, 189, 0.3);
 }
 
 .login-header h2 {
-  font-size: 1.75rem;
-  margin-bottom: 8px;
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: #1a1218;
+  margin-bottom: 4px;
+  letter-spacing: -0.01em;
 }
 
 .login-header p {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
+  color: #8a7a8f;
+  font-size: 0.84rem;
+  margin: 0;
+  line-height: 1.4;
 }
 
+/* Demo Helper Callout */
+.admin-demo-callout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fdf8ed;
+  border: 1px solid rgba(181, 136, 62, 0.35);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 20px;
+  gap: 12px;
+}
+
+.demo-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #92400e;
+  background: rgba(181, 136, 62, 0.15);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-bottom: 3px;
+}
+
+.demo-info-text p {
+  font-size: 0.78rem;
+  color: #451a03;
+  margin: 0;
+}
+
+.btn-auto-fill {
+  background: #b5883e;
+  color: #ffffff;
+  border: none;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+}
+
+.btn-auto-fill:hover {
+  background: #966f2d;
+}
+
+/* Form */
 .login-form {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #4b3f52;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid rgba(159, 18, 57, 0.2);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #1a1218;
+  background: #ffffff;
+  transition: all 0.18s ease;
+  outline: none;
+}
+
+.form-control:focus {
+  border-color: #9f1239;
+  box-shadow: 0 0 0 3px rgba(159, 18, 57, 0.12);
+}
+
+.form-control.is-invalid {
+  border-color: #dc2626;
+  background: #fff8f8;
+}
+
+.invalid-feedback {
+  font-size: 0.74rem;
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.admin-submit-btn {
+  background: linear-gradient(135deg, #9f1239 0%, #7b1129 100%) !important;
+  box-shadow: 0 4px 12px rgba(159, 18, 57, 0.25);
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding: 11px 18px;
+}
+
+.admin-submit-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
 }
 
 .w-full {
@@ -93,25 +244,49 @@
   margin-top: 16px;
 }
 
+/* Footer */
 .login-footer {
-  margin-top: 32px;
+  margin-top: 24px;
   text-align: center;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
+  font-size: 0.84rem;
+  color: #8a7a8f;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .login-footer a {
-  font-weight: 600;
+  color: #9f1239;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+.admin-security-note {
+  font-size: 0.74rem;
+  color: #8a7a8f;
+  margin: 0;
 }
 
 .back-link a {
-  font-size: 0.85rem;
-  color: var(--text-muted);
+  font-size: 0.8rem;
+  color: #8a7a8f;
 }
 
 .back-link a:hover {
-  color: var(--text-primary);
+  color: #1a1218;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 22px !important;
+  }
 }

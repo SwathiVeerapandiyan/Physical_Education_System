@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿﻿import React, { useState, useEffect } from 'react';
 import { healthFitnessService } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import Spinner from '../components/Spinner';
@@ -88,11 +88,11 @@ const HealthFitnessManagement = () => {
     <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ margin: 0, color: '#fff' }}>🩺 Health & Fitness Trackers</h2>
+          <h2 style={{ margin: 0, color: '#fff' }}> Health & Fitness Trackers</h2>
           <p style={{ margin: '0.25rem 0 0 0', color: '#94a3b8' }}>Monitor student health metrics, BMI, and medical records.</p>
         </div>
         <button onClick={handleOpenCreate} style={{ padding: '0.75rem 1.4rem', background: '#06b6d4', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 600, cursor: 'pointer' }}>
-          ➕ Add Health Record
+           Add Health Record
         </button>
       </div>
 
@@ -106,14 +106,14 @@ const HealthFitnessManagement = () => {
                   {item.bloodGroup || 'N/A'}
                 </span>
               </div>
-              <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.88rem' }}>📏 Height: {item.heightCm} cm | ⚖️ Weight: {item.weightKg} kg</p>
-              <p style={{ margin: 0, color: '#38bdf8', fontSize: '0.88rem', fontWeight: 600 }}>📊 BMI: {item.bmi || 'N/A'} | ❤️ Heart Rate: {item.heartRate || 'N/A'} bpm</p>
+              <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.88rem' }}> Height: {item.heightCm} cm | ️ Weight: {item.weightKg} kg</p>
+              <p style={{ margin: 0, color: '#38bdf8', fontSize: '0.88rem', fontWeight: 600 }}> BMI: {item.bmi || 'N/A'} | ️ Heart Rate: {item.heartRate || 'N/A'} bpm</p>
               <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.82rem' }}>Fitness: {item.fitnessLevel || 'Standard'} | Last Checkup: {item.lastCheckup || 'N/A'}</p>
               {item.emergencyNotes && <p style={{ margin: 0, color: '#64748b', fontSize: '0.82rem' }}>Notes: {item.emergencyNotes}</p>}
 
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', paddingTop: '0.8rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <button onClick={() => handleOpenEdit(item)} style={{ padding: '0.4rem 0.8rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>✏️ Edit</button>
-                <button onClick={() => setDeletingId(item.recordId)} style={{ padding: '0.4rem 0.8rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>🗑️ Delete</button>
+                <button onClick={() => handleOpenEdit(item)} style={{ padding: '0.4rem 0.8rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}> Edit</button>
+                <button onClick={() => setDeletingId(item.recordId)} style={{ padding: '0.4rem 0.8rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}> Delete</button>
               </div>
             </div>
           ))}

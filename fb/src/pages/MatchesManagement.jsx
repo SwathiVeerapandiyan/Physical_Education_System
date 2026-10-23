@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { matchService, tournamentService, teamService } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import Spinner from '../components/Spinner';
@@ -99,10 +99,10 @@ const MatchesManagement = () => {
     try {
       if (editingId) {
         await matchService.update(editingId, formData);
-        showToast('Match updated successfully! ⚽', 'success');
+        showToast('Match updated successfully.', 'success');
       } else {
         await matchService.create(formData);
-        showToast('New Match scheduled! ⚽', 'success');
+        showToast('New Match scheduled! ', 'success');
       }
       setShowModal(false);
       fetchData();
@@ -148,7 +148,7 @@ const MatchesManagement = () => {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span style={{ fontSize: '36px' }}>⚽</span>
+            <span style={{ fontSize: '36px' }}></span>
             <div>
               <h2 style={{ fontSize: '1.5rem', margin: 0 }}>Matches &amp; Fixtures Schedule</h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '4px' }}>
@@ -158,7 +158,7 @@ const MatchesManagement = () => {
           </div>
 
           <button className="btn-primary" onClick={handleOpenAddModal} style={{ gap: '8px', display: 'flex', alignItems: 'center' }}>
-            <span>➕</span> Schedule Match
+            <span></span> Schedule Match
           </button>
         </div>
 
@@ -195,7 +195,7 @@ const MatchesManagement = () => {
             >
               <div>
                 <div style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700, marginBottom: '10px' }}>
-                  🏆 {getTournamentName(match.tournamentId)}
+                   {getTournamentName(match.tournamentId)}
                 </div>
 
                 {/* Team Vs Team Box */}
@@ -243,8 +243,8 @@ const MatchesManagement = () => {
                 </div>
 
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                  <div>📍 <strong>Venue:</strong> {match.venue || 'TBD'}</div>
-                  <div>🕒 <strong>Scheduled:</strong> {match.matchDate ? new Date(match.matchDate).toLocaleString() : 'TBD'}</div>
+                  <div> <strong>Venue:</strong> {match.venue || 'TBD'}</div>
+                  <div> <strong>Scheduled:</strong> {match.matchDate ? new Date(match.matchDate).toLocaleString() : 'TBD'}</div>
                 </div>
               </div>
 
@@ -264,10 +264,10 @@ const MatchesManagement = () => {
 
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button className="btn-secondary" onClick={() => handleOpenEditModal(match)} style={{ padding: '6px 10px', fontSize: '0.8rem' }}>
-                    ✏️ Edit
+                     Edit
                   </button>
                   <button className="btn-secondary" onClick={() => handleDelete(match.matchId)} style={{ padding: '6px 10px', fontSize: '0.8rem', color: 'var(--error)' }}>
-                    🗑️
+                    
                   </button>
                 </div>
               </div>
@@ -277,7 +277,7 @@ const MatchesManagement = () => {
 
         {filteredMatches.length === 0 && (
           <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
-            <p style={{ fontSize: '2rem', marginBottom: '10px' }}>⚽</p>
+            <p style={{ fontSize: '2rem', marginBottom: '10px' }}></p>
             <p>No matches scheduled yet.</p>
           </div>
         )}
@@ -292,7 +292,7 @@ const MatchesManagement = () => {
         }}>
           <div className="glass-card animate-fade-in" style={{ width: '100%', maxWidth: '500px', padding: '28px' }}>
             <h3 style={{ margin: '0 0 20px 0', fontSize: '1.25rem' }}>
-              {editingId ? '✏️ Update Match' : '➕ Schedule Match'}
+              {editingId ? ' Update Match' : ' Schedule Match'}
             </h3>
 
             <form onSubmit={handleSubmit}>

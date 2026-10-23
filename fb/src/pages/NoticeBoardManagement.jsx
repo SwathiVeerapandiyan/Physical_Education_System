@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿﻿import React, { useState, useEffect } from 'react';
 import { noticeBoardService } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import Spinner from '../components/Spinner';
@@ -91,11 +91,11 @@ const NoticeBoardManagement = () => {
     <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ margin: 0, color: '#fff' }}>📢 Notice Board</h2>
+          <h2 style={{ margin: 0, color: '#fff' }}> Notice Board</h2>
           <p style={{ margin: '0.25rem 0 0 0', color: '#94a3b8' }}>Publish announcements, alerts, and tournament news.</p>
         </div>
         <button onClick={handleOpenCreate} style={{ padding: '0.75rem 1.4rem', background: '#f59e0b', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 600, cursor: 'pointer' }}>
-          ➕ Post Notice
+           Post Notice
         </button>
       </div>
 
@@ -120,11 +120,11 @@ const NoticeBoardManagement = () => {
                 </span>
               </div>
               <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.88rem' }}>{item.description}</p>
-              <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.82rem' }}>🏷️ Category: {item.category || 'General'} | 📅 Date: {item.publishDate}</p>
+              <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.82rem' }}>️ Category: {item.category || 'General'} |  Date: {item.publishDate}</p>
 
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', paddingTop: '0.8rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <button onClick={() => handleOpenEdit(item)} style={{ padding: '0.4rem 0.8rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>✏️ Edit</button>
-                <button onClick={() => setDeletingId(item.noticeId)} style={{ padding: '0.4rem 0.8rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>🗑️ Delete</button>
+                <button onClick={() => handleOpenEdit(item)} style={{ padding: '0.4rem 0.8rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}> Edit</button>
+                <button onClick={() => setDeletingId(item.noticeId)} style={{ padding: '0.4rem 0.8rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}> Delete</button>
               </div>
             </div>
           ))}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿﻿import React, { useState, useEffect } from 'react';
 import { tournamentService, tournamentRegistrationService, teamService } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import Spinner from '../components/Spinner';
@@ -90,10 +90,10 @@ const TournamentsManagement = () => {
     try {
       if (editingId) {
         await tournamentService.update(editingId, formData);
-        showToast('Tournament updated successfully! 🏆', 'success');
+        showToast('Tournament updated successfully.', 'success');
       } else {
         await tournamentService.create(formData);
-        showToast('New Tournament created! 🏆', 'success');
+        showToast('New tournament created successfully.', 'success');
       }
       setShowModal(false);
       fetchData();
@@ -135,7 +135,7 @@ const TournamentsManagement = () => {
         teamId: Number(selectedTeamId),
         status: 'Approved'
       });
-      showToast('Team registered for tournament successfully! 🎉', 'success');
+      showToast('Team registered for tournament successfully.', 'success');
       setShowRegisterModal(false);
     } catch (err) {
       showToast(err.message || 'Failed to register team', 'error');
@@ -162,7 +162,7 @@ const TournamentsManagement = () => {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span style={{ fontSize: '36px' }}>🏆</span>
+            <Icon name="trophy" size={32} color="var(--primary)" />
             <div>
               <h2 style={{ fontSize: '1.5rem', margin: 0 }}>Tournament Management</h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '4px' }}>
@@ -172,7 +172,7 @@ const TournamentsManagement = () => {
           </div>
 
           <button className="btn-primary" onClick={handleOpenAddModal} style={{ gap: '8px', display: 'flex', alignItems: 'center' }}>
-            <span>➕</span> Create Tournament
+            Create Tournament
           </button>
         </div>
 
@@ -182,7 +182,7 @@ const TournamentsManagement = () => {
             <input
               type="text"
               className="form-control"
-              placeholder="🔍 Search tournament, venue, organizer..."
+              placeholder="Search tournament, venue, organizer..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -232,9 +232,9 @@ const TournamentsManagement = () => {
                 </div>
 
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                  <div>📍 <strong>Venue:</strong> {t.venue || 'TBD'}</div>
-                  <div>🏢 <strong>Organizer:</strong> {t.organizer || 'Department'}</div>
-                  <div>📅 <strong>Dates:</strong> {t.startDate || 'N/A'} {t.endDate ? `to ${t.endDate}` : ''}</div>
+                  <div><strong>Venue:</strong> {t.venue || 'TBD'}</div>
+                  <div><strong>Organizer:</strong> {t.organizer || 'Department'}</div>
+                  <div><strong>Dates:</strong> {t.startDate || 'N/A'} {t.endDate ? `to ${t.endDate}` : ''}</div>
                 </div>
               </div>
 
@@ -244,15 +244,15 @@ const TournamentsManagement = () => {
                   onClick={() => handleOpenRegisterModal(t)}
                   style={{ padding: '6px 12px', fontSize: '0.8rem' }}
                 >
-                  📝 Register Team
+                  Register Team
                 </button>
 
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button className="btn-secondary" onClick={() => handleOpenEditModal(t)} style={{ padding: '6px 10px', fontSize: '0.8rem' }}>
-                    ✏️ Edit
+                    Edit
                   </button>
                   <button className="btn-secondary" onClick={() => handleDelete(t.tournamentId, t.tournamentName)} style={{ padding: '6px 10px', fontSize: '0.8rem', color: 'var(--error)' }}>
-                    🗑️
+                    Delete
                   </button>
                 </div>
               </div>
@@ -262,7 +262,7 @@ const TournamentsManagement = () => {
 
         {filteredTournaments.length === 0 && (
           <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
-            <p style={{ fontSize: '2rem', marginBottom: '10px' }}>🏆</p>
+            
             <p>No tournaments scheduled yet.</p>
           </div>
         )}
@@ -277,7 +277,7 @@ const TournamentsManagement = () => {
         }}>
           <div className="glass-card animate-fade-in" style={{ width: '100%', maxWidth: '500px', padding: '28px' }}>
             <h3 style={{ margin: '0 0 20px 0', fontSize: '1.3rem' }}>
-              {editingId ? '✏️ Edit Tournament' : '➕ Create Tournament'}
+              {editingId ? 'Edit Tournament' : ' Create Tournament'}
             </h3>
 
             <form onSubmit={handleSubmit}>
@@ -370,7 +370,7 @@ const TournamentsManagement = () => {
         }}>
           <div className="glass-card animate-fade-in" style={{ width: '100%', maxWidth: '460px', padding: '28px' }}>
             <h3 style={{ margin: '0 0 10px 0', fontSize: '1.2rem' }}>
-              📝 Register Team for Tournament
+              Register Team for Tournament
             </h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '20px' }}>
               Select a team to enroll in <strong>{selectedTournament?.tournamentName}</strong>

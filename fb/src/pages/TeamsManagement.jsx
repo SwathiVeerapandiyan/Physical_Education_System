@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿﻿import React, { useState, useEffect } from 'react';
 import { teamService, sportsService, userFormService, teamMemberService } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import Spinner from '../components/Spinner';
@@ -74,10 +74,10 @@ const TeamsManagement = () => {
     try {
       if (editingTeamId) {
         await teamService.update(editingTeamId, teamForm);
-        showToast('Team updated successfully! 🛡️', 'success');
+        showToast('Team updated successfully.', 'success');
       } else {
         await teamService.create(teamForm);
-        showToast('New Team created! 🛡️', 'success');
+        showToast('New team created successfully.', 'success');
       }
       setShowTeamModal(false);
       fetchData();
@@ -128,7 +128,7 @@ const TeamsManagement = () => {
         teamId: activeTeam.teamId,
         studentId: selectedStudentId
       });
-      showToast('Member added to team! 👤', 'success');
+      showToast('Member added to team.', 'success');
       setSelectedStudentId('');
       fetchTeamMembers(activeTeam.teamId);
     } catch (err) {
@@ -172,7 +172,7 @@ const TeamsManagement = () => {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span style={{ fontSize: '36px' }}>🛡️</span>
+            <Icon name="shield" size={32} color="var(--primary)" />
             <div>
               <h2 style={{ fontSize: '1.5rem', margin: 0 }}>Teams &amp; Squad Rosters</h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '4px' }}>
@@ -182,7 +182,7 @@ const TeamsManagement = () => {
           </div>
 
           <button className="btn-primary" onClick={handleOpenAddTeam} style={{ gap: '8px', display: 'flex', alignItems: 'center' }}>
-            <span>➕</span> Create New Team
+            Create New Team
           </button>
         </div>
 
@@ -191,7 +191,7 @@ const TeamsManagement = () => {
           <input
             type="text"
             className="form-control"
-            placeholder="🔍 Search team by name..."
+            placeholder="Search team by name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{ maxWidth: '360px' }}
@@ -235,15 +235,15 @@ const TeamsManagement = () => {
                   onClick={() => handleOpenMembersModal(team)}
                   style={{ padding: '6px 12px', fontSize: '0.8rem' }}
                 >
-                  👥 Manage Roster
+                  Manage Roster
                 </button>
 
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <button className="btn-secondary" onClick={() => handleOpenEditTeam(team)} style={{ padding: '6px 10px', fontSize: '0.8rem' }}>
-                    ✏️
+                    Edit
                   </button>
                   <button className="btn-secondary" onClick={() => handleDeleteTeam(team.teamId, team.teamName)} style={{ padding: '6px 10px', fontSize: '0.8rem', color: 'var(--error)' }}>
-                    🗑️
+                    Delete
                   </button>
                 </div>
               </div>
@@ -253,7 +253,7 @@ const TeamsManagement = () => {
 
         {filteredTeams.length === 0 && (
           <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
-            <p style={{ fontSize: '2rem', marginBottom: '10px' }}>🛡️</p>
+            
             <p>No teams created yet.</p>
           </div>
         )}
@@ -268,7 +268,7 @@ const TeamsManagement = () => {
         }}>
           <div className="glass-card animate-fade-in" style={{ width: '100%', maxWidth: '460px', padding: '28px' }}>
             <h3 style={{ margin: '0 0 20px 0', fontSize: '1.25rem' }}>
-              {editingTeamId ? '✏️ Edit Team' : '➕ Create New Team'}
+              {editingTeamId ? 'Edit Team' : ' Create New Team'}
             </h3>
 
             <form onSubmit={handleSaveTeam}>
@@ -328,10 +328,10 @@ const TeamsManagement = () => {
           <div className="glass-card animate-fade-in" style={{ width: '100%', maxWidth: '580px', padding: '28px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
               <h3 style={{ margin: 0, fontSize: '1.25rem' }}>
-                👥 {activeTeam?.teamName} Roster
+                {activeTeam?.teamName} Roster
               </h3>
               <button className="btn-secondary" onClick={() => setShowMembersModal(false)} style={{ padding: '4px 10px' }}>
-                ✕
+                
               </button>
             </div>
 
@@ -351,7 +351,7 @@ const TeamsManagement = () => {
                 ))}
               </select>
               <button type="submit" className="btn-primary" disabled={addingMember} style={{ whiteSpace: 'nowrap' }}>
-                {addingMember ? 'Adding...' : '➕ Add Member'}
+                {addingMember ? 'Adding...' : 'Add Member'}
               </button>
             </form>
 

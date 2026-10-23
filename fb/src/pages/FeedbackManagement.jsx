@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { feedbackService } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import Spinner from '../components/Spinner';
@@ -90,11 +90,11 @@ const FeedbackManagement = () => {
     <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ margin: 0, color: '#fff' }}>💬 Feedback & Reviews</h2>
+          <h2 style={{ margin: 0, color: '#fff' }}> Feedback & Reviews</h2>
           <p style={{ margin: '0.25rem 0 0 0', color: '#94a3b8' }}>Review user feedback, ratings, and portal suggestions.</p>
         </div>
         <button onClick={handleOpenCreate} style={{ padding: '0.75rem 1.4rem', background: '#ec4899', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 600, cursor: 'pointer' }}>
-          ➕ Submit Feedback
+           Submit Feedback
         </button>
       </div>
 
@@ -114,17 +114,17 @@ const FeedbackManagement = () => {
             <div key={item.feedbackId} className="glass-panel" style={{ padding: '1.2rem', borderRadius: '14px', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.05rem' }}>{item.subject || 'Feedback'}</h3>
-                <span style={{ color: '#fbbf24', fontSize: '0.9rem' }}>{'⭐'.repeat(item.rating || 5)}</span>
+                <span style={{ color: '#fbbf24', fontSize: '0.9rem' }}>{''.repeat(item.rating || 5)}</span>
               </div>
               <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.88rem' }}>{item.message}</p>
-              <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.82rem' }}>👤 {item.userName || 'Anonymous'} ({item.email || 'N/A'})</p>
+              <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.82rem' }}> {item.userName || 'Anonymous'} ({item.email || 'N/A'})</p>
               <span style={{ alignSelf: 'flex-start', padding: '0.2rem 0.5rem', borderRadius: '6px', fontSize: '0.72rem', background: 'rgba(236,72,153,0.2)', color: '#f472b6' }}>
                 Status: {item.status || 'Open'}
               </span>
 
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', paddingTop: '0.8rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <button onClick={() => handleOpenEdit(item)} style={{ padding: '0.4rem 0.8rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>✏️ Edit</button>
-                <button onClick={() => setDeletingId(item.feedbackId)} style={{ padding: '0.4rem 0.8rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>🗑️ Delete</button>
+                <button onClick={() => handleOpenEdit(item)} style={{ padding: '0.4rem 0.8rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}> Edit</button>
+                <button onClick={() => setDeletingId(item.feedbackId)} style={{ padding: '0.4rem 0.8rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}> Delete</button>
               </div>
             </div>
           ))}

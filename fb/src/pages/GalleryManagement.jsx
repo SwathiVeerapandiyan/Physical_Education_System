@@ -244,19 +244,19 @@ const GalleryManagement = () => {
       {/* Header Section */}
       <div className="gallery-header glass-card">
         <div className="header-title-group">
-          <h2>🖼️ Sports & Event Gallery</h2>
+          <h2> Sports & Event Gallery</h2>
           <p>Browse media highlights, photo collections, and tournament videos from our PE events.</p>
         </div>
 
         <button className="add-media-btn" onClick={handleOpenCreateModal}>
-          <span>➕</span> Add Media Item
+          <span></span> Add Media Item
         </button>
       </div>
 
       {/* Stats Quick Ribbon */}
       <div className="gallery-stats-grid">
         <div className="stat-card glass-card">
-          <span className="stat-icon">📸</span>
+          <span className="stat-icon"></span>
           <div className="stat-info">
             <span className="stat-value">{stats.total}</span>
             <span className="stat-label">Total Media</span>
@@ -264,7 +264,7 @@ const GalleryManagement = () => {
         </div>
 
         <div className="stat-card glass-card">
-          <span className="stat-icon">🖼️</span>
+          <span className="stat-icon"></span>
           <div className="stat-info">
             <span className="stat-value">{stats.photos}</span>
             <span className="stat-label">Photo Uploads</span>
@@ -272,7 +272,7 @@ const GalleryManagement = () => {
         </div>
 
         <div className="stat-card glass-card">
-          <span className="stat-icon">🎥</span>
+          <span className="stat-icon"></span>
           <div className="stat-info">
             <span className="stat-value">{stats.videos}</span>
             <span className="stat-label">Video Clips</span>
@@ -280,7 +280,7 @@ const GalleryManagement = () => {
         </div>
 
         <div className="stat-card glass-card">
-          <span className="stat-icon">✅</span>
+          <span className="stat-icon"></span>
           <div className="stat-info">
             <span className="stat-value">{stats.active}</span>
             <span className="stat-label">Active Items</span>
@@ -291,7 +291,7 @@ const GalleryManagement = () => {
       {/* Controls & Filter Bar */}
       <div className="gallery-filter-bar glass-card">
         <div className="search-input-wrapper">
-          <span className="search-icon">🔍</span>
+          <span className="search-icon"></span>
           <input
             type="text"
             placeholder="Search by title, description, or uploader..."
@@ -300,7 +300,7 @@ const GalleryManagement = () => {
           />
           {searchTerm && (
             <button className="clear-search-btn" onClick={() => setSearchTerm('')}>
-              ✖
+              
             </button>
           )}
         </div>
@@ -330,13 +330,13 @@ const GalleryManagement = () => {
               className={`pill-btn ${mediaTypeFilter === 'PHOTO' ? 'active' : ''}`}
               onClick={() => setMediaTypeFilter('PHOTO')}
             >
-              📷 Photos
+               Photos
             </button>
             <button
               className={`pill-btn ${mediaTypeFilter === 'VIDEO' ? 'active' : ''}`}
               onClick={() => setMediaTypeFilter('VIDEO')}
             >
-              📹 Videos
+               Videos
             </button>
           </div>
 
@@ -357,14 +357,14 @@ const GalleryManagement = () => {
         <Spinner message="Fetching gallery media..." />
       ) : error ? (
         <div className="gallery-error-card glass-card">
-          <p>⚠️ {error}</p>
+          <p>️ {error}</p>
           <button className="retry-btn" onClick={fetchGalleryItems}>
-            🔄 Retry
+             Retry
           </button>
         </div>
       ) : filteredItems.length === 0 ? (
         <div className="empty-gallery-card glass-card">
-          <div className="empty-illustration">🖼️</div>
+          <div className="empty-illustration"></div>
           <h3>No Media Items Found</h3>
           <p>
             {galleryItems.length === 0
@@ -373,7 +373,7 @@ const GalleryManagement = () => {
           </p>
           {galleryItems.length === 0 && (
             <button className="add-media-btn" onClick={handleOpenCreateModal}>
-              ➕ Add First Item
+               Add First Item
             </button>
           )}
         </div>
@@ -387,11 +387,11 @@ const GalleryManagement = () => {
               <div className="card-media-wrapper" onClick={() => setViewingItem(item)}>
                 {renderMedia(item)}
 
-                {item.videoUrl && <div className="video-overlay-badge">🎥 Video</div>}
+                {item.videoUrl && <div className="video-overlay-badge"> Video</div>}
                 {item.eventName && <div className="event-overlay-badge">{item.eventName}</div>}
 
                 <div className="media-hover-overlay">
-                  <span className="overlay-view-text">🔍 View Details</span>
+                  <span className="overlay-view-text"> View Details</span>
                 </div>
               </div>
 
@@ -400,8 +400,8 @@ const GalleryManagement = () => {
                   <h3 className="card-title" title={item.title}>
                     {item.title}
                   </h3>
-                  <span className={`status-badge ${item.isActive ? 'badge-active' : 'badge-inactive'}`}>
-                    {item.isActive ? 'Active' : 'Draft'}
+                  <span className={`status-badge ${item.isActive ? 'Active' : 'Inactive'}`}>
+                    {item.isActive ? 'Active' : 'Inactive'}
                   </span>
                 </div>
 
@@ -416,10 +416,10 @@ const GalleryManagement = () => {
                 <div className="card-meta">
                   {item.eventDate && (
                     <span className="meta-tag">
-                      📅 {new Date(item.eventDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                       {new Date(item.eventDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                     </span>
                   )}
-                  {item.uploadedBy && <span className="meta-tag">👤 {item.uploadedBy}</span>}
+                  {item.uploadedBy && <span className="meta-tag"> {item.uploadedBy}</span>}
                 </div>
 
                 <div className="card-actions">
@@ -428,28 +428,28 @@ const GalleryManagement = () => {
                     title="View Media"
                     onClick={() => setViewingItem(item)}
                   >
-                    👁️
+                    ️
                   </button>
                   <button
                     className="action-icon-btn edit-btn"
                     title="Edit Item"
                     onClick={() => handleOpenEditModal(item)}
                   >
-                    ✏️
+                    
                   </button>
                   <button
-                    className={`action-icon-btn toggle-btn ${item.isActive ? 'active' : ''}`}
-                    title={item.isActive ? 'Deactivate' : 'Activate'}
+                    className={`action-icon-btn toggle-btn ${item.isActive ? 'Active' : 'Inactive'}`}
+                    title={item.isActive ? 'Active' : 'Inactive'}
                     onClick={() => handleToggleStatus(item)}
                   >
-                    {item.isActive ? '⏸️' : '▶️'}
+                    {item.isActive ? 'Active' : 'Inactive'}
                   </button>
                   <button
                     className="action-icon-btn delete-btn"
                     title="Delete Item"
                     onClick={() => setDeletingId(item.galleryId)}
                   >
-                    🗑️
+                    
                   </button>
                 </div>
               </div>
@@ -463,7 +463,7 @@ const GalleryManagement = () => {
         <div className="modal-overlay" onClick={() => setViewingItem(null)}>
           <div className="lightbox-modal glass-card" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close-btn" onClick={() => setViewingItem(null)}>
-              ✖
+              
             </button>
 
             <div className="lightbox-media-container">
@@ -508,7 +508,7 @@ const GalleryManagement = () => {
                     handleOpenEditModal(item);
                   }}
                 >
-                  ✏️ Edit
+                   Edit
                 </button>
                 <button
                   className="danger-btn"
@@ -518,7 +518,7 @@ const GalleryManagement = () => {
                     setDeletingId(id);
                   }}
                 >
-                  🗑️ Delete
+                   Delete
                 </button>
               </div>
             </div>
@@ -531,9 +531,9 @@ const GalleryManagement = () => {
         <div className="modal-overlay" onClick={handleCloseModal}>
           <div className="form-modal glass-card" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>{editingItem ? '✏️ Edit Media Item' : '➕ Add Gallery Media'}</h3>
+              <h3>{editingItem ? ' Edit Media Item' : ' Add Gallery Media'}</h3>
               <button className="modal-close-btn" onClick={handleCloseModal}>
-                ✖
+                
               </button>
             </div>
 
@@ -654,7 +654,7 @@ const GalleryManagement = () => {
       {deletingId && (
         <div className="modal-overlay" onClick={() => setDeletingId(null)}>
           <div className="confirm-modal glass-card" onClick={(e) => e.stopPropagation()}>
-            <h3>⚠️ Confirm Deletion</h3>
+            <h3>Confirm Deletion</h3>
             <p>Are you sure you want to delete this gallery item? This action cannot be undone.</p>
             <div className="confirm-actions">
               <button className="secondary-btn" onClick={() => setDeletingId(null)}>
