@@ -17,6 +17,7 @@ class ApiClient {
 
   static const String _serverPrefKey = 'pe_custom_server_url';
   static String? customBaseUrl;
+  static String? authToken;
 
   static Future<void> init() async {
     try {
@@ -86,10 +87,16 @@ class ApiClient {
     return uri;
   }
 
-  static Map<String, String> get _headers => {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      };
+  static Map<String, String> get _headers {
+    final map = <String, String>{
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+    if (authToken != null && authToken!.isNotEmpty) {
+      map['Authorization'] = 'Bearer $authToken';
+    }
+    return map;
+  }
 
   static dynamic _handleResponse(http.Response response) {
     dynamic body;

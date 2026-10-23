@@ -2,11 +2,16 @@ package dev.dept.pe.service.impl;
 
 import dev.dept.pe.dto.TournamentDto;
 import dev.dept.pe.exception.ResourceNotFoundException;
+import dev.dept.pe.model.Match;
 import dev.dept.pe.model.Tournament;
+import dev.dept.pe.model.TournamentRegistration;
+import dev.dept.pe.repository.MatchRepository;
+import dev.dept.pe.repository.TournamentRegistrationRepository;
 import dev.dept.pe.repository.TournamentRepository;
 import dev.dept.pe.service.TournamentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,10 +20,16 @@ import java.util.stream.Collectors;
 public class TournamentServiceImpl implements TournamentService {
 
     private final TournamentRepository tournamentRepository;
+    private final TournamentRegistrationRepository tournamentRegistrationRepository;
+    private final MatchRepository matchRepository;
 
     @Autowired
-    public TournamentServiceImpl(TournamentRepository tournamentRepository) {
+    public TournamentServiceImpl(TournamentRepository tournamentRepository,
+                                 TournamentRegistrationRepository tournamentRegistrationRepository,
+                                 MatchRepository matchRepository) {
         this.tournamentRepository = tournamentRepository;
+        this.tournamentRegistrationRepository = tournamentRegistrationRepository;
+        this.matchRepository = matchRepository;
     }
 
     @Override
@@ -66,10 +77,25 @@ public class TournamentServiceImpl implements TournamentService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         if (!tournamentRepository.existsById(id)) {
             throw new ResourceNotFoundException("Tournament not found with ID: " + id);
         }
+
+        // Safely remove dependent registrations and matches to preserve database integrity
+        try {
+            List<TournamentRegistration> regs = tournamentRegistrationRepository.findByTournamentId(id);
+            if (regs != null && !regs.isEmpty()) {
+                tournamentRegistrationRepository.deleteAll(regs);
+            }
+            List<Match> matches = matchRepository.findByTournamentId(id);
+            if (matches != null && !matches.isEmpty()) {
+                matchRepository.deleteAll(matches);
+            }
+        } catch (Exception ignored) {
+        }
+
         tournamentRepository.deleteById(id);
     }
 

@@ -41,6 +41,10 @@ class MatchFixtureModel {
     );
   }
 
+  int? get team1Id => teamOne;
+  int? get team2Id => teamTwo;
+  String? get matchTime => null;
+
   Map<String, dynamic> toJson() {
     return {
       if (matchId != null) 'matchId': matchId,

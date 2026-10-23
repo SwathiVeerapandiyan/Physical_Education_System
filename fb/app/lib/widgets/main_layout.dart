@@ -18,24 +18,40 @@ class NavItemData {
   });
 }
 
-const List<NavItemData> navItems = [
-  NavItemData(route: '/dashboard', label: 'Dashboard', icon: '📊'),
-  NavItemData(route: '/users', label: 'User Directory', icon: '👥'),
-  NavItemData(route: '/profile', label: 'User Form', icon: '📝'),
+const List<NavItemData> studentNavItems = [
+  NavItemData(route: '/dashboard', label: 'My Dashboard', icon: '📊'),
+  NavItemData(route: '/profile', label: 'Personal Details', icon: '📝'),
   NavItemData(route: '/family', label: 'Family Details', icon: '👨‍👩‍👧‍👦'),
-  NavItemData(route: '/documents', label: 'Document Details', icon: '📁'),
+  NavItemData(route: '/documents', label: 'Uploaded Documents', icon: '📁'),
   NavItemData(route: '/sports', label: 'Sports Directory', icon: '🏀'),
   NavItemData(route: '/tournaments', label: 'Tournaments', icon: '🏆'),
   NavItemData(route: '/teams', label: 'Teams & Squads', icon: '🛡️'),
   NavItemData(route: '/matches', label: 'Match Fixtures', icon: '⚽'),
-  NavItemData(route: '/gallery', label: 'Gallery & Media', icon: '🖼️'),
+  NavItemData(route: '/live-scores', label: 'Live Scoreboard', icon: '⚡'),
   NavItemData(route: '/equipment-bookings', label: 'Equipment Bookings', icon: '🏀'),
   NavItemData(route: '/ground-bookings', label: 'Ground Bookings', icon: '🏟️'),
   NavItemData(route: '/notices', label: 'Notice Board', icon: '📢'),
   NavItemData(route: '/feedback', label: 'Feedback & Reviews', icon: '💬'),
   NavItemData(route: '/health-fitness', label: 'Health & Fitness', icon: '🩺'),
   NavItemData(route: '/emergency-contacts', label: 'Emergency Contacts', icon: '🚨'),
+  NavItemData(route: '/gallery', label: 'Gallery & Media', icon: '🖼️'),
+];
+
+const List<NavItemData> adminNavItems = [
+  NavItemData(route: '/admin/dashboard', label: 'Admin Command Center', icon: '📊'),
+  NavItemData(route: '/users', label: 'Student Directory', icon: '👥'),
+  NavItemData(route: '/sports', label: 'Sports Directory', icon: '🏀'),
+  NavItemData(route: '/tournaments', label: 'Tournaments', icon: '🏆'),
+  NavItemData(route: '/teams', label: 'Teams & Squads', icon: '🛡️'),
+  NavItemData(route: '/matches', label: 'Match Fixtures', icon: '⚽'),
   NavItemData(route: '/live-scores', label: 'Live Scoreboard', icon: '⚡'),
+  NavItemData(route: '/equipment-bookings', label: 'Equipment Bookings', icon: '🏀'),
+  NavItemData(route: '/ground-bookings', label: 'Ground Bookings', icon: '🏟️'),
+  NavItemData(route: '/notices', label: 'Notice Board', icon: '📢'),
+  NavItemData(route: '/feedback', label: 'Feedback & Reviews', icon: '💬'),
+  NavItemData(route: '/health-fitness', label: 'Health & Fitness', icon: '🩺'),
+  NavItemData(route: '/emergency-contacts', label: 'Emergency Contacts', icon: '🚨'),
+  NavItemData(route: '/gallery', label: 'Gallery & Media', icon: '🖼️'),
 ];
 
 class MainLayout extends StatelessWidget {
@@ -49,11 +65,10 @@ class MainLayout extends StatelessWidget {
   });
 
   String _getPageTitle() {
-    final current = navItems.firstWhere(
-      (item) => item.route == currentRoute,
-      orElse: () => const NavItemData(route: '', label: 'Management System', icon: ''),
-    );
-    return current.label;
+    for (final item in [...adminNavItems, ...studentNavItems]) {
+      if (item.route == currentRoute) return item.label;
+    }
+    return 'Management System';
   }
 
   void _handleLogout(BuildContext context) {
@@ -123,12 +138,15 @@ class MainLayout extends StatelessWidget {
 
           // Nav Items
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-              itemCount: navItems.length,
-              itemBuilder: (context, index) {
-                final item = navItems[index];
-                final isActive = currentRoute == item.route;
+            child: Builder(
+              builder: (context) {
+                final currentNavItems = authProvider.isAdmin ? adminNavItems : studentNavItems;
+                return ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                  itemCount: currentNavItems.length,
+                  itemBuilder: (context, index) {
+                    final item = currentNavItems[index];
+                    final isActive = currentRoute == item.route;
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 4),
@@ -155,8 +173,10 @@ class MainLayout extends StatelessWidget {
                   ),
                 );
               },
-            ),
-          ),
+            );
+          },
+        ),
+      ),
 
           // User Profile Badge Footer
           const Divider(height: 1, color: AppColors.borderColor),
@@ -303,7 +323,7 @@ class MainLayout extends StatelessWidget {
               ),
             ],
           ),
-          const ChatbotWidget(),
+          if (!authProvider.isAdmin) const ChatbotWidget(),
         ],
       ),
     );

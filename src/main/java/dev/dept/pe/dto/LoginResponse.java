@@ -6,6 +6,7 @@ public class LoginResponse {
     private boolean success;
     private String message;
     private UserDetails user;
+    private String token;
 
     public LoginResponse() {
     }
@@ -19,6 +20,21 @@ public class LoginResponse {
         this.success = success;
         this.message = message;
         this.user = user;
+    }
+
+    public LoginResponse(boolean success, String message, UserDetails user, String token) {
+        this.success = success;
+        this.message = message;
+        this.user = user;
+        this.token = token;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public boolean isSuccess() {

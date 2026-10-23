@@ -17,6 +17,17 @@ class LiveScoreModel {
     this.commentary,
   });
 
+  String? get status => currentStatus;
+  int? get scoreA => int.tryParse(teamAScore ?? '0');
+  int? get scoreB => int.tryParse(teamBScore ?? '0');
+  String get teamA => matchTitle != null && matchTitle!.toLowerCase().contains('vs')
+      ? matchTitle!.split(RegExp(r'vs', caseSensitive: false)).first.trim()
+      : (matchTitle ?? 'Team A');
+  String get teamB => matchTitle != null && matchTitle!.toLowerCase().contains('vs')
+      ? matchTitle!.split(RegExp(r'vs', caseSensitive: false)).last.trim()
+      : (matchTitle ?? 'Team B');
+  String? get currentSetHalf => commentary;
+
   factory LiveScoreModel.fromJson(Map<String, dynamic> json) {
     return LiveScoreModel(
       scoreId: json['scoreId'] as int?,

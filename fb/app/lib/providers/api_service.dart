@@ -31,10 +31,50 @@ class ApiService {
     return (res as List).map((e) => User.fromJson(e)).toList();
   }
 
+  static Future<void> deleteUser(int id) async {
+    await ApiClient.delete('/auth/users/$id');
+  }
+
   // Dashboard
   static Future<DashboardStats> getDashboardStats() async {
     final res = await ApiClient.get('/dashboard/stats');
     return DashboardStats.fromJson(res);
+  }
+
+  // Isolated Student Self Profile Endpoints
+  static Future<UserFormModel?> getMyProfile() async {
+    try {
+      final res = await ApiClient.get('/users-form/me');
+      if (res == null) return null;
+      return UserFormModel.fromJson(res);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static Future<UserFormModel> updateMyProfile(UserFormModel form) async {
+    final res = await ApiClient.put('/users-form/me', body: form.toJson());
+    return UserFormModel.fromJson(res);
+  }
+
+  static Future<FamilyDetailsModel?> getMyFamily() async {
+    try {
+      final res = await ApiClient.get('/family-details/my-family');
+      if (res == null) return null;
+      return FamilyDetailsModel.fromJson(res);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  static Future<DocumentDetailsModel?> getMyDocuments() async {
+    try {
+      final res = await ApiClient.get('/document-details/my-documents');
+      if (res == null) return null;
+      return DocumentDetailsModel.fromJson(res);
+    } catch (_) {
+      return null;
+    }
   }
 
   // User Forms

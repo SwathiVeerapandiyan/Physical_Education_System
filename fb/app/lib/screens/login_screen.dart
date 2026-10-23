@@ -7,7 +7,8 @@ import '../providers/auth_provider.dart';
 import '../providers/toast_provider.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final bool initialAdminMode;
+  const LoginScreen({super.key, this.initialAdminMode = false});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -18,6 +19,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoading = false;
+  late bool _isAdminPortal;
+
+  @override
+  void initState() {
+    super.initState();
+    _isAdminPortal = widget.initialAdminMode;
+  }
 
   void _showServerConfigDialog() {
     final controller = TextEditingController(text: ApiClient.currentHostUrl);
@@ -86,6 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final result = await authProvider.login(
       _usernameController.text.trim(),
       _passwordController.text,
+      requiredRole: _isAdminPortal ? 'ADMIN' : null,
     );
 
     if (mounted) {
@@ -93,9 +102,16 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     if (result['success'] == true) {
-      toastProvider.showToast('Login successful!', 'success');
+      toastProvider.showToast(
+        _isAdminPortal ? 'Admin authenticated successfully!' : 'Login successful!',
+        'success',
+      );
       if (mounted) {
-        Navigator.pushReplacementNamed(context, '/dashboard');
+        if (authProvider.isAdmin) {
+          Navigator.pushReplacementNamed(context, '/admin/dashboard');
+        } else {
+          Navigator.pushReplacementNamed(context, '/dashboard');
+        }
       }
     } else {
       toastProvider.showToast(result['message'] ?? 'Login failed', 'error');
@@ -110,8 +126,8 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Container(
-            constraints: const BoxConstraints(maxWidth: 420),
-            padding: const EdgeInsets.all(36),
+            constraints: const BoxConstraints(maxWidth: 440),
+            padding: const EdgeInsets.all(32),
             decoration: AppStyles.glassBoxDecoration(borderRadius: 20),
             child: Form(
               key: _formKey,
@@ -123,13 +139,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const SizedBox(width: 40),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          '🏅 PE Portal',
+                          _isAdminPortal ? '🛡️ Admin Portal' : '🏅 PE Student Portal',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: AppColors.textPrimary,
-                            fontSize: 24,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -144,26 +160,88 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Sign in to access your portal',
+                  const SizedBox(height: 6),
+                  Text(
+                    _isAdminPortal
+                        ? 'Administrative Command Access (Role: ADMIN)'
+                        : 'Sign in to access student athletics portal',
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
+
+                  // Role Tab Selector
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.bgTertiary,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppColors.borderColor),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () => setState(() => _isAdminPortal = false),
+                            borderRadius: BorderRadius.circular(9),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              decoration: BoxDecoration(
+                                color: !_isAdminPortal ? AppColors.primary : Colors.transparent,
+                                borderRadius: BorderRadius.circular(9),
+                              ),
+                              child: Text(
+                                '🎓 Student Login',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: !_isAdminPortal ? Colors.white : AppColors.textSecondary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () => setState(() => _isAdminPortal = true),
+                            borderRadius: BorderRadius.circular(9),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              decoration: BoxDecoration(
+                                color: _isAdminPortal ? AppColors.primary : Colors.transparent,
+                                borderRadius: BorderRadius.circular(9),
+                              ),
+                              child: Text(
+                                '🛡️ Admin Login',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: _isAdminPortal ? Colors.white : AppColors.textSecondary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 13,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
 
                   // Username / Email / Register No / Name
                   TextFormField(
                     controller: _usernameController,
                     style: const TextStyle(color: AppColors.textPrimary),
                     decoration: AppStyles.inputDecoration(
-                      hintText: 'Email, Register No, or Name',
-                      labelText: 'Email / Register No / Name',
+                      hintText: _isAdminPortal ? 'admin or admin@mcc.edu' : 'Email, Register No, or Name',
+                      labelText: _isAdminPortal ? 'Admin Username / Email' : 'Email / Register No / Name',
                       prefixIcon: const Icon(Icons.person_outline, color: AppColors.textMuted),
                     ),
-                    validator: (val) => val == null || val.trim().isEmpty ? 'Please enter your email, register no, or name' : null,
+                    validator: (val) => val == null || val.trim().isEmpty
+                        ? (_isAdminPortal ? 'Enter admin username or email' : 'Please enter your email, register no, or name')
+                        : null,
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 18),
 
                   // Password
                   TextFormField(
@@ -177,7 +255,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     validator: (val) => val == null || val.isEmpty ? 'Password is required' : null,
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 26),
 
                   // Submit Button
                   ElevatedButton(
@@ -194,23 +272,35 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                           )
-                        : const Text('Sign In', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                        : Text(
+                            _isAdminPortal ? 'Enter Admin Command Center' : 'Sign In to Student Portal',
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                          ),
                   ),
                   const SizedBox(height: 20),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Don't have an account? ", style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
-                      GestureDetector(
-                        onTap: () => Navigator.pushReplacementNamed(context, '/register'),
-                        child: const Text(
-                          'Register',
-                          style: TextStyle(color: AppColors.secondary, fontWeight: FontWeight.bold, fontSize: 14),
+                  if (!_isAdminPortal)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Don't have an account? ", style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+                        GestureDetector(
+                          onTap: () => Navigator.pushReplacementNamed(context, '/register'),
+                          child: const Text(
+                            'Register as Student',
+                            style: TextStyle(color: AppColors.secondary, fontWeight: FontWeight.bold, fontSize: 14),
+                          ),
                         ),
+                      ],
+                    )
+                  else
+                    const Center(
+                      child: Text(
+                        'Secure administrator authentication required. Non-admin logins will be denied.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: AppColors.textMuted, fontSize: 12),
                       ),
-                    ],
-                  ),
+                    ),
                 ],
               ),
             ),

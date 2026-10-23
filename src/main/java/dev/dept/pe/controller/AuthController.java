@@ -3,12 +3,18 @@ package dev.dept.pe.controller;
 import dev.dept.pe.dto.LoginRequest;
 import dev.dept.pe.dto.LoginResponse;
 import dev.dept.pe.model.User;
+import dev.dept.pe.model.UserForm;
 import dev.dept.pe.repository.UserRepository;
+import dev.dept.pe.repository.UserFormRepository;
+import dev.dept.pe.security.TokenService;
+import dev.dept.pe.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
+import dev.dept.pe.service.UserFormService;
+import java.time.LocalDate;
 import java.util.Optional;
 import java.util.List;
 
@@ -18,11 +24,24 @@ import java.util.List;
 public class AuthController {
 
     private final UserRepository userRepository;
+    private final UserFormRepository userFormRepository;
+    private final UserFormService userFormService;
+    private final TokenService tokenService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public AuthController(UserRepository userRepository) {
+    public AuthController(UserRepository userRepository,
+                          UserFormRepository userFormRepository,
+                          UserFormService userFormService,
+                          TokenService tokenService,
+                          NotificationService notificationService) {
         this.userRepository = userRepository;
+        this.userFormRepository = userFormRepository;
+        this.userFormService = userFormService;
+        this.tokenService = tokenService;
+        this.notificationService = notificationService;
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
@@ -80,6 +99,15 @@ public class AuthController {
             return ResponseEntity.status(401).body(new LoginResponse(false, "Invalid username or password"));
         }
 
+        // Enforce role separation if login requested for a specific portal
+        if (loginRequest.getRequiredRole() != null && !loginRequest.getRequiredRole().trim().isEmpty()) {
+            String reqRole = loginRequest.getRequiredRole().trim().toUpperCase();
+            String userRole = user.getRole() != null ? user.getRole().trim().toUpperCase() : "STUDENT";
+            if ("ADMIN".equals(reqRole) && !"ADMIN".equals(userRole)) {
+                return ResponseEntity.status(403).body(new LoginResponse(false, "Access Denied: Only administrators are authorized to log in through the Admin Portal."));
+            }
+        }
+
         // Map User entity to UserDetails DTO to avoid exposing the password
         LoginResponse.UserDetails userDetails = new LoginResponse.UserDetails(
                 user.getUserId(),
@@ -94,7 +122,10 @@ public class AuthController {
                 user.getUpdatedTime()
         );
 
-        return ResponseEntity.ok(new LoginResponse(true, "Login successful", userDetails));
+        // Generate verified session token
+        String token = tokenService.generateToken(user);
+
+        return ResponseEntity.ok(new LoginResponse(true, "Login successful", userDetails, token));
     }
 
     @PostMapping("/register")
@@ -109,7 +140,6 @@ public class AuthController {
         if (user.getRole() == null || user.getRole().trim().isEmpty()) {
             user.setRole("STUDENT");
         }
-
 
         // Pre-validate unique constraint fields before save
         if (user.getEmail() != null && userRepository.findByEmail(user.getEmail().trim()).isPresent()) {
@@ -130,6 +160,31 @@ public class AuthController {
         
         try {
             User savedUser = userRepository.save(user);
+
+            // Automatically initialize baseline student profile form in users_form if not present
+            try {
+                if (userFormRepository.findByEmail(savedUser.getEmail()).isEmpty()) {
+                    UserForm form = new UserForm();
+                    form.setName(savedUser.getName());
+                    form.setEmail(savedUser.getEmail());
+                    form.setPassword(savedUser.getPassword());
+                    form.setBatch("2024-2025");
+                    form.setGender("MALE");
+                    form.setDob(LocalDate.of(2003, 1, 1));
+                    form.setMobileNo(savedUser.getMobileNo());
+                    form.setSpecialization("Athletics");
+                    form.setPermanentAddress("Student Campus Residence");
+                    userFormRepository.save(form);
+                }
+            } catch (Exception ignored) {
+            }
+
+            // Immediately broadcast real-time notification to active admin dashboards
+            try {
+                notificationService.notifyNewStudentRegistration(savedUser);
+            } catch (Exception ignored) {
+            }
+
             return ResponseEntity.ok(savedUser);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Failed to register user: " + e.getMessage());
@@ -139,5 +194,22 @@ public class AuthController {
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userRepository.findAll());
+    }
+
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
+        Optional<User> opt = userRepository.findById(id);
+        if (opt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        User user = opt.get();
+        // If related UserForm exists, delete it safely (cascading family & doc)
+        if (user.getEmail() != null) {
+            userFormRepository.findByEmail(user.getEmail().trim()).ifPresent(uf -> {
+                userFormService.deleteUserForm(uf.getId());
+            });
+        }
+        userRepository.deleteById(id);
+        return ResponseEntity.ok("User deleted successfully");
     }
 }

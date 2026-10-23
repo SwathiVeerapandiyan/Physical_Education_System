@@ -3,11 +3,14 @@ package dev.dept.pe.service.impl;
 import dev.dept.pe.dto.UserFormDto;
 import dev.dept.pe.exception.ResourceNotFoundException;
 import dev.dept.pe.model.UserForm;
+import dev.dept.pe.repository.DocumentDetailsRepository;
+import dev.dept.pe.repository.FamilyDetailsRepository;
 import dev.dept.pe.repository.UserFormRepository;
 import dev.dept.pe.service.UserFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,10 +20,16 @@ import java.util.stream.Collectors;
 public class UserFormServiceImpl implements UserFormService {
 
     private final UserFormRepository userFormRepository;
+    private final FamilyDetailsRepository familyDetailsRepository;
+    private final DocumentDetailsRepository documentDetailsRepository;
 
     @Autowired
-    public UserFormServiceImpl(UserFormRepository userFormRepository) {
+    public UserFormServiceImpl(UserFormRepository userFormRepository,
+                               FamilyDetailsRepository familyDetailsRepository,
+                               DocumentDetailsRepository documentDetailsRepository) {
         this.userFormRepository = userFormRepository;
+        this.familyDetailsRepository = familyDetailsRepository;
+        this.documentDetailsRepository = documentDetailsRepository;
     }
 
     @Override
@@ -50,6 +59,16 @@ public class UserFormServiceImpl implements UserFormService {
     public UserFormDto getUserFormById(Long id) {
         UserForm form = userFormRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Candidate form not found with ID: " + id));
+        return mapToDto(form);
+    }
+
+    @Override
+    public UserFormDto getUserFormByEmail(String email) {
+        if (email == null) {
+            throw new ResourceNotFoundException("Email cannot be null");
+        }
+        UserForm form = userFormRepository.findByEmail(email.trim())
+                .orElseThrow(() -> new ResourceNotFoundException("Candidate form not found with email: " + email));
         return mapToDto(form);
     }
 
@@ -105,9 +124,18 @@ public class UserFormServiceImpl implements UserFormService {
     }
 
     @Override
+    @Transactional
     public void deleteUserForm(Long id) {
         UserForm form = userFormRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Candidate form not found with ID: " + id));
+
+        // Cascade delete dependent records to maintain database referential integrity
+        try {
+            familyDetailsRepository.findByUserFormId(id).ifPresent(familyDetailsRepository::delete);
+            documentDetailsRepository.findByUserFormId(id).ifPresent(documentDetailsRepository::delete);
+        } catch (Exception ignored) {
+        }
+
         userFormRepository.delete(form);
     }
 

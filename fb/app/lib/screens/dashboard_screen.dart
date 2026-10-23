@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/theme/app_colors.dart';
 import '../models/dashboard_stats.dart';
+import '../models/sport.dart';
+import '../models/live_score.dart';
+import '../models/match_fixture.dart';
 import '../providers/auth_provider.dart';
 import '../providers/api_service.dart';
 import '../providers/toast_provider.dart';
@@ -18,6 +21,10 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   DashboardStats _stats = DashboardStats();
+  List<SportModel> _sports = [];
+  List<LiveScoreModel> _liveScores = [];
+  List<MatchFixtureModel> _matches = [];
+  Map<int, String> _teamNames = {};
   bool _loading = true;
 
   bool _profileCreated = false;
@@ -39,25 +46,40 @@ class _DashboardScreenState extends State<DashboardScreen> {
     } catch (_) {}
 
     try {
-      final user = Provider.of<AuthProvider>(context, listen: false).user;
-      if (user?.email != null) {
-        final forms = await ApiService.getAllUserForms();
-        final match = forms.where(
-          (f) => f.email?.toLowerCase() == user!.email?.toLowerCase(),
-        ).toList();
+      final sports = await ApiService.getAllSports();
+      if (mounted) setState(() => _sports = sports);
+    } catch (_) {}
 
-        if (match.isNotEmpty) {
-          final myForm = match.first;
-          _profileCreated = true;
+    try {
+      final scores = await ApiService.getLiveScores();
+      if (mounted) setState(() => _liveScores = scores);
+    } catch (_) {}
 
-          if (myForm.id != null) {
-            final family = await ApiService.getFamilyByCandidateId(myForm.id!);
-            if (family?.familyId != null) _familyAdded = true;
+    try {
+      final matches = await ApiService.getAllMatches();
+      if (mounted) setState(() => _matches = matches);
+    } catch (_) {}
 
-            final doc = await ApiService.getDocumentByCandidateId(myForm.id!);
-            if (doc?.documentId != null) _documentsUploaded = true;
-          }
-        }
+    try {
+      final teams = await ApiService.getAllTeams();
+      if (mounted) {
+        setState(() {
+          _teamNames = {
+            for (final t in teams)
+              if (t.teamId != null) t.teamId!: t.teamName,
+          };
+        });
+      }
+    } catch (_) {}
+
+    try {
+      final myForm = await ApiService.getMyProfile();
+      if (myForm != null && myForm.id != null) {
+        _profileCreated = true;
+        final family = await ApiService.getMyFamily();
+        if (family?.familyId != null) _familyAdded = true;
+        final doc = await ApiService.getMyDocuments();
+        if (doc?.documentId != null) _documentsUploaded = true;
       }
     } catch (_) {}
 
@@ -72,6 +94,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return count;
   }
 
+  String _getTeamName(int? teamId) {
+    if (teamId == null) return 'TBD';
+    return _teamNames[teamId] ?? 'Team #$teamId';
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthProvider>(context).user;
@@ -79,7 +106,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (_loading) {
       return const MainLayout(
         currentRoute: '/dashboard',
-        child: SpinnerWidget(message: 'Loading dashboard statistics...'),
+        child: SpinnerWidget(message: 'Loading your athletics dashboard...'),
       );
     }
 
@@ -91,7 +118,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             // Welcome Banner
             GlassCard(
-              padding: const EdgeInsets.all(28),
+              padding: const EdgeInsets.all(24),
               child: Row(
                 children: [
                   Expanded(
@@ -99,191 +126,469 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Welcome Back, ${user?.name ?? 'Candidate'}!',
+                          'Welcome, ${user?.name ?? 'Student Athlete'}!',
                           style: const TextStyle(
                             color: AppColors.textPrimary,
-                            fontSize: 26,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 4),
                         const Text(
-                          'Madras Christian College • Physical Education & Sports Portal',
-                          style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                          'Madras Christian College • Student Physical Education Portal',
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 14),
                         Wrap(
-                          spacing: 12,
+                          spacing: 10,
                           runSpacing: 8,
                           children: [
                             _InfoBadge(label: 'Reg No', value: user?.registerNo ?? 'N/A'),
                             _InfoBadge(label: 'Department', value: user?.dept ?? 'N/A'),
+                            _InfoBadge(label: 'Role', value: user?.role ?? 'STUDENT'),
                             _InfoBadge(label: 'Email', value: user?.email ?? 'N/A'),
                           ],
                         ),
                       ],
                     ),
                   ),
-                  const Text('🏆', style: TextStyle(fontSize: 48)),
+                  const SizedBox(width: 12),
+                  const Text('🏃‍♂️', style: TextStyle(fontSize: 44)),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Profile Completion Progress Bar & Quick Links
+            GlassCard(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'My Profile Completion',
+                        style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                      Text('$_completionPercent%', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 16)),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: LinearProgressIndicator(
+                      value: _completionPercent / 100,
+                      minHeight: 8,
+                      backgroundColor: AppColors.bgTertiary,
+                      valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 8,
+                    children: [
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: _profileCreated ? AppColors.success : AppColors.primary,
+                          side: BorderSide(color: _profileCreated ? AppColors.success : AppColors.primary),
+                        ),
+                        onPressed: () => Navigator.pushReplacementNamed(context, '/profile'),
+                        icon: Icon(_profileCreated ? Icons.check_circle : Icons.edit, size: 16),
+                        label: Text(_profileCreated ? 'Personal Details (Done)' : 'Fill Personal Details'),
+                      ),
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: _familyAdded ? AppColors.success : AppColors.secondary,
+                          side: BorderSide(color: _familyAdded ? AppColors.success : AppColors.secondary),
+                        ),
+                        onPressed: () => Navigator.pushReplacementNamed(context, '/family'),
+                        icon: Icon(_familyAdded ? Icons.check_circle : Icons.family_restroom, size: 16),
+                        label: Text(_familyAdded ? 'Family Details (Done)' : 'Add Family Details'),
+                      ),
+                      OutlinedButton.icon(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: _documentsUploaded ? AppColors.success : AppColors.accent,
+                          side: BorderSide(color: _documentsUploaded ? AppColors.success : AppColors.accent),
+                        ),
+                        onPressed: () => Navigator.pushReplacementNamed(context, '/documents'),
+                        icon: Icon(_documentsUploaded ? Icons.check_circle : Icons.upload_file, size: 16),
+                        label: Text(_documentsUploaded ? 'Documents (Done)' : 'Upload Documents'),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
             const SizedBox(height: 24),
 
-            // KPI Grid
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final isWide = constraints.maxWidth > 768;
-                return GridView.count(
-                  crossAxisCount: isWide ? 4 : 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  childAspectRatio: isWide ? 1.6 : 1.3,
-                  children: [
-                    _KpiCard(title: 'Total Users', value: _stats.totalUsers, trend: 'System accounts', color: AppColors.success),
-                    _KpiCard(title: 'Registered Candidates', value: _stats.totalCandidates, trend: 'Completed profile forms', color: AppColors.secondary),
-                    _KpiCard(title: 'Male Students', value: _stats.totalMaleStudents, trend: 'Athletes', color: AppColors.accent),
-                    _KpiCard(title: 'Female Students', value: _stats.totalFemaleStudents, trend: 'Athletes', color: AppColors.primary),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 24),
-
-            // Main Dashboard Grid
-            Wrap(
-              spacing: 24,
-              runSpacing: 24,
+            // ==========================================
+            // 1. SPORTS SECTION (Directly on Dashboard)
+            // ==========================================
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Completion Tracker
-                SizedBox(
-                  width: 480,
-                  child: GlassCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Profile Completion Status',
-                          style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text('Overall Progress', style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
-                            Text('$_completionPercent%', style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 16)),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: LinearProgressIndicator(
-                            value: _completionPercent / 100,
-                            minHeight: 10,
-                            backgroundColor: AppColors.bgTertiary,
-                            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-
-                        // Checklist items
-                        _ChecklistItem(
-                          completed: _profileCreated,
-                          title: 'Complete Student Profile Form',
-                          subtitle: 'Batch, address, and athletic specialty details',
-                          actionText: _profileCreated ? 'View' : 'Fill',
-                          onTap: () => Navigator.pushReplacementNamed(context, '/profile'),
-                        ),
-                        const SizedBox(height: 12),
-                        _ChecklistItem(
-                          completed: _familyAdded,
-                          title: 'Associate Family Details',
-                          subtitle: 'Emergency contacts and guardian info',
-                          actionText: _profileCreated ? (_familyAdded ? 'View' : 'Add') : 'Locked',
-                          onTap: () {
-                            if (!_profileCreated) {
-                              Provider.of<ToastProvider>(context, listen: false).showToast('Please complete Profile Form first', 'warning');
-                              Navigator.pushReplacementNamed(context, '/profile');
-                            } else {
-                              Navigator.pushReplacementNamed(context, '/family');
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 12),
-                        _ChecklistItem(
-                          completed: _documentsUploaded,
-                          title: 'Upload Required Certificates',
-                          subtitle: 'Aadhar card, medical fitness certificates, etc.',
-                          actionText: _profileCreated ? (_documentsUploaded ? 'View' : 'Upload') : 'Locked',
-                          onTap: () {
-                            if (!_profileCreated) {
-                              Provider.of<ToastProvider>(context, listen: false).showToast('Please complete Profile Form first', 'warning');
-                              Navigator.pushReplacementNamed(context, '/profile');
-                            } else {
-                              Navigator.pushReplacementNamed(context, '/documents');
-                            }
-                          },
-                        ),
-                      ],
+                const Row(
+                  children: [
+                    Text('🏀 ', style: TextStyle(fontSize: 20)),
+                    Text(
+                      'Available Sports',
+                      style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                  ),
+                  ],
                 ),
-
-                // Quick Actions & Activity
-                SizedBox(
-                  width: 440,
-                  child: Column(
-                    children: [
-                      GlassCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Quick Actions',
-                              style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 16),
-                            GridView.count(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 12,
-                              mainAxisSpacing: 12,
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              childAspectRatio: 2.2,
-                              children: [
-                                _ActionTile(icon: '📝', title: 'Edit Profile', onTap: () => Navigator.pushReplacementNamed(context, '/profile')),
-                                _ActionTile(icon: '👨‍👩‍👧‍👦', title: 'Family Info', onTap: () => Navigator.pushReplacementNamed(context, '/family')),
-                                _ActionTile(icon: '📂', title: 'Upload Docs', onTap: () => Navigator.pushReplacementNamed(context, '/documents')),
-                                _ActionTile(icon: '👥', title: 'View Users', onTap: () => Navigator.pushReplacementNamed(context, '/users')),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      GlassCard(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
-                            Text(
-                              'Recent Activity',
-                              style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 16),
-                            _ActivityItem(text: 'Log in successful', time: 'Just now'),
-                            SizedBox(height: 12),
-                            _ActivityItem(text: 'Database sync complete', time: '5 mins ago'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                TextButton(
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/sports'),
+                  child: const Text('View All Sports →', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600)),
                 ),
               ],
             ),
+            const SizedBox(height: 10),
+            _sports.isEmpty
+                ? GlassCard(
+                    padding: const EdgeInsets.all(20),
+                    child: const Center(
+                      child: Text('No sports listed yet.', style: TextStyle(color: AppColors.textMuted)),
+                    ),
+                  )
+                : LayoutBuilder(
+                    builder: (context, constraints) {
+                      return GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: constraints.maxWidth > 900 ? 3 : (constraints.maxWidth > 600 ? 2 : 1),
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: constraints.maxWidth > 600 ? 1.4 : 1.7,
+                        ),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _sports.length > 6 ? 6 : _sports.length,
+                        itemBuilder: (context, index) {
+                          final sport = _sports[index];
+                          return GlassCard(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        sport.sportName,
+                                        style: const TextStyle(
+                                          color: AppColors.textPrimary,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryGlow,
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Text(
+                                        sport.category ?? 'Outdoor',
+                                        style: const TextStyle(color: AppColors.primary, fontSize: 10, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Expanded(
+                                  child: Text(
+                                    sport.description ?? 'Official department sport discipline.',
+                                    maxLines: 3,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Team size: ${sport.minPlayers ?? 1} - ${sport.maxPlayers ?? 11} athletes',
+                                  style: const TextStyle(color: AppColors.textMuted, fontSize: 11),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+            const SizedBox(height: 28),
+
+            // ==========================================
+            // 2. LIVE SCORES SECTION (Directly on Dashboard)
+            // ==========================================
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Row(
+                  children: [
+                    Text('⚡ ', style: TextStyle(fontSize: 20)),
+                    Text(
+                      'Live Scores',
+                      style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/live-scores'),
+                  child: const Text('Live Scoreboard →', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            _liveScores.isEmpty
+                ? GlassCard(
+                    padding: const EdgeInsets.all(24),
+                    child: const Center(
+                      child: Column(
+                        children: [
+                          Icon(Icons.sports_score, size: 36, color: AppColors.textMuted),
+                          SizedBox(height: 8),
+                          Text('No live matches in progress right now.', style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+                          SizedBox(height: 4),
+                          Text('Check the upcoming match fixtures below for scheduled tournament games.', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+                        ],
+                      ),
+                    ),
+                  )
+                : LayoutBuilder(
+                    builder: (context, constraints) {
+                      return GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: constraints.maxWidth > 768 ? 2 : 1,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: constraints.maxWidth > 768 ? 1.8 : 2.0,
+                        ),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _liveScores.length > 4 ? 4 : _liveScores.length,
+                        itemBuilder: (context, index) {
+                          final score = _liveScores[index];
+                          final isLive = score.status?.toUpperCase() == 'LIVE';
+                          return GlassCard(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      score.sportType ?? 'Match Score',
+                                      style: const TextStyle(color: AppColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: isLive ? Colors.red.withOpacity(0.2) : AppColors.bgTertiary,
+                                        borderRadius: BorderRadius.circular(4),
+                                        border: Border.all(color: isLive ? Colors.red : AppColors.borderColor),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          if (isLive)
+                                            Container(
+                                              width: 6,
+                                              height: 6,
+                                              margin: const EdgeInsets.only(right: 4),
+                                              decoration: const BoxDecoration(shape: BoxShape.circle, color: Colors.red),
+                                            ),
+                                          Text(
+                                            score.status ?? 'IN_PROGRESS',
+                                            style: TextStyle(
+                                              color: isLive ? Colors.red : AppColors.textSecondary,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Spacer(),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            score.teamA ?? 'Team A',
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 15),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            '${score.scoreA ?? 0}',
+                                            style: const TextStyle(color: AppColors.primary, fontSize: 28, fontWeight: FontWeight.w900),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.symmetric(horizontal: 8),
+                                      child: Text('VS', style: TextStyle(color: AppColors.textMuted, fontWeight: FontWeight.bold, fontSize: 12)),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            score.teamB ?? 'Team B',
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 15),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            '${score.scoreB ?? 0}',
+                                            style: const TextStyle(color: AppColors.secondary, fontSize: 28, fontWeight: FontWeight.w900),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Spacer(),
+                                if (score.currentSetHalf != null && score.currentSetHalf!.isNotEmpty)
+                                  Center(
+                                    child: Text(
+                                      'Period / Set: ${score.currentSetHalf}',
+                                      style: const TextStyle(color: AppColors.textMuted, fontSize: 11),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+            const SizedBox(height: 28),
+
+            // ==========================================
+            // 3. MATCH FIXTURES SECTION (Directly on Dashboard)
+            // ==========================================
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Row(
+                  children: [
+                    Text('⚽ ', style: TextStyle(fontSize: 20)),
+                    Text(
+                      'Upcoming Match Fixtures',
+                      style: TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/matches'),
+                  child: const Text('All Fixtures →', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            _matches.isEmpty
+                ? GlassCard(
+                    padding: const EdgeInsets.all(24),
+                    child: const Center(
+                      child: Text('No match fixtures scheduled yet.', style: TextStyle(color: AppColors.textMuted)),
+                    ),
+                  )
+                : LayoutBuilder(
+                    builder: (context, constraints) {
+                      return GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: constraints.maxWidth > 850 ? 3 : (constraints.maxWidth > 550 ? 2 : 1),
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: constraints.maxWidth > 550 ? 1.5 : 1.8,
+                        ),
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _matches.length > 6 ? 6 : _matches.length,
+                        itemBuilder: (context, index) {
+                          final match = _matches[index];
+                          final team1 = (match.teamA != null && match.teamA!.isNotEmpty)
+                              ? match.teamA!
+                              : _getTeamName(match.teamOne ?? match.team1Id);
+                          final team2 = (match.teamB != null && match.teamB!.isNotEmpty)
+                              ? match.teamB!
+                              : _getTeamName(match.teamTwo ?? match.team2Id);
+
+                          return GlassCard(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryGlow,
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        match.status ?? 'SCHEDULED',
+                                        style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 10),
+                                      ),
+                                    ),
+                                    Text(
+                                      match.matchDate ?? 'Date TBD',
+                                      style: const TextStyle(color: AppColors.textMuted, fontSize: 11),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  '$team1  vs  $team2',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.bold),
+                                ),
+                                if (match.score != null && match.score!.isNotEmpty) ...[
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Score: ${match.score}',
+                                    style: const TextStyle(color: AppColors.accent, fontSize: 12, fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                                const Spacer(),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.location_on_outlined, size: 14, color: AppColors.textMuted),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        match.venue ?? 'College Ground',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+            const SizedBox(height: 24),
           ],
         ),
       ),
@@ -300,174 +605,20 @@ class _InfoBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: AppColors.bgTertiary,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(6),
         border: Border.all(color: AppColors.borderColor),
       ),
       child: Text.rich(
         TextSpan(
           children: [
-            TextSpan(text: '$label: ', style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
-            TextSpan(text: value, style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 12)),
+            TextSpan(text: '$label: ', style: const TextStyle(color: AppColors.textMuted, fontSize: 11)),
+            TextSpan(text: value, style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 11)),
           ],
         ),
       ),
-    );
-  }
-}
-
-class _KpiCard extends StatelessWidget {
-  final String title;
-  final int value;
-  final String trend;
-  final Color color;
-
-  const _KpiCard({required this.title, required this.value, required this.trend, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return GlassCard(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(title, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
-          const SizedBox(height: 6),
-          Text(
-            '$value',
-            style: const TextStyle(color: AppColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 4),
-          Text(trend, style: TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w500)),
-        ],
-      ),
-    );
-  }
-}
-
-class _ChecklistItem extends StatelessWidget {
-  final bool completed;
-  final String title;
-  final String subtitle;
-  final String actionText;
-  final VoidCallback onTap;
-
-  const _ChecklistItem({
-    required this.completed,
-    required this.title,
-    required this.subtitle,
-    required this.actionText,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.bgSecondary,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: completed ? AppColors.success : AppColors.borderColor),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              completed ? Icons.check_circle : Icons.radio_button_unchecked,
-              color: completed ? AppColors.success : AppColors.textMuted,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 14)),
-                  Text(subtitle, style: const TextStyle(color: AppColors.textMuted, fontSize: 12)),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: completed ? AppColors.primaryGlow : AppColors.bgTertiary,
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                actionText,
-                style: TextStyle(
-                  color: completed ? AppColors.primary : AppColors.textSecondary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _ActionTile extends StatelessWidget {
-  final String icon;
-  final String title;
-  final VoidCallback onTap;
-
-  const _ActionTile({required this.icon, required this.title, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.bgTertiary,
-        foregroundColor: AppColors.textPrimary,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: const BorderSide(color: AppColors.borderColor),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-      ),
-      onPressed: onTap,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(icon, style: const TextStyle(fontSize: 16)),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              title,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ActivityItem extends StatelessWidget {
-  final String text;
-  final String time;
-
-  const _ActivityItem({required this.text, required this.time});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const CircleAvatar(radius: 4, backgroundColor: AppColors.primary),
-        const SizedBox(width: 10),
-        Expanded(child: Text(text, style: const TextStyle(color: AppColors.textPrimary, fontSize: 13))),
-        Text(time, style: const TextStyle(color: AppColors.textMuted, fontSize: 11)),
-      ],
     );
   }
 }

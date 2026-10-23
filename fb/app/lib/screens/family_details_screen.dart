@@ -42,19 +42,14 @@ class _FamilyDetailsScreenState extends State<FamilyDetailsScreen> {
     setState(() => _loading = true);
     final user = Provider.of<AuthProvider>(context, listen: false).user;
 
-    if (user?.email != null) {
+    if (user != null) {
       try {
-        final forms = await ApiService.getAllUserForms();
-        final match = forms.where(
-          (f) => f.email?.toLowerCase() == user!.email?.toLowerCase(),
-        ).toList();
+        _myUserForm = await ApiService.getMyProfile();
 
-        if (match.isNotEmpty) {
-          _myUserForm = match.first;
-        } else {
+        if (_myUserForm == null) {
           // Initialize base form for the logged-in user if not created yet
           _myUserForm = await ApiService.createUserForm(UserFormModel(
-            name: user!.name ?? 'Student',
+            name: user.name ?? 'Student',
             email: user.email ?? '',
             registerNo: user.registerNo ?? '',
             dept: user.dept ?? 'General',
@@ -66,16 +61,15 @@ class _FamilyDetailsScreenState extends State<FamilyDetailsScreen> {
           ));
         }
 
-        if (_myUserForm?.id != null) {
-          final family = await ApiService.getFamilyByCandidateId(_myUserForm!.id!);
-          if (family?.familyId != null) {
-            _familyModel = family;
-            _fatherNameCtrl.text = family!.fatherName ?? '';
-            _fatherOccCtrl.text = family.fatherOccupation ?? '';
-            _motherNameCtrl.text = family.motherName ?? '';
-            _motherOccCtrl.text = family.motherOccupation ?? '';
-            _guardianPhoneCtrl.text = family.guardianPhone ?? '';
-          }
+        // Fetch strictly the authenticated user's own family details
+        final family = await ApiService.getMyFamily();
+        if (family?.familyId != null) {
+          _familyModel = family;
+          _fatherNameCtrl.text = family!.fatherName ?? '';
+          _fatherOccCtrl.text = family.fatherOccupation ?? '';
+          _motherNameCtrl.text = family.motherName ?? '';
+          _motherOccCtrl.text = family.motherOccupation ?? '';
+          _guardianPhoneCtrl.text = family.guardianPhone ?? '';
         }
       } catch (_) {}
     }

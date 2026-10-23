@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_styles.dart';
+import 'login_screen.dart';
 
 class LandingScreen extends StatelessWidget {
   const LandingScreen({super.key});
@@ -43,6 +44,18 @@ class LandingScreen extends StatelessWidget {
                     ],
                   ),
                   const Spacer(),
+                  TextButton.icon(
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.secondary,
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    ),
+                    onPressed: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => const LoginScreen(initialAdminMode: true)));
+                    },
+                    icon: const Icon(Icons.admin_panel_settings_outlined, size: 18),
+                    label: const Text('Admin Portal', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  ),
+                  const SizedBox(width: 8),
                   OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.textPrimary,

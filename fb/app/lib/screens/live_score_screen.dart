@@ -4,6 +4,7 @@ import '../core/theme/app_colors.dart';
 import '../core/theme/app_styles.dart';
 import '../models/live_score.dart';
 import '../providers/api_service.dart';
+import '../providers/auth_provider.dart';
 import '../providers/toast_provider.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/main_layout.dart';
@@ -116,8 +117,149 @@ class _LiveScoreScreenState extends State<LiveScoreScreen> {
     );
   }
 
+  void _showEditDialog(LiveScoreModel score) {
+    final titleCtrl = TextEditingController(text: score.matchTitle ?? '');
+    final sportCtrl = TextEditingController(text: score.sportType ?? 'Football');
+    final scoreACtrl = TextEditingController(text: score.teamAScore ?? '${score.scoreA ?? 0}');
+    final scoreBCtrl = TextEditingController(text: score.teamBScore ?? '${score.scoreB ?? 0}');
+    final commCtrl = TextEditingController(text: score.commentary ?? '');
+    String currentStatus = score.status ?? 'LIVE';
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.bgSecondary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text('Edit Live Scoreboard', style: TextStyle(color: AppColors.textPrimary)),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleCtrl,
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: AppStyles.inputDecoration(hintText: 'Match Title', labelText: 'Match Title'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: sportCtrl,
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: AppStyles.inputDecoration(hintText: 'Sport Type', labelText: 'Sport'),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: scoreACtrl,
+                      style: const TextStyle(color: AppColors.textPrimary),
+                      decoration: AppStyles.inputDecoration(hintText: 'Team A Score', labelText: 'Score A'),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextField(
+                      controller: scoreBCtrl,
+                      style: const TextStyle(color: AppColors.textPrimary),
+                      decoration: AppStyles.inputDecoration(hintText: 'Team B Score', labelText: 'Score B'),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: commCtrl,
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: AppStyles.inputDecoration(hintText: 'Live commentary update', labelText: 'Commentary'),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+            onPressed: () => Navigator.pop(ctx),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+            child: const Text('Save Score'),
+            onPressed: () async {
+              if (score.scoreId == null) return;
+              final toast = Provider.of<ToastProvider>(context, listen: false);
+              try {
+                await ApiService.updateLiveScore(
+                  score.scoreId!,
+                  LiveScoreModel(
+                    scoreId: score.scoreId,
+                    matchTitle: titleCtrl.text.trim(),
+                    sportType: sportCtrl.text.trim(),
+                    teamAScore: scoreACtrl.text.trim(),
+                    teamBScore: scoreBCtrl.text.trim(),
+                    currentStatus: currentStatus,
+                    commentary: commCtrl.text.trim(),
+                  ),
+                );
+                toast.showToast('Live score updated in database', 'success');
+                Navigator.pop(ctx);
+                _loadScores();
+              } catch (_) {
+                toast.showToast('Failed to update live score', 'error');
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _confirmDeleteScore(LiveScoreModel score) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.bgSecondary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: AppColors.error),
+            SizedBox(width: 8),
+            Text('Confirm Deletion', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: Text(
+          'Are you sure you want to delete this live score ticker for "${score.matchTitle ?? 'Live Match'}"?\n\nThis will remove the live scoring record permanently.',
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error, foregroundColor: Colors.white),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              if (score.scoreId == null) return;
+              final toast = Provider.of<ToastProvider>(context, listen: false);
+              try {
+                await ApiService.deleteLiveScore(score.scoreId!);
+                toast.showToast('Live score deleted successfully', 'info');
+                _loadScores();
+              } catch (_) {
+                toast.showToast('Failed to delete live score', 'error');
+              }
+            },
+            child: const Text('Delete Score'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final isAdmin = authProvider.isAdmin;
+
     return MainLayout(
       currentRoute: '/live-scores',
       child: Column(
@@ -130,12 +272,13 @@ class _LiveScoreScreenState extends State<LiveScoreScreen> {
                 'Live Scoreboard',
                 style: TextStyle(color: AppColors.textPrimary, fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.accent, foregroundColor: Colors.black),
-                onPressed: _showAddDialog,
-                icon: const Icon(Icons.flash_on, size: 18),
-                label: const Text('Update Score', style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
+              if (isAdmin)
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.accent, foregroundColor: Colors.black),
+                  onPressed: _showAddDialog,
+                  icon: const Icon(Icons.flash_on, size: 18),
+                  label: const Text('Publish Live Score', style: TextStyle(fontWeight: FontWeight.bold)),
+                ),
             ],
           ),
           const SizedBox(height: 20),
@@ -163,10 +306,31 @@ class _LiveScoreScreenState extends State<LiveScoreScreen> {
                                         s.matchTitle ?? 'Live Match',
                                         style: const TextStyle(color: AppColors.textPrimary, fontSize: 18, fontWeight: FontWeight.bold),
                                       ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                        decoration: BoxDecoration(color: AppColors.error.withOpacity(0.2), borderRadius: BorderRadius.circular(20), border: Border.all(color: AppColors.error)),
-                                        child: const Text('🔴 LIVE', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold, fontSize: 11)),
+                                      Row(
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: AppColors.error.withOpacity(0.2),
+                                              borderRadius: BorderRadius.circular(20),
+                                              border: Border.all(color: AppColors.error),
+                                            ),
+                                            child: const Text('🔴 LIVE', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold, fontSize: 11)),
+                                          ),
+                                          if (isAdmin) ...[
+                                            const SizedBox(width: 8),
+                                            IconButton(
+                                              icon: const Icon(Icons.edit_outlined, color: AppColors.primary, size: 18),
+                                              tooltip: 'Edit Score',
+                                              onPressed: () => _showEditDialog(s),
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 18),
+                                              tooltip: 'Delete Score',
+                                              onPressed: () => _confirmDeleteScore(s),
+                                            ),
+                                          ],
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -175,12 +339,12 @@ class _LiveScoreScreenState extends State<LiveScoreScreen> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        '${s.teamAScore ?? '0'} : ${s.teamBScore ?? '0'}',
+                                        '${s.teamAScore ?? s.scoreA ?? '0'} : ${s.teamBScore ?? s.scoreB ?? '0'}',
                                         style: const TextStyle(color: AppColors.accent, fontSize: 32, fontWeight: FontWeight.w800),
                                       ),
                                     ],
                                   ),
-                                  if (s.commentary != null) ...[
+                                  if (s.commentary != null && s.commentary!.isNotEmpty) ...[
                                     const SizedBox(height: 12),
                                     Text('Commentary: ${s.commentary}', style: const TextStyle(color: AppColors.textMuted, fontSize: 13)),
                                   ],

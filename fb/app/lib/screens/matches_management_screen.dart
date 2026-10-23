@@ -6,6 +6,7 @@ import '../models/match_fixture.dart';
 import '../models/team.dart';
 import '../models/tournament.dart';
 import '../providers/api_service.dart';
+import '../providers/auth_provider.dart';
 import '../providers/toast_provider.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/main_layout.dart';
@@ -275,6 +276,136 @@ class _MatchesManagementScreenState extends State<MatchesManagementScreen> {
     );
   }
 
+  void _showEditDialog(MatchFixtureModel match) {
+    final scoreCtrl = TextEditingController(text: match.score ?? '');
+    final venueCtrl = TextEditingController(text: match.venue ?? '');
+    String selectedStatus = match.status ?? 'SCHEDULED';
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          backgroundColor: AppColors.cardSurface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text('Edit Match: ${match.teamA} vs ${match.teamB}',
+              style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16)),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: scoreCtrl,
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: AppStyles.inputDecoration(hintText: 'e.g. 2 - 1 or 78 - 65', labelText: 'Score / Result'),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: venueCtrl,
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: AppStyles.inputDecoration(hintText: 'Stadium / Field name', labelText: 'Venue'),
+              ),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<String>(
+                value: selectedStatus,
+                dropdownColor: AppColors.cardSurface,
+                style: const TextStyle(color: AppColors.textPrimary),
+                decoration: AppStyles.inputDecoration(labelText: 'Match Status'),
+                items: const [
+                  DropdownMenuItem(value: 'SCHEDULED', child: Text('SCHEDULED')),
+                  DropdownMenuItem(value: 'LIVE', child: Text('LIVE')),
+                  DropdownMenuItem(value: 'COMPLETED', child: Text('COMPLETED')),
+                  DropdownMenuItem(value: 'POSTPONED', child: Text('POSTPONED')),
+                ],
+                onChanged: (val) {
+                  if (val != null) setDialogState(() => selectedStatus = val);
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+              onPressed: () async {
+                if (match.matchId == null) return;
+                final toast = Provider.of<ToastProvider>(context, listen: false);
+                try {
+                  await ApiService.updateMatch(
+                    match.matchId!,
+                    MatchFixtureModel(
+                      matchId: match.matchId,
+                      teamA: match.teamA,
+                      teamB: match.teamB,
+                      teamOne: match.teamOne,
+                      teamTwo: match.teamTwo,
+                      tournamentId: match.tournamentId,
+                      matchDate: match.matchDate,
+                      venue: venueCtrl.text.trim(),
+                      status: selectedStatus,
+                      score: scoreCtrl.text.trim(),
+                    ),
+                  );
+                  toast.showToast('Match fixture updated in database', 'success');
+                  Navigator.pop(ctx);
+                  _loadData();
+                } catch (e) {
+                  toast.showToast('Failed to update match', 'error');
+                }
+              },
+              child: const Text('Save Changes'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmDeleteMatch(MatchFixtureModel match) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.bgSecondary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: AppColors.error),
+            SizedBox(width: 8),
+            Text('Confirm Deletion', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: Text(
+          'Are you sure you want to delete match fixture "${match.teamA} vs ${match.teamB}"?\n\nThis will remove the fixture and its scoring record permanently.',
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error, foregroundColor: Colors.white),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              if (match.matchId == null) return;
+              final toast = Provider.of<ToastProvider>(context, listen: false);
+              try {
+                await ApiService.deleteMatch(match.matchId!);
+                toast.showToast('Match fixture deleted successfully', 'info');
+                _loadData();
+              } catch (_) {
+                toast.showToast('Failed to delete match fixture', 'error');
+              }
+            },
+            child: const Text('Delete Fixture'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Color _getStatusColor(String? status) {
     switch (status?.toUpperCase()) {
       case 'LIVE':
@@ -289,6 +420,9 @@ class _MatchesManagementScreenState extends State<MatchesManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final isAdmin = authProvider.isAdmin;
+
     return MainLayout(
       currentRoute: '/matches',
       child: Column(
@@ -311,17 +445,18 @@ class _MatchesManagementScreenState extends State<MatchesManagementScreen> {
                   ),
                 ],
               ),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              if (isAdmin)
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: _showAddDialog,
+                  icon: const Icon(Icons.add, size: 18),
+                  label: const Text('Schedule Match'),
                 ),
-                onPressed: _showAddDialog,
-                icon: const Icon(Icons.add, size: 18),
-                label: const Text('Schedule Match'),
-              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -337,12 +472,14 @@ class _MatchesManagementScreenState extends State<MatchesManagementScreen> {
                             const Text('⚽', style: TextStyle(fontSize: 48)),
                             const SizedBox(height: 12),
                             const Text('No match fixtures scheduled yet', style: TextStyle(color: AppColors.textMuted, fontSize: 16)),
-                            const SizedBox(height: 12),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
-                              onPressed: _showAddDialog,
-                              child: const Text('Schedule First Match'),
-                            ),
+                            if (isAdmin) ...[
+                              const SizedBox(height: 12),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+                                onPressed: _showAddDialog,
+                                child: const Text('Schedule First Match'),
+                              ),
+                            ],
                           ],
                         ),
                       )
@@ -426,6 +563,19 @@ class _MatchesManagementScreenState extends State<MatchesManagementScreen> {
                                       ),
                                     ],
                                   ),
+                                  if (isAdmin) ...[
+                                    const SizedBox(width: 12),
+                                    IconButton(
+                                      icon: const Icon(Icons.edit_outlined, color: AppColors.primary, size: 20),
+                                      tooltip: 'Edit Match Fixture',
+                                      onPressed: () => _showEditDialog(m),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 20),
+                                      tooltip: 'Delete Match Fixture',
+                                      onPressed: () => _confirmDeleteMatch(m),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),

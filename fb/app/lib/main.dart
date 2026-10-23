@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 // Core & Theme
 import 'core/theme/app_theme.dart';
 import 'providers/auth_provider.dart';
+import 'providers/notification_provider.dart';
 import 'providers/toast_provider.dart';
 import 'widgets/toast_overlay.dart';
 import 'widgets/spinner_widget.dart';
@@ -13,6 +14,7 @@ import 'screens/landing_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/dashboard_screen.dart';
+import 'screens/admin_dashboard_screen.dart';
 import 'screens/user_management_screen.dart';
 import 'screens/user_form_screen.dart';
 import 'screens/family_details_screen.dart';
@@ -39,6 +41,7 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => ToastProvider()),
       ],
       child: const PePortalApp(),
@@ -83,6 +86,9 @@ class PePortalApp extends StatelessWidget {
         // Protected Authenticated Routes
         Widget screen;
         switch (routeName) {
+          case '/admin/dashboard':
+            screen = const AdminDashboardScreen();
+            break;
           case '/dashboard':
             screen = const DashboardScreen();
             break;
@@ -139,7 +145,7 @@ class PePortalApp extends StatelessWidget {
         }
 
         return MaterialPageRoute(
-          builder: (_) => AuthGuardProtected(child: screen),
+          builder: (_) => AuthGuardProtected(routeName: routeName, child: screen),
           settings: settings,
         );
       },
@@ -160,7 +166,11 @@ class AuthGuardPublic extends StatelessWidget {
     }
     if (authProvider.isAuthenticated) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushReplacementNamed('/dashboard');
+        if (authProvider.isAdmin) {
+          Navigator.of(context).pushReplacementNamed('/admin/dashboard');
+        } else {
+          Navigator.of(context).pushReplacementNamed('/dashboard');
+        }
       });
       return const SpinnerWidget(fullPage: true, message: 'Redirecting to Dashboard...');
     }
@@ -170,8 +180,9 @@ class AuthGuardPublic extends StatelessWidget {
 
 class AuthGuardProtected extends StatelessWidget {
   final Widget child;
+  final String? routeName;
 
-  const AuthGuardProtected({super.key, required this.child});
+  const AuthGuardProtected({super.key, required this.child, this.routeName});
 
   @override
   Widget build(BuildContext context) {
@@ -185,6 +196,28 @@ class AuthGuardProtected extends StatelessWidget {
       });
       return const SpinnerWidget(fullPage: true, message: 'Redirecting to Login...');
     }
+
+    // Role-based protection: Students cannot access Admin-only routes
+    final isAdminRoute = routeName == '/admin/dashboard' || routeName == '/users';
+    if (!authProvider.isAdmin && isAdminRoute) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Provider.of<ToastProvider>(context, listen: false).showToast(
+          'Access Denied: You do not have administrator permissions to access this screen.',
+          'error',
+        );
+        Navigator.of(context).pushReplacementNamed('/dashboard');
+      });
+      return const SpinnerWidget(fullPage: true, message: 'Access Denied: Redirecting to Student Dashboard...');
+    }
+
+    // Admins accessing student personal details redirected to admin dashboard
+    if (authProvider.isAdmin && routeName == '/dashboard') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.of(context).pushReplacementNamed('/admin/dashboard');
+      });
+      return const SpinnerWidget(fullPage: true, message: 'Redirecting to Admin Dashboard...');
+    }
+
     return child;
   }
 }

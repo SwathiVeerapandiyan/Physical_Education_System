@@ -50,13 +50,10 @@ class _UserFormScreenState extends State<UserFormScreen> {
       _deptCtrl.text = user.dept ?? '';
 
       try {
-        final forms = await ApiService.getAllUserForms();
-        final myForm = forms.firstWhere(
-          (f) => f.email?.toLowerCase() == user.email?.toLowerCase(),
-          orElse: () => UserFormModel(),
-        );
+        // Fetch strictly the authenticated user's own profile
+        final myForm = await ApiService.getMyProfile();
 
-        if (myForm.id != null) {
+        if (myForm != null && myForm.id != null) {
           _existingForm = myForm;
           _nameCtrl.text = myForm.name ?? _nameCtrl.text;
           _regNoCtrl.text = myForm.registerNo ?? _regNoCtrl.text;
@@ -96,16 +93,20 @@ class _UserFormScreenState extends State<UserFormScreen> {
     );
 
     try {
-      if (_existingForm?.id != null) {
-        await ApiService.updateUserForm(_existingForm!.id!, model);
-        toast.showToast('Profile updated successfully!', 'success');
-      } else {
-        await ApiService.createUserForm(model);
-        toast.showToast('Profile created successfully!', 'success');
-      }
+      final updated = await ApiService.updateMyProfile(model);
+      _existingForm = updated;
+      toast.showToast('Profile updated successfully in database!', 'success');
       _loadProfile();
     } catch (e) {
-      toast.showToast('Failed to save profile: ${e.toString()}', 'error');
+      // Fallback if not created yet
+      try {
+        final created = await ApiService.createUserForm(model);
+        _existingForm = created;
+        toast.showToast('Profile saved successfully!', 'success');
+        _loadProfile();
+      } catch (err) {
+        toast.showToast('Failed to save profile: ${err.toString()}', 'error');
+      }
     } finally {
       if (mounted) setState(() => _saving = false);
     }

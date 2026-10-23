@@ -40,19 +40,14 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
     setState(() => _loading = true);
     final user = Provider.of<AuthProvider>(context, listen: false).user;
 
-    if (user?.email != null) {
+    if (user != null) {
       try {
-        final forms = await ApiService.getAllUserForms();
-        final match = forms.where(
-          (f) => f.email?.toLowerCase() == user!.email?.toLowerCase(),
-        ).toList();
+        _myUserForm = await ApiService.getMyProfile();
 
-        if (match.isNotEmpty) {
-          _myUserForm = match.first;
-        } else {
+        if (_myUserForm == null) {
           // Initialize base form for the logged-in user if not created yet
           _myUserForm = await ApiService.createUserForm(UserFormModel(
-            name: user!.name ?? 'Student',
+            name: user.name ?? 'Student',
             email: user.email ?? '',
             registerNo: user.registerNo ?? '',
             dept: user.dept ?? 'General',
@@ -64,14 +59,13 @@ class _DocumentDetailsScreenState extends State<DocumentDetailsScreen> {
           ));
         }
 
-        if (_myUserForm?.id != null) {
-          final doc = await ApiService.getDocumentByCandidateId(_myUserForm!.id!);
-          if (doc?.documentId != null) {
-            _docModel = doc;
-            _aadharCtrl.text = doc!.aadharNo ?? '';
-            _medCertCtrl.text = doc.medicalCertificateUrl ?? '';
-            _photoUrlCtrl.text = doc.photoUrl ?? '';
-          }
+        // Fetch strictly the authenticated user's own documents
+        final doc = await ApiService.getMyDocuments();
+        if (doc?.documentId != null) {
+          _docModel = doc;
+          _aadharCtrl.text = doc!.aadharNo ?? '';
+          _medCertCtrl.text = doc.medicalCertificateUrl ?? '';
+          _photoUrlCtrl.text = doc.photoUrl ?? '';
         }
       } catch (_) {}
     }

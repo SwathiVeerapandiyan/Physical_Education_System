@@ -6,6 +6,7 @@ import '../models/sport.dart';
 import '../models/team.dart';
 import '../models/team_member.dart';
 import '../providers/api_service.dart';
+import '../providers/auth_provider.dart';
 import '../providers/toast_provider.dart';
 import '../widgets/glass_card.dart';
 import '../widgets/main_layout.dart';
@@ -139,6 +140,141 @@ class _TeamsManagementScreenState extends State<TeamsManagementScreen> {
     );
   }
 
+  void _showEditDialog(TeamModel team) {
+    final nameCtrl = TextEditingController(text: team.teamName);
+    final captCtrl = TextEditingController(text: team.captainName ?? '');
+    final deptCtrl = TextEditingController(text: team.department ?? '');
+    int? selectedSportId = team.sportId ?? (_sports.isNotEmpty ? _sports.first.sportId : null);
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          backgroundColor: AppColors.cardSurface,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text('Edit Team: ${team.teamName}', style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  controller: nameCtrl,
+                  style: const TextStyle(color: AppColors.textPrimary),
+                  decoration: AppStyles.inputDecoration(hintText: 'Team Name', labelText: 'Team Name'),
+                ),
+                const SizedBox(height: 14),
+                if (_sports.isNotEmpty) ...[
+                  DropdownButtonFormField<int>(
+                    value: selectedSportId,
+                    dropdownColor: AppColors.cardSurface,
+                    style: const TextStyle(color: AppColors.textPrimary),
+                    decoration: AppStyles.inputDecoration(labelText: 'Sport / Discipline'),
+                    items: _sports.map((s) {
+                      return DropdownMenuItem<int>(
+                        value: s.sportId,
+                        child: Text(s.sportName, style: const TextStyle(color: AppColors.textPrimary)),
+                      );
+                    }).toList(),
+                    onChanged: (val) {
+                      setDialogState(() => selectedSportId = val);
+                    },
+                  ),
+                  const SizedBox(height: 14),
+                ],
+                TextField(
+                  controller: captCtrl,
+                  style: const TextStyle(color: AppColors.textPrimary),
+                  decoration: AppStyles.inputDecoration(hintText: 'Captain Name', labelText: 'Captain'),
+                ),
+                const SizedBox(height: 14),
+                TextField(
+                  controller: deptCtrl,
+                  style: const TextStyle(color: AppColors.textPrimary),
+                  decoration: AppStyles.inputDecoration(hintText: 'Department / Division', labelText: 'Department'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+              onPressed: () async {
+                if (nameCtrl.text.trim().isEmpty || team.teamId == null) return;
+                final toast = Provider.of<ToastProvider>(context, listen: false);
+                try {
+                  await ApiService.updateTeam(
+                    team.teamId!,
+                    TeamModel(
+                      teamId: team.teamId,
+                      teamName: nameCtrl.text.trim(),
+                      sportId: selectedSportId,
+                      captainName: captCtrl.text.trim().isNotEmpty ? captCtrl.text.trim() : null,
+                      department: deptCtrl.text.trim().isNotEmpty ? deptCtrl.text.trim() : null,
+                    ),
+                  );
+                  toast.showToast('Team updated in database', 'success');
+                  Navigator.pop(ctx);
+                  _loadData();
+                } catch (e) {
+                  toast.showToast('Failed to update team', 'error');
+                }
+              },
+              child: const Text('Save Changes'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmDeleteTeam(TeamModel team) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.bgSecondary,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: AppColors.error),
+            SizedBox(width: 8),
+            Text('Confirm Deletion', style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold)),
+          ],
+        ),
+        content: Text(
+          'Are you sure you want to delete squad "${team.teamName}"?\n\nThis will safely cascade and delete associated team members, tournament registrations, and matches to preserve database integrity.',
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error, foregroundColor: Colors.white),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              if (team.teamId == null) return;
+              final toast = Provider.of<ToastProvider>(context, listen: false);
+              try {
+                await ApiService.deleteTeam(team.teamId!);
+                toast.showToast('Team deleted successfully', 'info');
+                _loadData();
+              } catch (_) {
+                toast.showToast('Failed to delete team', 'error');
+              }
+            },
+            child: const Text('Delete Team'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showSquadRosterDialog(TeamModel team) {
     showDialog(
       context: context,
@@ -148,6 +284,9 @@ class _TeamsManagementScreenState extends State<TeamsManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final isAdmin = authProvider.isAdmin;
+
     return MainLayout(
       currentRoute: '/teams',
       child: Column(
@@ -170,17 +309,18 @@ class _TeamsManagementScreenState extends State<TeamsManagementScreen> {
                   ),
                 ],
               ),
-              ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              if (isAdmin)
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  onPressed: _showAddDialog,
+                  icon: const Icon(Icons.add, size: 18),
+                  label: const Text('Create Team'),
                 ),
-                onPressed: _showAddDialog,
-                icon: const Icon(Icons.add, size: 18),
-                label: const Text('Create Team'),
-              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -196,12 +336,14 @@ class _TeamsManagementScreenState extends State<TeamsManagementScreen> {
                             const Text('🛡️', style: TextStyle(fontSize: 48)),
                             const SizedBox(height: 12),
                             const Text('No registered teams yet', style: TextStyle(color: AppColors.textMuted, fontSize: 16)),
-                            const SizedBox(height: 12),
-                            ElevatedButton(
-                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
-                              onPressed: _showAddDialog,
-                              child: const Text('Create First Team'),
-                            ),
+                            if (isAdmin) ...[
+                              const SizedBox(height: 12),
+                              ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white),
+                                onPressed: _showAddDialog,
+                                child: const Text('Create First Team'),
+                              ),
+                            ],
                           ],
                         ),
                       )
@@ -247,6 +389,18 @@ class _TeamsManagementScreenState extends State<TeamsManagementScreen> {
                                         ],
                                       ),
                                     ),
+                                    if (isAdmin) ...[
+                                      IconButton(
+                                        icon: const Icon(Icons.edit_outlined, color: AppColors.primary, size: 18),
+                                        tooltip: 'Edit Team',
+                                        onPressed: () => _showEditDialog(team),
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 18),
+                                        tooltip: 'Delete Team',
+                                        onPressed: () => _confirmDeleteTeam(team),
+                                      ),
+                                    ],
                                   ],
                                 ),
                                 const SizedBox(height: 14),

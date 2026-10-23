@@ -3,11 +3,14 @@ package dev.dept.pe.service.impl;
 import dev.dept.pe.dto.TeamDto;
 import dev.dept.pe.exception.ResourceNotFoundException;
 import dev.dept.pe.model.Team;
-import dev.dept.pe.repository.SportsDetailsRepository;
-import dev.dept.pe.repository.TeamRepository;
+import dev.dept.pe.model.Match;
+import dev.dept.pe.model.TeamMember;
+import dev.dept.pe.model.TournamentRegistration;
+import dev.dept.pe.repository.*;
 import dev.dept.pe.service.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import dev.dept.pe.model.SportsDetails;
 
@@ -19,11 +22,21 @@ public class TeamServiceImpl implements TeamService {
 
     private final TeamRepository teamRepository;
     private final SportsDetailsRepository sportsDetailsRepository;
+    private final TeamMemberRepository teamMemberRepository;
+    private final TournamentRegistrationRepository tournamentRegistrationRepository;
+    private final MatchRepository matchRepository;
 
     @Autowired
-    public TeamServiceImpl(TeamRepository teamRepository, SportsDetailsRepository sportsDetailsRepository) {
+    public TeamServiceImpl(TeamRepository teamRepository,
+                           SportsDetailsRepository sportsDetailsRepository,
+                           TeamMemberRepository teamMemberRepository,
+                           TournamentRegistrationRepository tournamentRegistrationRepository,
+                           MatchRepository matchRepository) {
         this.teamRepository = teamRepository;
         this.sportsDetailsRepository = sportsDetailsRepository;
+        this.teamMemberRepository = teamMemberRepository;
+        this.tournamentRegistrationRepository = tournamentRegistrationRepository;
+        this.matchRepository = matchRepository;
     }
 
     @Override
@@ -95,10 +108,31 @@ public class TeamServiceImpl implements TeamService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         if (!teamRepository.existsById(id)) {
             throw new ResourceNotFoundException("Team not found with ID: " + id);
         }
+
+        // Safely remove dependent records to preserve relational integrity
+        try {
+            List<TeamMember> members = teamMemberRepository.findByTeamId(id);
+            if (members != null && !members.isEmpty()) {
+                teamMemberRepository.deleteAll(members);
+            }
+            List<TournamentRegistration> registrations = tournamentRegistrationRepository.findByTeamId(id);
+            if (registrations != null && !registrations.isEmpty()) {
+                tournamentRegistrationRepository.deleteAll(registrations);
+            }
+            List<Match> matches = matchRepository.findAll().stream()
+                    .filter(m -> id.equals(m.getTeamOne()) || id.equals(m.getTeamTwo()))
+                    .collect(Collectors.toList());
+            if (!matches.isEmpty()) {
+                matchRepository.deleteAll(matches);
+            }
+        } catch (Exception ignored) {
+        }
+
         teamRepository.deleteById(id);
     }
 
