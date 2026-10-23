@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
+﻿import React, { createContext, useContext, useState, useCallback } from 'react';
 import './Toast.css';
 
 const ToastContext = createContext(null);
@@ -26,10 +26,10 @@ export const ToastProvider = ({ children }) => {
         {toasts.map((toast) => (
           <div key={toast.id} className={`toast-item ${toast.type}`} onClick={() => removeToast(toast.id)}>
             <div className="toast-icon">
-              {toast.type === 'success' && '✓'}
-              {toast.type === 'error' && '✗'}
-              {toast.type === 'warning' && '⚠'}
-              {toast.type === 'info' && 'ℹ'}
+              {toast.type === 'success' && <span style={{color:'#10b981',fontWeight:700}}>&#10003;</span>}
+              {toast.type === 'error' && <span style={{color:'#ef4444',fontWeight:700}}>&#10007;</span>}
+              {toast.type === 'warning' && <span style={{color:'#f59e0b',fontWeight:700}}>!</span>}
+              {toast.type === 'info' && <span style={{color:'#3b82f6',fontWeight:700}}>i</span>}
             </div>
             <div className="toast-message">
               {typeof toast.message === 'string' ? toast.message : (toast.message?.message || JSON.stringify(toast.message))}

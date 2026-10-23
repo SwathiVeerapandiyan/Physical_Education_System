@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿﻿import React, { useState, useEffect, useRef } from 'react';
 import { chatbotService } from '../services/api';
 import './ChatbotWidget.css';
 
@@ -49,7 +49,7 @@ const ChatbotWidget = () => {
           {
             id: 'fallback-1',
             sender: 'bot',
-            message: 'Hi ✋ Welcome to Department of Physical Education & Sports. How can we help you today?',
+            message: 'Hi  Welcome to the Department of Physical Education & Sports. How can we assist you today?',
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
           }
         ]);
@@ -99,33 +99,33 @@ const ChatbotWidget = () => {
       }
     } catch (error) {
       // Local fallback simulation if server is unreachable
-      let fallbackText = "❓ I couldn't quite understand your request. Please ask a specific question regarding Ground Bookings, Equipment Rental, User Form, Notice Board, Tournaments, or Gallery, or select one of the options below!";
+      let fallbackText = " I couldn't quite understand your request. Please ask a specific question regarding Ground Bookings, Equipment Rental, User Form, Notice Board, Tournaments, or Gallery, or select one of the options below!";
       if (actionPill) {
         if (actionPill.action === 'ACTION_FAQ') {
-          fallbackText = "FAQ Highlights:\n• Ground Bookings: Use the Ground Bookings tab.\n• Equipment Rental: Use the Equipment tab.\n• Hours: Mon-Sat 6 AM to 7 PM.";
+          fallbackText = "FAQ Highlights:\n Ground Bookings: Use the Ground Bookings tab.\n Equipment Rental: Use the Equipment tab.\n Hours: Mon-Sat 6 AM to 7 PM.";
         } else if (actionPill.action === 'ACTION_EMAIL') {
-          fallbackText = "📧 Official Contact:\nEmail: pe.dept@portal.edu\nPhone: +91 44 2239 0675";
+          fallbackText = " Official Contact:\nEmail: pe.dept@portal.edu\nPhone: +91 44 2239 0675";
         } else if (actionPill.action === 'ACTION_GOODBYE') {
-          fallbackText = "Thank you for visiting Physical Education Portal! Have a great day ahead! 🏆";
+          fallbackText = "Thank you for visiting Physical Education Portal! Have a great day ahead! ";
         } else if (actionPill.action === 'ACTION_GROUND') {
-          fallbackText = "🏟️ Ground Booking: Select 'Ground Bookings' from sidebar to reserve slots for Football, Cricket, Basketball or Tennis.";
+          fallbackText = " Ground Booking: Select 'Ground Bookings' from sidebar to reserve slots for Football, Cricket, Basketball or Tennis.";
         } else if (actionPill.action === 'ACTION_EQUIPMENT') {
-          fallbackText = "🏀 Equipment Rental: Request sports gear via the 'Equipment Bookings' dashboard.";
+          fallbackText = " Equipment Rental: Request sports gear via the 'Equipment Bookings' dashboard.";
         }
       } else if (text) {
         const lower = text.toLowerCase();
         if (lower.includes("notice") || lower.includes("announcement")) {
-          fallbackText = "📌 Notice Board:\nCheck out official department notices, sports announcements, and schedule updates under the 'Notice Board' section in your portal dashboard.";
+          fallbackText = " Notice Board:\nCheck out official department notices, sports announcements, and schedule updates under the 'Notice Board' section in your portal dashboard.";
         } else if (lower.includes("form") || lower.includes("profile") || lower.includes("candidate")) {
-          fallbackText = "📝 User Profile Form:\nYou can complete your student profile details, batch info, and athletic specialty under the 'User Form' section in the left sidebar menu.";
+          fallbackText = " User Profile Form:\nYou can complete your student profile details, batch info, and athletic specialty under the 'User Form' section in the left sidebar menu.";
         } else if (lower.includes("directory") || lower.includes("user")) {
-          fallbackText = "👥 User Directory:\nView registered candidates, system accounts, and athlete profiles under the 'User Directory' section in the sidebar.";
+          fallbackText = " User Directory:\nView registered candidates, system accounts, and athlete profiles under the 'User Directory' section in the sidebar.";
         } else if (lower.includes("family")) {
-          fallbackText = "👨‍👩‍👧 Family Details:\nAssociate emergency contacts and family/sibling occupations under the 'Family Details' tab in the sidebar.";
+          fallbackText = " Family Details:\nAssociate emergency contacts and family/sibling occupations under the 'Family Details' tab in the sidebar.";
         } else if (lower.includes("document") || lower.includes("upload") || lower.includes("certificate")) {
-          fallbackText = "📁 Document Upload:\nUpload your Aadhar card, medical fitness certificates, and required documents under the 'Document Details' section.";
+          fallbackText = " Document Upload:\nUpload your Aadhar card, medical fitness certificates, and required documents under the 'Document Details' section.";
         } else if (lower.includes("gallery") || lower.includes("media") || lower.includes("photo")) {
-          fallbackText = "📸 Gallery & Media:\nBrowse event photos, tournament highlights, and sports media under the 'Gallery & Media' section.";
+          fallbackText = " Gallery & Media:\nBrowse event photos, tournament highlights, and sports media under the 'Gallery & Media' section.";
         }
       }
 
@@ -163,19 +163,19 @@ const ChatbotWidget = () => {
           <div className="mcc-chatbot-header">
             <div className="mcc-header-greeting">
               <div className="mcc-greeting-title">
-                Hi <span className="waving-hand">✋</span>
+                Hi 
               </div>
               <p className="mcc-greeting-sub">Welcome to PE & Sports Portal</p>
             </div>
             <button className="mcc-close-btn" onClick={() => setIsOpen(false)} title="Close Chat">
-              ✕
+              
             </button>
           </div>
 
           {/* Contact Line Call Card */}
           <div className="mcc-contact-card-container">
             <a href="tel:+914422390675" className="mcc-call-pill" title="Call Emergency Contact Line">
-              <span className="mcc-phone-icon">📞</span>
+              
             </a>
           </div>
 
@@ -198,7 +198,7 @@ const ChatbotWidget = () => {
               <div key={msg.id} className={`mcc-message-row ${msg.sender === 'user' ? 'user-row' : 'bot-row'}`}>
                 {msg.sender === 'bot' && (
                   <div className="mcc-bot-avatar">
-                    <span role="img" aria-label="bot">🎓</span>
+                    <span>PE Bot</span>
                   </div>
                 )}
                 <div className={`mcc-message-bubble ${msg.sender === 'user' ? 'user-bubble' : 'bot-bubble'}`}>
@@ -210,7 +210,7 @@ const ChatbotWidget = () => {
 
             {loading && (
               <div className="mcc-message-row bot-row">
-                <div className="mcc-bot-avatar">🎓</div>
+                <div className="mcc-bot-avatar">PE</div>
                 <div className="mcc-message-bubble bot-bubble typing-bubble">
                   <div className="typing-dots">
                     <span></span>
@@ -238,7 +238,7 @@ const ChatbotWidget = () => {
               onClick={() => handleSendMessage(inputMsg)}
               disabled={!inputMsg.trim() || loading}
             >
-              ➔
+              
             </button>
           </div>
         </div>
@@ -251,10 +251,10 @@ const ChatbotWidget = () => {
         title="Physical Education Chatbot"
       >
         {isOpen ? (
-          <span className="trigger-close-icon">✕</span>
+          <span className="trigger-close-icon">x</span>
         ) : (
           <div className="trigger-icon-content">
-            <span className="trigger-chat-icon">💬</span>
+            <span className="trigger-chat-icon">Chat</span>
             <span className="trigger-badge">1</span>
           </div>
         )}

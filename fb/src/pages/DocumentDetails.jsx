@@ -1,23 +1,24 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { userFormService, documentDetailsService } from '../services/api';
 import Spinner from '../components/Spinner';
+import Icon from '../components/Icons';
 
 const DOC_TYPES = [
-  { id: 'aadharCard', label: 'Aadhar Card', icon: '🪪', req: true },
-  { id: 'fitnessMedicalCertificate', label: 'Medical Fitness Certificate', icon: '🩺', req: true },
-  { id: 'mark12Certificate', label: '12th Mark Certificate', icon: '📜', req: true },
-  { id: 'transferCertificate', label: 'Transfer Certificate (TC)', icon: '📑', req: false },
-  { id: 'communityCertificate', label: 'Community Certificate', icon: '🏛️', req: false },
-  { id: 'sportsCertificate', label: 'Sports Achievement Certificate', icon: '🏆', req: false },
-  { id: 'candidateSignature', label: 'Candidate Signature Image', icon: '✍️', req: true },
-  { id: 'parentSignature', label: 'Parent / Guardian Signature', icon: '✍️', req: false },
-  { id: 'admissionCard', label: 'Admission Card / Allotment', icon: '🪪', req: false },
-  { id: 'feeReceipt', label: 'Fee Payment Receipt', icon: '🧾', req: false },
-  { id: 'incomeCertificate', label: 'Income Certificate', icon: '💵', req: false },
-  { id: 'eligibilityCertificate', label: 'Eligibility Certificate', icon: '📋', req: false },
+  { id: 'aadharCard', label: 'Aadhar Card', req: true },
+  { id: 'fitnessMedicalCertificate', label: 'Medical Fitness Certificate', req: true },
+  { id: 'mark12Certificate', label: '12th Mark Certificate', req: true },
+  { id: 'transferCertificate', label: 'Transfer Certificate (TC)', req: false },
+  { id: 'communityCertificate', label: 'Community Certificate', req: false },
+  { id: 'sportsCertificate', label: 'Sports Achievement Certificate', req: false },
+  { id: 'candidateSignature', label: 'Candidate Signature Image', req: true },
+  { id: 'parentSignature', label: 'Parent / Guardian Signature', req: false },
+  { id: 'admissionCard', label: 'Admission Card / Allotment', req: false },
+  { id: 'feeReceipt', label: 'Fee Payment Receipt', req: false },
+  { id: 'incomeCertificate', label: 'Income Certificate', req: false },
+  { id: 'eligibilityCertificate', label: 'Eligibility Certificate', req: false },
 ];
 
 const DocumentDetails = () => {
@@ -120,11 +121,11 @@ const DocumentDetails = () => {
 
       if (existingDocId) {
         await documentDetailsService.update(existingDocId, payload);
-        showToast('Document submission updated successfully! ✅', 'success');
+        showToast('Document submission updated successfully!', 'success');
       } else {
         const created = await documentDetailsService.create(payload);
         setExistingDocId(created.documentId);
-        showToast('Document submission uploaded successfully! 🎉', 'success');
+        showToast('Document submission uploaded successfully!', 'success');
       }
     } catch (err) {
       showToast(err.message || 'Failed to save document details', 'error');
@@ -144,7 +145,9 @@ const DocumentDetails = () => {
       <div className="glass-card">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span style={{ fontSize: '32px' }}>📁</span>
+            <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(159, 18, 57, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Icon name="document" size={24} color="#9f1239" />
+            </div>
             <div>
               <h2 style={{ fontSize: '1.5rem', margin: 0 }}>Document Submission &amp; Verification</h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '4px' }}>
@@ -182,7 +185,7 @@ const DocumentDetails = () => {
                     </span>
                     {hasFile ? (
                       <span style={{ fontSize: '0.75rem', color: 'var(--success)', fontWeight: 700, background: 'rgba(16, 185, 129, 0.15)', padding: '2px 8px', borderRadius: '10px' }}>
-                        ✓ Attached
+                         Attached
                       </span>
                     ) : (
                       <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Pending</span>
@@ -212,7 +215,7 @@ const DocumentDetails = () => {
                         whiteSpace: 'nowrap',
                       }}
                     >
-                      📎 Upload
+                       Upload
                       <input
                         type="file"
                         style={{ display: 'none' }}
@@ -233,14 +236,14 @@ const DocumentDetails = () => {
               onClick={() => navigate('/dashboard')}
               disabled={isSubmitting}
             >
-              ← Back to Dashboard
+               Back to Dashboard
             </button>
 
             <button type="submit" className="btn-primary" disabled={isSubmitting} style={{ minWidth: '200px' }}>
               {isSubmitting ? (
                 <Spinner message={existingDocId ? 'Updating...' : 'Submitting...'} />
               ) : (
-                <span>{existingDocId ? '💾 Update Certificates' : '🚀 Submit Documents'}</span>
+                <span>{existingDocId ? ' Update Certificates' : ' Submit Documents'}</span>
               )}
             </button>
           </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿﻿import React, { useState, useEffect } from 'react';
 import { emergencyContactService } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import Spinner from '../components/Spinner';
@@ -87,11 +87,11 @@ const EmergencyContactManagement = () => {
     <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ margin: 0, color: '#fff' }}>🚨 Emergency Contacts</h2>
+          <h2 style={{ margin: 0, color: '#fff' }}> Emergency Contacts</h2>
           <p style={{ margin: '0.25rem 0 0 0', color: '#94a3b8' }}>Maintain emergency phone numbers, family contacts, and medical addresses.</p>
         </div>
         <button onClick={handleOpenCreate} style={{ padding: '0.75rem 1.4rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 600, cursor: 'pointer' }}>
-          ➕ Add Contact
+           Add Contact
         </button>
       </div>
 
@@ -105,14 +105,14 @@ const EmergencyContactManagement = () => {
                   {item.relationship || 'Contact'}
                 </span>
               </div>
-              <p style={{ margin: 0, color: '#4ade80', fontSize: '0.95rem', fontWeight: 600 }}>📞 {item.phoneNumber}</p>
+              <p style={{ margin: 0, color: '#4ade80', fontSize: '0.95rem', fontWeight: 600 }}> {item.phoneNumber}</p>
               {item.alternatePhone && <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.85rem' }}>Alt Phone: {item.alternatePhone}</p>}
-              {item.email && <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.85rem' }}>✉️ {item.email}</p>}
-              {item.city && <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.82rem' }}>📍 {item.city}, {item.state || ''}</p>}
+              {item.email && <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.85rem' }}>️ {item.email}</p>}
+              {item.city && <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.82rem' }}> {item.city}, {item.state || ''}</p>}
 
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', paddingTop: '0.8rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <button onClick={() => handleOpenEdit(item)} style={{ padding: '0.4rem 0.8rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>✏️ Edit</button>
-                <button onClick={() => setDeletingId(item.contactId)} style={{ padding: '0.4rem 0.8rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>🗑️ Delete</button>
+                <button onClick={() => handleOpenEdit(item)} style={{ padding: '0.4rem 0.8rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}> Edit</button>
+                <button onClick={() => setDeletingId(item.contactId)} style={{ padding: '0.4rem 0.8rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}> Delete</button>
               </div>
             </div>
           ))}

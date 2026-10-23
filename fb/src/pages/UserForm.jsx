@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { userFormService } from '../services/api';
 import Spinner from '../components/Spinner';
+import Icon from '../components/Icons';
 import './UserForm.css';
 
 const GENDER_OPTIONS = ['Male', 'Female', 'Other'];
@@ -15,10 +16,10 @@ const SPECIALIZATION_OPTIONS = [
 ];
 
 const SECTIONS = [
-  { id: 'personal', label: 'Personal Info', icon: '👤' },
-  { id: 'academic', label: 'Academic Info', icon: '🎓' },
-  { id: 'address', label: 'Address', icon: '🏠' },
-  { id: 'achievements', label: 'Achievements', icon: '🏆' },
+  { id: 'personal', label: 'Personal Info', icon: 'user' },
+  { id: 'academic', label: 'Academic Info', icon: 'document' },
+  { id: 'address', label: 'Address', icon: 'mapPin' },
+  { id: 'achievements', label: 'Achievements', icon: 'trophy' },
 ];
 
 const EMPTY_FORM = {
@@ -137,11 +138,11 @@ const UserForm = () => {
       let result;
       if (existingId) {
         result = await userFormService.update(existingId, payload);
-        showToast('Profile updated successfully! ✅', 'success');
+        showToast('Profile updated successfully.', 'success');
       } else {
         result = await userFormService.create(payload);
         setExistingId(result.id);
-        showToast('Profile created successfully! 🎉', 'success');
+        showToast('Profile created successfully.', 'success');
       }
       setLastSaved(new Date().toLocaleString());
     } catch (err) {
@@ -168,7 +169,7 @@ const UserForm = () => {
     <div className="userform-wrapper animate-fade-in">
       <div className="userform-header">
         <div className="userform-header-left">
-          <span className="userform-page-icon">📝</span>
+          
           <div>
             <h2>Student Profile Form</h2>
             <p className="userform-subtitle">
@@ -206,7 +207,7 @@ const UserForm = () => {
                 className={`userform-nav-item ${activeSection === sec.id ? 'active' : ''}`}
                 onClick={() => setActiveSection(sec.id)}
               >
-                <span className="nav-icon">{sec.icon}</span>
+                <span className="nav-icon"><Icon name={sec.icon} size={16} /></span>
                 <span>{sec.label}</span>
                 {hasErrors && <span className="nav-error-dot" title="Has required fields" />}
               </button>
@@ -224,7 +225,7 @@ const UserForm = () => {
 
           {activeSection === 'personal' && (
             <div className="form-section animate-fade-in">
-              <h3 className="section-title"><span>👤</span> Personal Information</h3>
+              <h3 className="section-title">Personal Information</h3>
               <div className="form-grid-2">
                 <div className="form-group">
                   <label className="form-label" htmlFor="name">Full Name <span className="req">*</span></label>
@@ -305,7 +306,7 @@ const UserForm = () => {
 
           {activeSection === 'academic' && (
             <div className="form-section animate-fade-in">
-              <h3 className="section-title"><span>🎓</span> Academic Information</h3>
+              <h3 className="section-title">Academic Information</h3>
               <div className="form-grid-2">
                 <div className="form-group">
                   <label className="form-label" htmlFor="batch">Batch <span className="req">*</span></label>
@@ -343,7 +344,7 @@ const UserForm = () => {
 
           {activeSection === 'address' && (
             <div className="form-section animate-fade-in">
-              <h3 className="section-title"><span>🏠</span> Address Details</h3>
+              <h3 className="section-title">Address Details</h3>
               <div className="form-group">
                 <label className="form-label" htmlFor="permanentAddress">Permanent Address</label>
                 <textarea id="permanentAddress" className="form-control textarea-md"
@@ -361,7 +362,7 @@ const UserForm = () => {
 
           {activeSection === 'achievements' && (
             <div className="form-section animate-fade-in">
-              <h3 className="section-title"><span>🏆</span> Achievements & Activities</h3>
+              <h3 className="section-title">Achievements &amp; Activities</h3>
               <div className="form-group">
                 <label className="form-label" htmlFor="sportsAchievement">Sports Achievements</label>
                 <textarea id="sportsAchievement" className="form-control textarea-md"
@@ -388,13 +389,13 @@ const UserForm = () => {
               {currentIdx > 0 && (
                 <button type="button" className="btn-secondary" disabled={isSubmitting}
                   onClick={() => setActiveSection(SECTIONS[currentIdx - 1].id)}>
-                  ← Previous
+                  Previous
                 </button>
               )}
               {currentIdx < SECTIONS.length - 1 && (
                 <button type="button" className="btn-secondary" disabled={isSubmitting}
                   onClick={() => setActiveSection(SECTIONS[currentIdx + 1].id)}>
-                  Next →
+                  Next
                 </button>
               )}
             </div>
@@ -402,7 +403,7 @@ const UserForm = () => {
             <button type="submit" className="btn-primary save-btn" disabled={isSubmitting}>
               {isSubmitting
                 ? <Spinner message={existingId ? 'Updating...' : 'Saving...'} />
-                : <span>{existingId ? '💾 Update Profile' : '🚀 Create Profile'}</span>
+                : <span>{existingId ? 'Update Profile' : 'Create Profile'}</span>
               }
             </button>
           </div>

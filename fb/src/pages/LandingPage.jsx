@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ChatbotWidget from '../components/ChatbotWidget';
@@ -27,12 +27,12 @@ const LandingPage = () => {
       {/* Navigation */}
       <header className="landing-header glass-panel">
         <div className="header-logo">
-          <span className="logo-emoji">🏅</span>
+          <span className="logo-emoji">PE</span>
           <span className="logo-title">PE Department</span>
         </div>
         <div className="header-actions">
           {isAuthenticated ? (
-            <Link to="/dashboard" className="btn-link-prim">Go to Dashboard →</Link>
+            <Link to="/dashboard" className="btn-link-prim">Go to Dashboard </Link>
           ) : (
             <>
               <Link to="/login" className="btn-link-sec">Sign In</Link>
@@ -58,12 +58,12 @@ const LandingPage = () => {
             <div className="hero-ctas">
               {isAuthenticated ? (
                 <Link to="/dashboard" className="btn-primary lg animate-pulse-glow">
-                  Dashboard ➔
+                  Dashboard 
                 </Link>
               ) : (
                 <>
                   <Link to="/register" className="btn-primary lg animate-pulse-glow">
-                    Get Started ➔
+                    Get Started 
                   </Link>
                   <Link to="/login" className="btn-secondary lg">
                     Candidate Login
@@ -98,7 +98,7 @@ const LandingPage = () => {
                   </div>
                 </div>
                 <div className="mock-activity-card">
-                  <p className="activity-title">🏆 Recent Achievements</p>
+                  <p className="activity-title"> Recent Achievements</p>
                   <p className="activity-desc">National Tournament Enrollments closed successfully with record stats.</p>
                 </div>
               </div>
@@ -111,22 +111,22 @@ const LandingPage = () => {
           <h2 className="section-title">Department Modules</h2>
           <div className="features-grid">
             <Link to={getModuleLink('/profile')} className="feature-card glass-card feature-card-clickable">
-              <div className="card-icon">📝</div>
+              <div className="card-icon"></div>
               <h3>Student Profile</h3>
               <p>Complete your official physical education profile form detailing your batch, dob, address, and specialty.</p>
-              <span className="card-action-link">Access Module →</span>
+              <span className="card-action-link">Access Module </span>
             </Link>
             <Link to={getModuleLink('/family')} className="feature-card glass-card feature-card-clickable">
-              <div className="card-icon">👨‍👩‍👧‍👦</div>
+              <div className="card-icon">‍‍‍</div>
               <h3>Family Association</h3>
               <p>Keep the department updated with emergency contacts and parents/guardians occupations for notifications.</p>
-              <span className="card-action-link">Access Module →</span>
+              <span className="card-action-link">Access Module </span>
             </Link>
             <Link to={getModuleLink('/documents')} className="feature-card glass-card feature-card-clickable">
-              <div className="card-icon">📂</div>
+              <div className="card-icon"></div>
               <h3>Document Submission</h3>
               <p>Upload and inspect required documents including fitness certificates, transfer records, and admission cards.</p>
-              <span className="card-action-link">Access Module →</span>
+              <span className="card-action-link">Access Module </span>
             </Link>
           </div>
         </section>

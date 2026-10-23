@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sportsService } from '../services/api';
 import { useToast } from '../context/ToastContext';
@@ -70,10 +70,10 @@ const SportsManagement = () => {
     try {
       if (editingId) {
         await sportsService.update(editingId, formData);
-        showToast('Sport updated successfully! ⚽', 'success');
+        showToast('Sport updated successfully.', 'success');
       } else {
         await sportsService.create(formData);
-        showToast('New Sport added successfully! 🏅', 'success');
+        showToast('Sport added successfully.', 'success');
       }
       setShowModal(false);
       fetchSports();
@@ -112,7 +112,7 @@ const SportsManagement = () => {
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span style={{ fontSize: '36px' }}>🏀</span>
+            <Icon name="sports" size={32} color="var(--primary)" />
             <div>
               <h2 style={{ fontSize: '1.5rem', margin: 0 }}>Sports Directory &amp; Discipline</h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '4px' }}>
@@ -122,7 +122,7 @@ const SportsManagement = () => {
           </div>
 
           <button className="btn-primary" onClick={handleOpenAddModal} style={{ gap: '8px', display: 'flex', alignItems: 'center' }}>
-            <span>➕</span> Add New Sport
+            Add New Sport
           </button>
         </div>
 
@@ -132,7 +132,7 @@ const SportsManagement = () => {
             <input
               type="text"
               className="form-control"
-              placeholder="🔍 Search sport or coach name..."
+              placeholder="Search sport or coach name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -186,7 +186,7 @@ const SportsManagement = () => {
                 </p>
 
                 <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span>🧢 Coach:</span>
+                  <span>Coach:</span>
                   <strong style={{ color: 'var(--text-primary)' }}>{sport.coachName || 'Unassigned'}</strong>
                 </div>
               </div>
@@ -197,14 +197,14 @@ const SportsManagement = () => {
                   onClick={() => handleOpenEditModal(sport)}
                   style={{ padding: '6px 12px', fontSize: '0.8rem' }}
                 >
-                  ✏️ Edit
+                  Edit
                 </button>
                 <button
                   className="btn-secondary"
                   onClick={() => handleDelete(sport.sportId, sport.sportName)}
                   style={{ padding: '6px 12px', fontSize: '0.8rem', color: 'var(--error)', borderColor: 'rgba(244,63,94,0.3)' }}
                 >
-                  🗑️ Delete
+                  Delete
                 </button>
               </div>
             </div>
@@ -213,7 +213,7 @@ const SportsManagement = () => {
 
         {filteredSports.length === 0 && (
           <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-muted)' }}>
-            <p style={{ fontSize: '2rem', marginBottom: '10px' }}>🏃</p>
+            
             <p>No sports found. Click "Add New Sport" to create one.</p>
           </div>
         )}
@@ -228,7 +228,7 @@ const SportsManagement = () => {
         }}>
           <div className="glass-card animate-fade-in" style={{ width: '100%', maxWidth: '500px', padding: '28px' }}>
             <h3 style={{ margin: '0 0 20px 0', fontSize: '1.3rem' }}>
-              {editingId ? '✏️ Edit Sport' : '➕ Add New Sport'}
+              {editingId ? 'Edit Sport' : ' Add New Sport'}
             </h3>
 
             <form onSubmit={handleSubmit}>

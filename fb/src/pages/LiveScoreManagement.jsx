@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { liveScoreService } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import Spinner from '../components/Spinner';
@@ -93,11 +93,11 @@ const LiveScoreManagement = () => {
     <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h2 style={{ margin: 0, color: '#fff' }}>⚡ Live Match Scores</h2>
+          <h2 style={{ margin: 0, color: '#fff' }}> Live Match Scores</h2>
           <p style={{ margin: '0.25rem 0 0 0', color: '#94a3b8' }}>Real-time match scoring and tournament scoreboard update.</p>
         </div>
         <button onClick={handleOpenCreate} style={{ padding: '0.75rem 1.4rem', background: '#8b5cf6', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 600, cursor: 'pointer' }}>
-          ➕ New Live Match
+           New Live Match
         </button>
       </div>
 
@@ -118,7 +118,7 @@ const LiveScoreManagement = () => {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.82rem', color: '#a78bfa', fontWeight: 600 }}>{item.sportType || 'Sport'}</span>
                 <span style={{ padding: '0.2rem 0.6rem', borderRadius: '12px', fontSize: '0.75rem', fontWeight: 700, background: item.matchStatus === 'LIVE' ? '#ef4444' : 'rgba(255,255,255,0.1)', color: '#fff' }}>
-                  {item.matchStatus === 'LIVE' ? '🔴 LIVE' : item.matchStatus}
+                  {item.matchStatus === 'LIVE' ? ' LIVE' : item.matchStatus}
                 </span>
               </div>
 
@@ -138,14 +138,14 @@ const LiveScoreManagement = () => {
               </div>
 
               <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.82rem', textAlign: 'center' }}>
-                📍 {item.venue || 'Venue'} | 📅 {item.matchDate} {item.startTime ? `at ${item.startTime}` : ''}
+                 {item.venue || 'Venue'} |  {item.matchDate} {item.startTime ? `at ${item.startTime}` : ''}
               </p>
 
-              {item.winner && <p style={{ margin: 0, color: '#4ade80', fontSize: '0.85rem', fontWeight: 600, textAlign: 'center' }}>🏆 Winner: {item.winner}</p>}
+              {item.winner && <p style={{ margin: 0, color: '#4ade80', fontSize: '0.85rem', fontWeight: 600, textAlign: 'center' }}> Winner: {item.winner}</p>}
 
               <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', paddingTop: '0.8rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <button onClick={() => handleOpenEdit(item)} style={{ flex: 1, padding: '0.4rem 0.8rem', background: '#8b5cf6', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}>⚡ Update Score</button>
-                <button onClick={() => setDeletingId(item.scoreId)} style={{ padding: '0.4rem 0.8rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>🗑️ Delete</button>
+                <button onClick={() => handleOpenEdit(item)} style={{ flex: 1, padding: '0.4rem 0.8rem', background: '#8b5cf6', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 600 }}> Update Score</button>
+                <button onClick={() => setDeletingId(item.scoreId)} style={{ padding: '0.4rem 0.8rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}> Delete</button>
               </div>
             </div>
           ))}

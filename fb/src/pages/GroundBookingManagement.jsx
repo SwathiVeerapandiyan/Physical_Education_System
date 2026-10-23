@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { groundBookingService } from '../services/api';
 import { useToast } from '../context/ToastContext';
 import Spinner from '../components/Spinner';
+import Icon from '../components/Icons';
 
 const GroundBookingManagement = () => {
   const [items, setItems] = useState([]);
@@ -10,20 +11,22 @@ const GroundBookingManagement = () => {
   const [editingItem, setEditingItem] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('ALL');
 
   const initialForm = {
     userId: 1,
-    groundName: '',
-    sportType: 'Football',
+    groundName: 'Main Oval Ground',
+    sportType: 'Cricket',
     bookingDate: new Date().toISOString().split('T')[0],
-    startTime: '10:00',
-    endTime: '12:00',
-    durationHours: 2.0,
+    startTime: '06:00',
+    endTime: '08:00',
+    durationHours: 2,
+    purpose: 'Practice Session',
     bookingStatus: 'Pending',
-    paymentAmount: 0.00,
-    paymentStatus: 'Pending',
     approvedBy: '',
-    remarks: ''
+    paymentStatus: 'Exempted',
+    paymentAmount: 0.0,
+    remarks: '',
   };
   const [formData, setFormData] = useState(initialForm);
   const { showToast } = useToast();
@@ -56,21 +59,51 @@ const GroundBookingManagement = () => {
     setShowModal(true);
   };
 
+  const handleApprove = async (item) => {
+    try {
+      const updated = {
+        ...item,
+        bookingStatus: 'Approved',
+        approvedBy: 'Sports Director (Admin)',
+      };
+      await groundBookingService.update(item.bookingId, updated);
+      setItems((prev) => prev.map((i) => (i.bookingId === item.bookingId ? updated : i)));
+      showToast(`Ground reservation #${item.bookingId} (${item.groundName}) approved!`, 'success');
+    } catch (err) {
+      showToast(err.message || 'Failed to approve reservation', 'error');
+    }
+  };
+
+  const handleReject = async (item) => {
+    try {
+      const updated = {
+        ...item,
+        bookingStatus: 'Rejected',
+        approvedBy: 'Sports Director (Admin)',
+      };
+      await groundBookingService.update(item.bookingId, updated);
+      setItems((prev) => prev.map((i) => (i.bookingId === item.bookingId ? updated : i)));
+      showToast(`Ground reservation #${item.bookingId} rejected.`, 'info');
+    } catch (err) {
+      showToast(err.message || 'Failed to update status', 'error');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (editingItem) {
         const updated = await groundBookingService.update(editingItem.bookingId, formData);
-        setItems(prev => prev.map(i => i.bookingId === editingItem.bookingId ? updated : i));
-        showToast('Ground booking updated!', 'success');
+        setItems((prev) => prev.map((i) => (i.bookingId === editingItem.bookingId ? updated : i)));
+        showToast('Ground booking updated successfully!', 'success');
       } else {
         const created = await groundBookingService.create(formData);
-        setItems(prev => [created, ...prev]);
-        showToast('Ground booking created!', 'success');
+        setItems((prev) => [created, ...prev]);
+        showToast('Ground booking created and reserved!', 'success');
       }
       setShowModal(false);
     } catch (err) {
-      showToast(err.message || 'Failed to save booking', 'error');
+      showToast(err.message || 'Failed to save ground booking', 'error');
     }
   };
 
@@ -78,96 +111,453 @@ const GroundBookingManagement = () => {
     if (!deletingId) return;
     try {
       await groundBookingService.delete(deletingId);
-      setItems(prev => prev.filter(i => i.bookingId !== deletingId));
-      showToast('Booking deleted!', 'success');
+      setItems((prev) => prev.filter((i) => i.bookingId !== deletingId));
+      showToast('Ground booking deleted!', 'success');
       setDeletingId(null);
     } catch (err) {
       showToast(err.message || 'Failed to delete booking', 'error');
     }
   };
 
-  const filtered = items.filter(i =>
-    !searchTerm || (i.groundName && i.groundName.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filtered = items.filter((i) => {
+    const matchesSearch =
+      !searchTerm || (i.groundName && i.groundName.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesStatus = statusFilter === 'ALL' || (i.bookingStatus || '').toLowerCase() === statusFilter.toLowerCase();
+    return matchesSearch && matchesStatus;
+  });
+
+  const pendingCount = items.filter((i) => (i.bookingStatus || '').toLowerCase() === 'pending').length;
+  const approvedCount = items.filter((i) => (i.bookingStatus || '').toLowerCase() === 'approved').length;
 
   return (
-    <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <div className="glass-panel" style={{ padding: '1.5rem', borderRadius: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* Header */}
+      <div
+        style={{
+          background: '#ffffff',
+          borderRadius: '14px',
+          padding: '24px 28px',
+          border: '1px solid rgba(159, 18, 57, 0.12)',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.03)',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '16px',
+        }}
+      >
         <div>
-          <h2 style={{ margin: 0, color: '#fff' }}>🏟️ Ground Booking Management</h2>
-          <p style={{ margin: '0.25rem 0 0 0', color: '#94a3b8' }}>Book sports grounds, turf, and stadium facilities.</p>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#9f1239', fontWeight: 800, fontSize: '0.72rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            <Icon name="badgeCheck" size={15} />
+            <span>CAMPUS FACILITY MANAGEMENT</span>
+          </div>
+          <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#1a1218', margin: '4px 0 2px 0' }}>
+            Ground &amp; Stadium Reservation Administration
+          </h2>
+          <p style={{ color: '#8a7a8f', fontSize: '0.86rem', margin: 0 }}>
+            Authorize pitch, court, and oval stadium reservations for matches, practices, and college trials.
+          </p>
         </div>
-        <button onClick={handleOpenCreate} style={{ padding: '0.75rem 1.4rem', background: '#10b981', color: '#fff', border: 'none', borderRadius: '10px', fontWeight: 600, cursor: 'pointer' }}>
-          ➕ Book Ground
+
+        <button
+          onClick={handleOpenCreate}
+          style={{
+            padding: '9px 18px',
+            background: 'linear-gradient(135deg, #9f1239 0%, #7b1129 100%)',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: '8px',
+            fontWeight: 700,
+            fontSize: '0.84rem',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            boxShadow: '0 2px 8px rgba(159, 18, 57, 0.25)',
+          }}
+        >
+          <span>+ Reserve Sports Ground</span>
         </button>
       </div>
 
-      <div className="glass-panel" style={{ padding: '1rem', borderRadius: '12px' }}>
-        <input
-          type="text"
-          placeholder="Search ground name..."
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          style={{ width: '100%', padding: '0.6rem 1rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(15,23,42,0.8)', color: '#fff' }}
-        />
+      {/* Main Table Card */}
+      <div
+        style={{
+          background: '#ffffff',
+          borderRadius: '14px',
+          padding: '24px',
+          border: '1px solid rgba(159, 18, 57, 0.12)',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.03)',
+        }}
+      >
+        {/* Filter and Search Bar */}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: '14px',
+            marginBottom: '20px',
+            borderBottom: '1px solid rgba(159, 18, 57, 0.1)',
+            paddingBottom: '16px',
+          }}
+        >
+          {/* Tabs */}
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            {[
+              { id: 'ALL', label: `All Facilities (${items.length})` },
+              { id: 'Pending', label: `Pending Approval (${pendingCount})` },
+              { id: 'Approved', label: `Confirmed (${approvedCount})` },
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setStatusFilter(tab.id)}
+                style={{
+                  padding: '7px 14px',
+                  borderRadius: '6px',
+                  border: statusFilter === tab.id ? '1px solid #9f1239' : '1px solid rgba(159, 18, 57, 0.15)',
+                  background: statusFilter === tab.id ? '#9f1239' : '#ffffff',
+                  color: statusFilter === tab.id ? '#ffffff' : '#4b3f52',
+                  fontSize: '0.8rem',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease',
+                }}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div style={{ minWidth: '240px' }}>
+            <input
+              type="text"
+              placeholder="Search ground name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={{
+                width: '100%',
+                padding: '8px 14px',
+                borderRadius: '8px',
+                border: '1px solid rgba(159, 18, 57, 0.2)',
+                fontSize: '0.84rem',
+                outline: 'none',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Content */}
+        {loading ? (
+          <Spinner message="Loading ground reservations..." />
+        ) : filtered.length === 0 ? (
+          <div style={{ padding: '40px 20px', textAlign: 'center', color: '#8a7a8f' }}>
+            <Icon name="ground" size={36} color="#9f1239" />
+            <h4 style={{ marginTop: '12px', color: '#1a1218' }}>No ground bookings recorded</h4>
+            <p style={{ fontSize: '0.85rem' }}>All sports facilities are currently unreserved.</p>
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.86rem' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid rgba(159, 18, 57, 0.12)', color: '#8a7a8f', fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  <th style={{ padding: '10px 14px' }}>Booking #</th>
+                  <th style={{ padding: '10px 14px' }}>Ground / Stadium</th>
+                  <th style={{ padding: '10px 14px' }}>Sport</th>
+                  <th style={{ padding: '10px 14px' }}>Purpose</th>
+                  <th style={{ padding: '10px 14px' }}>Date &amp; Slot</th>
+                  <th style={{ padding: '10px 14px' }}>Status</th>
+                  <th style={{ padding: '10px 14px', textAlign: 'right' }}>Admin Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((item) => (
+                  <tr key={item.bookingId} style={{ borderBottom: '1px solid rgba(0, 0, 0, 0.04)' }}>
+                    <td style={{ padding: '12px 14px', fontWeight: 700, color: '#9f1239' }}>#{item.bookingId}</td>
+                    <td style={{ padding: '12px 14px' }}>
+                      <div style={{ fontWeight: 700, color: '#1a1218' }}>{item.groundName}</div>
+                      <div style={{ fontSize: '0.74rem', color: '#8a7a8f' }}>User #{item.userId}</div>
+                    </td>
+                    <td style={{ padding: '12px 14px', color: '#4b3f52' }}>{item.sportType}</td>
+                    <td style={{ padding: '12px 14px', color: '#4b3f52' }}>{item.purpose || 'Match Session'}</td>
+                    <td style={{ padding: '12px 14px' }}>
+                      <div style={{ fontWeight: 600, color: '#1a1218' }}>{item.bookingDate}</div>
+                      <div style={{ fontSize: '0.74rem', color: '#8a7a8f' }}>
+                        {item.startTime} - {item.endTime} ({item.durationHours || 2}h)
+                      </div>
+                    </td>
+                    <td style={{ padding: '12px 14px' }}>
+                      <span
+                        style={{
+                          padding: '3px 9px',
+                          borderRadius: '12px',
+                          fontSize: '0.72rem',
+                          fontWeight: 700,
+                          textTransform: 'uppercase',
+                          background:
+                            (item.bookingStatus || '').toLowerCase() === 'approved'
+                              ? '#dcfce7'
+                              : (item.bookingStatus || '').toLowerCase() === 'rejected'
+                              ? '#fee2e2'
+                              : '#fef3c7',
+                          color:
+                            (item.bookingStatus || '').toLowerCase() === 'approved'
+                              ? '#15803d'
+                              : (item.bookingStatus || '').toLowerCase() === 'rejected'
+                              ? '#dc2626'
+                              : '#b45309',
+                        }}
+                      >
+                        {item.bookingStatus || 'Pending'}
+                      </span>
+                    </td>
+                    <td style={{ padding: '12px 14px', textAlign: 'right' }}>
+                      <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end', alignItems: 'center' }}>
+                        {(item.bookingStatus || '').toLowerCase() === 'pending' && (
+                          <>
+                            <button
+                              onClick={() => handleApprove(item)}
+                              style={{
+                                background: '#059669',
+                                color: '#ffffff',
+                                border: 'none',
+                                padding: '5px 10px',
+                                borderRadius: '6px',
+                                fontSize: '0.76rem',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              (done) Approve
+                            </button>
+                            <button
+                              onClick={() => handleReject(item)}
+                              style={{
+                                background: '#fee2e2',
+                                color: '#dc2626',
+                                border: '1px solid #fca5a5',
+                                padding: '5px 8px',
+                                borderRadius: '6px',
+                                fontSize: '0.76rem',
+                                fontWeight: 700,
+                                cursor: 'pointer',
+                              }}
+                            >
+                              
+                            </button>
+                          </>
+                        )}
+                        <button
+                          onClick={() => handleOpenEdit(item)}
+                          style={{
+                            background: '#ffffff',
+                            border: '1px solid rgba(159, 18, 57, 0.2)',
+                            color: '#4b3f52',
+                            padding: '5px 8px',
+                            borderRadius: '6px',
+                            fontSize: '0.76rem',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => setDeletingId(item.bookingId)}
+                          style={{
+                            background: '#ffffff',
+                            border: '1px solid rgba(220, 38, 38, 0.2)',
+                            color: '#dc2626',
+                            padding: '5px 8px',
+                            borderRadius: '6px',
+                            fontSize: '0.76rem',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
-      {loading ? <Spinner message="Loading ground bookings..." /> : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.2rem' }}>
-          {filtered.map(item => (
-            <div key={item.bookingId} className="glass-panel" style={{ padding: '1.2rem', borderRadius: '14px', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <h3 style={{ margin: 0, color: '#f8fafc', fontSize: '1.1rem' }}>{item.groundName}</h3>
-                <span style={{ padding: '0.2rem 0.5rem', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 600, background: item.bookingStatus === 'Approved' ? 'rgba(34,197,94,0.2)' : 'rgba(234,179,8,0.2)', color: item.bookingStatus === 'Approved' ? '#4ade80' : '#fde047' }}>
-                  {item.bookingStatus}
-                </span>
-              </div>
-              <p style={{ margin: 0, color: '#94a3b8', fontSize: '0.88rem' }}>Sport: {item.sportType} | Duration: {item.durationHours || 1} hrs</p>
-              <p style={{ margin: 0, color: '#cbd5e1', fontSize: '0.85rem' }}>📅 Date: {item.bookingDate} ({item.startTime || '00:00'} - {item.endTime || '00:00'})</p>
-              <p style={{ margin: 0, color: '#38bdf8', fontSize: '0.85rem' }}>💳 Payment: ${item.paymentAmount || 0} ({item.paymentStatus})</p>
-
-              <div style={{ display: 'flex', gap: '0.5rem', marginTop: 'auto', paddingTop: '0.8rem', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-                <button onClick={() => handleOpenEdit(item)} style={{ padding: '0.4rem 0.8rem', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>✏️ Edit</button>
-                <button onClick={() => setDeletingId(item.bookingId)} style={{ padding: '0.4rem 0.8rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>🗑️ Delete</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
+      {/* Modal */}
       {showModal && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div className="glass-panel" style={{ background: '#1e293b', padding: '1.8rem', borderRadius: '16px', width: '100%', maxWidth: '500px' }}>
-            <h3 style={{ margin: '0 0 1rem 0', color: '#fff' }}>{editingItem ? 'Edit Ground Booking' : 'New Ground Booking'}</h3>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <input type="text" placeholder="Ground Name (e.g. Main Turf Stadium)" value={formData.groundName} onChange={e => setFormData({ ...formData, groundName: e.target.value })} required style={{ padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }} />
-              <input type="text" placeholder="Sport Type (e.g. Football)" value={formData.sportType} onChange={e => setFormData({ ...formData, sportType: e.target.value })} style={{ padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }} />
-              <input type="date" value={formData.bookingDate} onChange={e => setFormData({ ...formData, bookingDate: e.target.value })} required style={{ padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }} />
-              <div style={{ display: 'flex', gap: '1rem' }}>
-                <input type="time" value={formData.startTime} onChange={e => setFormData({ ...formData, startTime: e.target.value })} style={{ flex: 1, padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }} />
-                <input type="time" value={formData.endTime} onChange={e => setFormData({ ...formData, endTime: e.target.value })} style={{ flex: 1, padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }} />
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.55)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1100,
+            padding: '20px',
+          }}
+        >
+          <div
+            style={{
+              background: '#ffffff',
+              borderRadius: '16px',
+              padding: '24px',
+              width: '100%',
+              maxWidth: '520px',
+              boxShadow: '0 16px 40px rgba(0, 0, 0, 0.2)',
+              border: '1px solid rgba(159, 18, 57, 0.2)',
+            }}
+          >
+            <h3 style={{ margin: '0 0 16px 0', color: '#1a1218', fontSize: '1.25rem' }}>
+              {editingItem ? 'Edit Ground Reservation' : 'Reserve Sports Facility'}
+            </h3>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div>
+                <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#4b3f52', display: 'block', marginBottom: '4px' }}>
+                  Facility / Ground Name
+                </label>
+                <select
+                  value={formData.groundName}
+                  onChange={(e) => setFormData({ ...formData, groundName: e.target.value })}
+                  style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid rgba(159, 18, 57, 0.2)', fontSize: '0.85rem' }}
+                >
+                  <option value="Main Athletics Oval">Main Athletics Oval (400m Track)</option>
+                  <option value="Cricket Turf Pitch">Cricket Turf Pitch &amp; Pavilion</option>
+                  <option value="Football Field #1">Football Field #1 (North Campus)</option>
+                  <option value="Indoor Wooden Court">Indoor Wooden Basketball Court</option>
+                  <option value="Tennis Hard Court">Tennis Hard Court</option>
+                  <option value="Volleyball Court">Volleyball Clay Court</option>
+                </select>
               </div>
-              <select value={formData.bookingStatus} onChange={e => setFormData({ ...formData, bookingStatus: e.target.value })} style={{ padding: '0.7rem', borderRadius: '8px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }}>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
-              </select>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.8rem' }}>
-                <button type="button" onClick={() => setShowModal(false)} style={{ padding: '0.6rem 1.2rem', background: '#475569', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Cancel</button>
-                <button type="submit" style={{ padding: '0.6rem 1.4rem', background: '#10b981', color: '#fff', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>Save</button>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#4b3f52', display: 'block', marginBottom: '4px' }}>
+                    Sport Type
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.sportType}
+                    onChange={(e) => setFormData({ ...formData, sportType: e.target.value })}
+                    required
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid rgba(159, 18, 57, 0.2)', fontSize: '0.85rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#4b3f52', display: 'block', marginBottom: '4px' }}>
+                    Date
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.bookingDate}
+                    onChange={(e) => setFormData({ ...formData, bookingDate: e.target.value })}
+                    required
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid rgba(159, 18, 57, 0.2)', fontSize: '0.85rem' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#4b3f52', display: 'block', marginBottom: '4px' }}>
+                    Start Time
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.startTime}
+                    onChange={(e) => setFormData({ ...formData, startTime: e.target.value })}
+                    placeholder="06:00"
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid rgba(159, 18, 57, 0.2)', fontSize: '0.85rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#4b3f52', display: 'block', marginBottom: '4px' }}>
+                    End Time
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.endTime}
+                    onChange={(e) => setFormData({ ...formData, endTime: e.target.value })}
+                    placeholder="08:00"
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid rgba(159, 18, 57, 0.2)', fontSize: '0.85rem' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#4b3f52', display: 'block', marginBottom: '4px' }}>
+                    Purpose
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Inter-Collegiate Trial / Practice"
+                    value={formData.purpose}
+                    onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid rgba(159, 18, 57, 0.2)', fontSize: '0.85rem' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.78rem', fontWeight: 700, color: '#4b3f52', display: 'block', marginBottom: '4px' }}>
+                    Status
+                  </label>
+                  <select
+                    value={formData.bookingStatus}
+                    onChange={(e) => setFormData({ ...formData, bookingStatus: e.target.value })}
+                    style={{ width: '100%', padding: '9px 12px', borderRadius: '8px', border: '1px solid rgba(159, 18, 57, 0.2)', fontSize: '0.85rem' }}
+                  >
+                    <option value="Pending">Pending Sign-off</option>
+                    <option value="Approved">Approved / Reserved</option>
+                    <option value="Rejected">Rejected</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '6px' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowModal(false)}
+                  style={{ padding: '8px 16px', borderRadius: '8px', border: '1px solid rgba(159, 18, 57, 0.2)', background: '#ffffff', color: '#4b3f52', cursor: 'pointer', fontWeight: 600 }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  style={{ padding: '8px 18px', borderRadius: '8px', background: '#9f1239', color: '#ffffff', border: 'none', cursor: 'pointer', fontWeight: 700 }}
+                >
+                  Save Reservation
+                </button>
               </div>
             </form>
           </div>
         </div>
       )}
 
+      {/* Delete Modal */}
       {deletingId && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div className="glass-panel" style={{ background: '#1e293b', padding: '1.5rem', borderRadius: '14px', textAlign: 'center' }}>
-            <p style={{ color: '#fff' }}>Are you sure you want to delete this booking?</p>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
-              <button onClick={() => setDeletingId(null)} style={{ padding: '0.5rem 1rem', background: '#475569', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Cancel</button>
-              <button onClick={handleDelete} style={{ padding: '0.5rem 1rem', background: '#ef4444', color: '#fff', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Delete</button>
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0, 0, 0, 0.55)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1100,
+          }}
+        >
+          <div style={{ background: '#ffffff', padding: '24px', borderRadius: '14px', textAlign: 'center', maxWidth: '380px', border: '1px solid rgba(159, 18, 57, 0.2)' }}>
+            <h4 style={{ margin: '0 0 8px 0', color: '#1a1218' }}>Confirm Delete</h4>
+            <p style={{ color: '#8a7a8f', fontSize: '0.85rem', margin: '0 0 16px 0' }}>
+              Are you sure you want to permanently delete ground booking #{deletingId}?
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+              <button onClick={() => setDeletingId(null)} style={{ padding: '7px 14px', borderRadius: '6px', border: '1px solid #cbd5e1', background: '#fff', cursor: 'pointer' }}>Cancel</button>
+              <button onClick={handleDelete} style={{ padding: '7px 14px', borderRadius: '6px', border: 'none', background: '#dc2626', color: '#fff', fontWeight: 700, cursor: 'pointer' }}>Delete</button>
             </div>
           </div>
         </div>

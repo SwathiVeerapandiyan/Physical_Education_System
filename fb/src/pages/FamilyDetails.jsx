@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { userFormService, familyDetailsService } from '../services/api';
 import Spinner from '../components/Spinner';
+import Icon from '../components/Icons';
 
 const FamilyDetails = () => {
   const { user } = useAuth();
@@ -109,11 +110,11 @@ const FamilyDetails = () => {
 
       if (existingFamilyId) {
         await familyDetailsService.update(existingFamilyId, payload);
-        showToast('Family details updated successfully! ✅', 'success');
+        showToast('Family details updated successfully!', 'success');
       } else {
         const created = await familyDetailsService.create(payload);
         setExistingFamilyId(created.familyId);
-        showToast('Family details saved successfully! 🎉', 'success');
+        showToast('Family details saved successfully!', 'success');
       }
     } catch (err) {
       showToast(err.message || 'Failed to save family details', 'error');
@@ -130,7 +131,9 @@ const FamilyDetails = () => {
     <div className="animate-fade-in" style={{ maxWidth: '800px', margin: '0 auto' }}>
       <div className="glass-card">
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>
-          <span style={{ fontSize: '32px' }}>👨‍👩‍👧‍👦</span>
+          <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(159, 18, 57, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon name="family" size={24} color="#9f1239" />
+          </div>
           <div>
             <h2 style={{ fontSize: '1.5rem', margin: 0 }}>Family Association &amp; Details</h2>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '4px' }}>
@@ -251,7 +254,7 @@ const FamilyDetails = () => {
               {isSubmitting ? (
                 <Spinner message={existingFamilyId ? 'Updating...' : 'Saving...'} />
               ) : (
-                <span>{existingFamilyId ? '💾 Update Family Details' : '🚀 Save Family Details'}</span>
+                <span>{existingFamilyId ? 'Update Family Details' : 'Save Family Details'}</span>
               )}
             </button>
           </div>
