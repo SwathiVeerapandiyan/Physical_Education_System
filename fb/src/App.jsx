@@ -11,6 +11,7 @@ import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import Dashboard from './pages/Dashboard';
+import UserDashboard from './pages/UserDashboard';
 import UserManagement from './pages/UserManagement';
 import UserForm from './pages/UserForm';
 import FamilyDetails from './pages/FamilyDetails';
@@ -47,60 +48,22 @@ const ProtectedRoute = () => {
   );
 };
 
-// Admin Dashboard Guard (Guarantees only Admin Login can view the Dashboard)
-const AdminDashboardGuard = () => {
-  const { user, isAdmin } = useAuth();
-  const navigate = useNavigate();
-
-  if (!isAdmin) {
-    return (
-      <div style={{ maxWidth: '620px', margin: '40px auto', background: '#ffffff', padding: '36px', borderRadius: '16px', border: '1px solid rgba(159, 18, 57, 0.16)', textAlign: 'center', boxShadow: '0 8px 24px rgba(0,0,0,0.06)' }}>
-        <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto' }}>
-          <Icon name="lock" size={28} color="#dc2626" />
-        </div>
-        <div style={{ fontSize: '0.72rem', fontWeight: 800, color: '#9f1239', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>
-          RESTRICTED ADMINISTRATIVE PRIVILEGES
-        </div>
-        <h2 style={{ fontSize: '1.45rem', fontWeight: 800, color: '#1a1218', margin: '0 0 10px 0' }}>
-          Admin Login Required for Executive Dashboard
-        </h2>
-        <p style={{ color: '#8a7a8f', fontSize: '0.88rem', lineHeight: '1.5', margin: '0 0 24px 0' }}>
-          The Executive Operations Dashboard is strictly reserved for Department Administrators and Sports Officers. You are currently logged in as candidate <strong>{user?.name || 'Student Candidate'}</strong>.
-        </p>
-
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => navigate('/profile')}
-            style={{ padding: '10px 18px', borderRadius: '8px', background: '#f5f3ef', border: '1px solid rgba(159, 18, 57, 0.2)', color: '#4b3f52', fontWeight: 600, fontSize: '0.84rem', cursor: 'pointer' }}
-          >
-            ← View My Student Profile
-          </button>
-          <button
-            onClick={() => navigate('/login', { state: { defaultTab: 'admin' } })}
-            style={{ padding: '10px 20px', borderRadius: '8px', background: 'linear-gradient(135deg, #9f1239 0%, #7b1129 100%)', border: 'none', color: '#ffffff', fontWeight: 700, fontSize: '0.84rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}
-          >
-            <span>Sign In as Administrator</span>
-            <Icon name="chevronRight" size={14} />
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return <Dashboard />;
+// Role-Based Dashboard Component
+const RoleDashboard = () => {
+  const { isAdmin } = useAuth();
+  return isAdmin ? <Dashboard /> : <UserDashboard />;
 };
 
 // Public Route Guard (prevents logged in users from visiting login/register)
 const PublicRoute = ({ children }) => {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
     return <Spinner fullPage message="Verifying session..." />;
   }
 
   if (isAuthenticated) {
-    // Admin goes to dashboard, candidates go to their profile
-    return <Navigate to={isAdmin ? '/dashboard' : '/profile'} replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;
@@ -131,8 +94,8 @@ function App() {
 
             {/* Protected Routes (Wrapped in MainLayout via ProtectedRoute) */}
             <Route element={<ProtectedRoute />}>
-              {/* Dashboard is strictly guarded for Admin Login */}
-              <Route path="/dashboard" element={<AdminDashboardGuard />} />
+              {/* Dashboard dynamically serves Admin Dashboard or Candidate User Dashboard */}
+              <Route path="/dashboard" element={<RoleDashboard />} />
 
               {/* Administrative and Management Pages */}
               <Route path="/users" element={<UserManagement />} />

@@ -37,6 +37,15 @@ export const AuthProvider = ({ children }) => {
         cleanUsername.toLowerCase() === 'admin@mcc.edu') &&
       (cleanPassword === 'admin' || cleanPassword === 'admin123');
 
+    // Strict Enforcement: Admin credentials must NEVER work in User / Candidate login
+    if (!explicitAdmin && isBuiltinAdmin) {
+      setLoading(false);
+      return {
+        success: false,
+        message: 'Administrator credentials cannot be used in Candidate Sign In. Please use Administrator Sign In tab.',
+      };
+    }
+
     if (isBuiltinAdmin) {
       const adminObj = {
         userId: 9999,
@@ -54,20 +63,61 @@ export const AuthProvider = ({ children }) => {
       return { success: true, message: 'Welcome to Central Sports Admin Console!' };
     }
 
+    // Built-in Candidate Demo check for quick evaluation and testing
+    const isBuiltinCandidate =
+      !explicitAdmin &&
+      (cleanUsername.toLowerCase() === 'candidate' ||
+        cleanUsername.toLowerCase() === 'candidate@pe.com' ||
+        cleanUsername.toLowerCase() === 'femi@mail.com' ||
+        cleanUsername.toLowerCase() === 'student@pe.com') &&
+      (cleanPassword === 'candidate123' || cleanPassword === '123456' || cleanPassword === 'candidate' || cleanPassword === 'student123');
+
+    if (isBuiltinCandidate) {
+      const candidateObj = {
+        userId: 25,
+        name: 'Femina',
+        dept: 'Master of Computer Applications',
+        registerNo: '213134',
+        email: 'femi@mail.com',
+        mobileNo: 5645435555,
+        role: 'STUDENT',
+      };
+      setUser(candidateObj);
+      setIsAuthenticated(true);
+      localStorage.setItem('pe_user', JSON.stringify(candidateObj));
+      setLoading(false);
+      return { success: true, message: 'Welcome to Candidate Athlete Portal!' };
+    }
+
     try {
       const response = await authService.login(cleanUsername, cleanPassword);
       const userObj = response?.user || response?.userDetails;
 
       if (response && response.success && userObj) {
-        const isAdmin =
-          explicitAdmin ||
+        const isAccountAdmin =
           userObj.email?.toLowerCase().includes('admin') ||
           userObj.registerNo?.toUpperCase().includes('ADMIN') ||
           (userObj.dept && userObj.dept.toLowerCase().includes('admin'));
 
+        // If trying to login on Candidate tab with an Admin account
+        if (!explicitAdmin && isAccountAdmin) {
+          return {
+            success: false,
+            message: 'Administrative accounts cannot sign in through Candidate Sign In. Please use the Administrator Sign In tab.',
+          };
+        }
+
+        // If trying to login on Admin tab with a regular Candidate account
+        if (explicitAdmin && !isAccountAdmin) {
+          return {
+            success: false,
+            message: 'Candidate accounts cannot access the Executive Admin Portal. Please use the Candidate Sign In tab.',
+          };
+        }
+
         const enhancedUser = {
           ...userObj,
-          role: isAdmin ? 'ADMIN' : 'STUDENT',
+          role: explicitAdmin || isAccountAdmin ? 'ADMIN' : 'STUDENT',
         };
 
         setUser(enhancedUser);

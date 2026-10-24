@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -40,12 +40,24 @@ const LoginPage = () => {
     setErrors({});
   };
 
+  const handleFillStudentDemo = () => {
+    setLoginMode('student');
+    setUsername('femi@mail.com');
+    setPassword('123456');
+    setErrors({});
+  };
+
   const validate = () => {
     const tempErrors = {};
-    if (!username.trim()) {
+    const trimmedUsername = (username || '').trim().toLowerCase();
+
+    if (!trimmedUsername) {
       tempErrors.username =
         loginMode === 'admin' ? 'Admin username or email is required' : 'Email or Register number is required';
+    } else if (loginMode === 'student' && (trimmedUsername === 'admin' || trimmedUsername === 'admin@pe.com' || trimmedUsername === 'admin@mcc.edu')) {
+      tempErrors.username = 'Administrator credentials cannot be used in Candidate Sign In. Please use Administrator Sign In tab.';
     }
+
     if (!password) {
       tempErrors.password = 'Password is required';
     }
@@ -65,12 +77,11 @@ const LoginPage = () => {
       showToast(
         loginMode === 'admin'
           ? 'Administrator authenticated! Welcome to Executive Dashboard.'
-          : 'Signed in successfully!',
+          : 'Candidate authenticated! Welcome to Student Sports Dashboard.',
         'success'
       );
-      // Admin goes directly to dashboard, students go to their profile form
-      const targetPath = loginMode === 'admin' ? '/dashboard' : '/profile';
-      navigate(targetPath, { replace: true });
+      // Both navigate to /dashboard (which displays Admin Dashboard or User Dashboard)
+      navigate('/dashboard', { replace: true });
     } else {
       showToast(result.message, 'error');
     }
@@ -117,7 +128,7 @@ const LoginPage = () => {
         </div>
 
         {/* Quick Demo Helper Box for Admin */}
-        {loginMode === 'admin' && (
+        {loginMode === 'admin' ? (
           <div className="admin-demo-callout">
             <div className="demo-info-text">
               <span className="demo-tag">DEFAULT ADMIN LOGIN</span>
@@ -131,7 +142,25 @@ const LoginPage = () => {
               onClick={handleFillAdminDemo}
               title="Auto-fill credentials"
             >
-              Auto-Fill
+              Auto-Fill Admin
+            </button>
+          </div>
+        ) : (
+          <div className="admin-demo-callout" style={{ background: 'rgba(30, 45, 90, 0.05)', borderColor: 'rgba(30, 45, 90, 0.15)' }}>
+            <div className="demo-info-text">
+              <span className="demo-tag" style={{ background: '#1e2d5a', color: '#fff' }}>DEMO CANDIDATE LOGIN</span>
+              <p>
+                Email: <strong>femi@mail.com</strong> (Registered Athlete)
+              </p>
+            </div>
+            <button
+              type="button"
+              className="btn-auto-fill"
+              style={{ background: '#1e2d5a', color: '#ffffff' }}
+              onClick={handleFillStudentDemo}
+              title="Auto-fill candidate credentials"
+            >
+              Auto-Fill Candidate
             </button>
           </div>
         )}

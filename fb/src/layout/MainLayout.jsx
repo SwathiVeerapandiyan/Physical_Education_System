@@ -13,55 +13,82 @@ const MainLayout = ({ children }) => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const navGroups = [
-    {
-      title: 'Executive',
-      items: [
+  // Role-based sidebar navigation
+  const navGroups = isAdmin
+    ? [
         {
-          path: '/dashboard',
-          label: 'Executive Dashboard',
-          icon: 'dashboard',
-          badge: isAdmin ? 'Live' : 'Admin Only',
+          title: 'Executive',
+          items: [
+            {
+              path: '/dashboard',
+              label: 'Executive Dashboard',
+              icon: 'dashboard',
+              badge: 'Live',
+            },
+          ],
         },
-      ],
-    },
-    {
-      title: 'Athletes & Students',
-      items: [
-        { path: '/users', label: 'Athlete Directory', icon: 'users' },
-        { path: '/profile', label: 'Student Profile Form', icon: 'userCheck' },
-        { path: '/family', label: 'Family Records', icon: 'family' },
-        { path: '/documents', label: 'Document Vault', icon: 'document' },
-        { path: '/health-fitness', label: 'Health & Fitness', icon: 'health' },
-      ],
-    },
-    {
-      title: 'Sports & Competitions',
-      items: [
-        { path: '/sports', label: 'Sports Catalog', icon: 'sports' },
-        { path: '/tournaments', label: 'Tournaments', icon: 'trophy' },
-        { path: '/teams', label: 'Teams & Squads', icon: 'shield' },
-        { path: '/matches', label: 'Match Fixtures', icon: 'calendar' },
-        { path: '/live-scores', label: 'Live Scoreboard', icon: 'liveScore' },
-      ],
-    },
-    {
-      title: 'Facilities & Logistics',
-      items: [
-        { path: '/equipment-bookings', label: 'Equipment Loans', icon: 'equipment' },
-        { path: '/ground-bookings', label: 'Ground Bookings', icon: 'ground' },
-      ],
-    },
-    {
-      title: 'Administration',
-      items: [
-        { path: '/notices', label: 'Notice Board', icon: 'notice' },
-        { path: '/feedback', label: 'Feedback & Reviews', icon: 'feedback' },
-        { path: '/emergency-contacts', label: 'Emergency Contacts', icon: 'emergency' },
-        { path: '/gallery', label: 'Media Gallery', icon: 'gallery' },
-      ],
-    },
-  ];
+        {
+          title: 'Candidate Athletes',
+          items: [
+            { path: '/users', label: 'Athlete Directory', icon: 'users' },
+            { path: '/health-fitness', label: 'Health & Fitness', icon: 'health' },
+          ],
+        },
+        {
+          title: 'Facilities & Logistics',
+          items: [
+            { path: '/equipment-bookings', label: 'Equipment Loans', icon: 'equipment' },
+            { path: '/ground-bookings', label: 'Ground Bookings', icon: 'ground' },
+          ],
+        },
+        {
+          title: 'Administration',
+          items: [
+            { path: '/notices', label: 'Notice Board & Alerts', icon: 'notice' },
+            { path: '/feedback', label: 'Feedback & Reviews', icon: 'feedback' },
+            { path: '/emergency-contacts', label: 'Emergency Contacts', icon: 'emergency' },
+            { path: '/gallery', label: 'Media Gallery', icon: 'gallery' },
+          ],
+        },
+      ]
+    : [
+        {
+          title: 'Portal',
+          items: [
+            {
+              path: '/dashboard',
+              label: 'Athlete Dashboard',
+              icon: 'dashboard',
+              badge: 'Live',
+            },
+          ],
+        },
+        {
+          title: 'Student Dossier',
+          items: [
+            { path: '/profile', label: 'Student Profile Form', icon: 'userCheck' },
+            { path: '/family', label: 'Family Records', icon: 'family' },
+            { path: '/documents', label: 'Document Vault', icon: 'document' },
+            { path: '/health-fitness', label: 'Health & Fitness', icon: 'health' },
+          ],
+        },
+        {
+          title: 'Facilities & Logistics',
+          items: [
+            { path: '/equipment-bookings', label: 'Equipment Loans', icon: 'equipment' },
+            { path: '/ground-bookings', label: 'Ground Bookings', icon: 'ground' },
+          ],
+        },
+        {
+          title: 'Campus & Support',
+          items: [
+            { path: '/notices', label: 'Notice Board', icon: 'notice' },
+            { path: '/feedback', label: 'Feedback & Reviews', icon: 'feedback' },
+            { path: '/emergency-contacts', label: 'Emergency Contacts', icon: 'emergency' },
+            { path: '/gallery', label: 'Media Gallery', icon: 'gallery' },
+          ],
+        },
+      ];
 
   const handleLogout = () => {
     logout();
@@ -205,8 +232,8 @@ const MainLayout = ({ children }) => {
         {/* Page Content */}
         <main className="page-container">{children}</main>
 
-        {/* Chatbot Widget */}
-        <ChatbotWidget />
+        {/* Chatbot Widget - Available solely in Student / Candidate Login */}
+        {!isAdmin && <ChatbotWidget />}
       </div>
     </div>
   );

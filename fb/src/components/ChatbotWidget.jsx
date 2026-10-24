@@ -1,4 +1,4 @@
-﻿﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { chatbotService } from '../services/api';
 import './ChatbotWidget.css';
 
@@ -162,20 +162,34 @@ const ChatbotWidget = () => {
           {/* Header Banner - MCC Deep Maroon Style */}
           <div className="mcc-chatbot-header">
             <div className="mcc-header-greeting">
-              <div className="mcc-greeting-title">
-                Hi 
+              <div className="mcc-greeting-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 8V4H8"></path>
+                  <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                  <path d="M2 14h2"></path>
+                  <path d="M20 14h2"></path>
+                  <path d="M15 13v2"></path>
+                  <path d="M9 13v2"></path>
+                </svg>
+                <span>Hi, Candidate Athlete!</span>
               </div>
-              <p className="mcc-greeting-sub">Welcome to PE & Sports Portal</p>
+              <p className="mcc-greeting-sub">PE & Sports Virtual Assistant</p>
             </div>
-            <button className="mcc-close-btn" onClick={() => setIsOpen(false)} title="Close Chat">
-              
+            <button className="mcc-close-btn" onClick={() => setIsOpen(false)} title="Close Chat" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
             </button>
           </div>
 
           {/* Contact Line Call Card */}
           <div className="mcc-contact-card-container">
-            <a href="tel:+914422390675" className="mcc-call-pill" title="Call Emergency Contact Line">
-              
+            <a href="tel:+914422390675" className="mcc-call-pill" title="Call Emergency Contact Line" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+              <span>Emergency Sports Line: +91 44 2239 0675</span>
             </a>
           </div>
 
@@ -197,8 +211,13 @@ const ChatbotWidget = () => {
             {messages.map((msg) => (
               <div key={msg.id} className={`mcc-message-row ${msg.sender === 'user' ? 'user-row' : 'bot-row'}`}>
                 {msg.sender === 'bot' && (
-                  <div className="mcc-bot-avatar">
-                    <span>PE Bot</span>
+                  <div className="mcc-bot-avatar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                      <path d="M12 8V4H8"></path>
+                      <circle cx="9" cy="14" r="1"></circle>
+                      <circle cx="15" cy="14" r="1"></circle>
+                    </svg>
                   </div>
                 )}
                 <div className={`mcc-message-bubble ${msg.sender === 'user' ? 'user-bubble' : 'bot-bubble'}`}>
@@ -210,7 +229,11 @@ const ChatbotWidget = () => {
 
             {loading && (
               <div className="mcc-message-row bot-row">
-                <div className="mcc-bot-avatar">PE</div>
+                <div className="mcc-bot-avatar">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                  </svg>
+                </div>
                 <div className="mcc-message-bubble bot-bubble typing-bubble">
                   <div className="typing-dots">
                     <span></span>
@@ -228,7 +251,7 @@ const ChatbotWidget = () => {
             <input
               type="text"
               className="mcc-chat-input"
-              placeholder="Ask a question..."
+              placeholder="Ask a sports or portal question..."
               value={inputMsg}
               onChange={(e) => setInputMsg(e.target.value)}
               onKeyDown={handleKeyPress}
@@ -237,8 +260,13 @@ const ChatbotWidget = () => {
               className="mcc-send-btn"
               onClick={() => handleSendMessage(inputMsg)}
               disabled={!inputMsg.trim() || loading}
+              title="Send message"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="22" y1="2" x2="11" y2="13"></line>
+                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+              </svg>
             </button>
           </div>
         </div>
@@ -248,14 +276,23 @@ const ChatbotWidget = () => {
       <button
         className={`mcc-chatbot-trigger ${isOpen ? 'active' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
-        title="Physical Education Chatbot"
+        title="Physical Education AI Chatbot"
+        aria-label="Open Chatbot Assistant"
       >
         {isOpen ? (
-          <span className="trigger-close-icon">x</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
         ) : (
           <div className="trigger-icon-content">
-            <span className="trigger-chat-icon">Chat</span>
-            <span className="trigger-badge">1</span>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              <circle cx="9" cy="10" r="1" fill="currentColor"></circle>
+              <circle cx="15" cy="10" r="1" fill="currentColor"></circle>
+              <path d="M9.5 13a3.5 3.5 0 0 0 5 0"></path>
+            </svg>
+            <span className="trigger-badge">AI</span>
           </div>
         )}
       </button>

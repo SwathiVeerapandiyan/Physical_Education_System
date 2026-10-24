@@ -665,3 +665,244 @@
   .stats-grid { grid-template-columns: 1fr; }
   .shortcuts-grid { grid-template-columns: 1fr; }
 }
+
+/* Sports Operations Command Center */
+.ops-command-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid rgba(159, 18, 57, 0.16);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.ops-card-header {
+  padding: 24px 28px;
+  background: #fdfafb;
+  border-bottom: 1px solid rgba(159, 18, 57, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.ops-header-title-box {
+  max-width: 600px;
+}
+
+.ops-live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #9f1239;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+}
+
+.live-pulse-dot {
+  width: 8px;
+  height: 8px;
+  background: #9f1239;
+  border-radius: 50%;
+  animation: pulse 1.4s infinite;
+}
+
+.ops-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #1a1218;
+  margin: 0 0 4px 0;
+}
+
+.ops-subtitle {
+  font-size: 0.84rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.ops-tab-nav {
+  display: flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 10px;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.ops-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.ops-nav-btn.active {
+  background: #ffffff;
+  color: #9f1239;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.dot-red {
+  width: 8px;
+  height: 8px;
+  background: #ef4444;
+  border-radius: 50%;
+  animation: pulse 1.2s infinite;
+}
+
+.ops-card-body {
+  padding: 28px;
+}
+
+.ops-tab-content {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 28px;
+}
+
+@media (max-width: 1024px) {
+  .ops-tab-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ops-form-panel {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 22px;
+}
+
+.panel-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.panel-header-row h4 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+
+.btn-autofill-demo {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-autofill-demo:hover {
+  background: #dbeafe;
+}
+
+.ops-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.form-col-span-2 {
+  grid-column: span 2;
+}
+
+.ops-submit-row {
+  margin-top: 8px;
+}
+
+.btn-ops-submit {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #9f1239 0%, #7b1129 100%);
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 800;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(159, 18, 57, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-ops-submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(159, 18, 57, 0.35);
+}
+
+.score-input-stepper {
+  display: flex;
+  gap: 6px;
+}
+
+.score-input-stepper input {
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.btn-stepper {
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 0 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-stepper:hover {
+  background: #cbd5e1;
+}
+
+.ops-records-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.preview-heading {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #334155;
+  margin: 0;
+}
+
+.ops-table-wrap {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.live-score-pill {
+  background: #0f172a;
+  color: #38bdf8;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-family: monospace;
+}
+
