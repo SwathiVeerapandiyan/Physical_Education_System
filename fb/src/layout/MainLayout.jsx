@@ -35,6 +35,16 @@ const MainLayout = ({ children }) => {
           ],
         },
         {
+          title: 'Sports & Competitions',
+          items: [
+            { path: '/sports', label: 'Sports Disciplines', icon: 'sports' },
+            { path: '/tournaments', label: 'Tournaments', icon: 'trophy' },
+            { path: '/teams', label: 'Teams & Squads', icon: 'shield' },
+            { path: '/matches', label: 'Match Fixtures', icon: 'calendar' },
+            { path: '/live-scores', label: 'Live Scores', icon: 'sports' },
+          ],
+        },
+        {
           title: 'Facilities & Logistics',
           items: [
             { path: '/equipment-bookings', label: 'Equipment Loans', icon: 'equipment' },
@@ -70,6 +80,15 @@ const MainLayout = ({ children }) => {
             { path: '/family', label: 'Family Records', icon: 'family' },
             { path: '/documents', label: 'Document Vault', icon: 'document' },
             { path: '/health-fitness', label: 'Health & Fitness', icon: 'health' },
+          ],
+        },
+        {
+          title: 'Sports & Events',
+          items: [
+            { path: '/tournaments', label: 'Tournaments', icon: 'trophy' },
+            { path: '/teams', label: 'View Teams', icon: 'shield' },
+            { path: '/matches', label: 'Match Schedule', icon: 'calendar' },
+            { path: '/live-scores', label: 'Live Scores', icon: 'sports' },
           ],
         },
         {

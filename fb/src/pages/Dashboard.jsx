@@ -363,12 +363,20 @@ const Dashboard = () => {
       showToast('Please select a tournament', 'error');
       return;
     }
+    if (!matchForm.teamOne || !matchForm.teamTwo) {
+      showToast('Please select both teams', 'error');
+      return;
+    }
+    if (String(matchForm.teamOne) === String(matchForm.teamTwo)) {
+      showToast('Team 1 and Team 2 must be different', 'error');
+      return;
+    }
     setIsSubmittingOps(true);
     try {
       const payload = {
         tournamentId: Number(matchForm.tournamentId),
-        teamOne: matchForm.teamOne,
-        teamTwo: matchForm.teamTwo,
+        teamOne: Number(matchForm.teamOne),
+        teamTwo: Number(matchForm.teamTwo),
         venue: matchForm.venue,
         matchDate: matchForm.matchDate,
         status: matchForm.status,
@@ -918,7 +926,12 @@ const Dashboard = () => {
 
               {/* Table of Tournaments */}
               <div className="ops-records-preview">
-                <h5 className="preview-heading">Published Tournaments ({tournaments.length})</h5>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h5 className="preview-heading">Published Tournaments ({tournaments.length})</h5>
+                  <button className="btn-view-all" onClick={() => navigate('/tournaments')} style={{ fontSize: '0.8rem', padding: '6px 12px' }}>
+                    Manage All →
+                  </button>
+                </div>
                 <div className="ops-table-wrap">
                   <table className="admin-data-table">
                     <thead>
@@ -1051,7 +1064,12 @@ const Dashboard = () => {
 
               {/* Table of Matches */}
               <div className="ops-records-preview">
-                <h5 className="preview-heading">Scheduled Fixtures ({matches.length})</h5>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h5 className="preview-heading">Scheduled Fixtures ({matches.length})</h5>
+                  <button className="btn-view-all" onClick={() => navigate('/matches')} style={{ fontSize: '0.8rem', padding: '6px 12px' }}>
+                    Manage All →
+                  </button>
+                </div>
                 <div className="ops-table-wrap">
                   <table className="admin-data-table">
                     <thead>
